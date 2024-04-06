@@ -84,10 +84,10 @@ namespace Demologinfirebase
                 MessageBox.Show("Registration successful");
             }
         }
-
+      
         private void bunifuButton2_Click(object sender, EventArgs e)
         {
-            if(string.IsNullOrEmpty(txtUser.Text) || string.IsNullOrEmpty(txtPass.Text))
+            if (string.IsNullOrEmpty(txtUser.Text) || string.IsNullOrEmpty(txtPass.Text))
             {
                 MessageBox.Show("Please fill all the fields");
                 return;
@@ -96,21 +96,51 @@ namespace Demologinfirebase
             {
                 FirebaseResponse response = client.Get("Information/");
                 Dictionary<string, register> result = response.ResultAs<Dictionary<string, register>>();
-                foreach (var get in result)
-                {
-                    string usesrname = get.Value.Name;
-                    string password = get.Value.Password;
+                    foreach (var get in result)
+                    {
+                        string usesrname = get.Value.Name;
+                        string password = get.Value.Password;
                     if (usesrname == txtUser.Text && password == txtPass.Text)
                     {
                         phone = get.Value.Phone;
-                        MessageBox.Show(" Login successful " + txtUser.Text);
+                        MessageBox.Show(" Đăng nhập thành công. Chào mừng " + txtUser.Text);
                         usesrname = txtUser.Text;
-                        home hm = new home();
-                        this.Hide();
-                        hm.ShowDialog();
+                        new home().ShowDialog();
+                        txtUser.Text = "";
+                        txtPass.Text = "";
+                        break;
                     }
-                }
+                    //if (usesrname != txtUser.Text && password != txtPass.Text)
+                    //{
+                    //    MessageBox.Show("Sai tên đăng nhập hoặc mật khẩu"); break;
+                    //}
+                    if ((usesrname == txtUser.Text && password != txtPass.Text))
+                    {
+                            MessageBox.Show("Sai mật khẩu.");
+                            break;
+                        }
+                        if ((usesrname != txtUser.Text && password == txtPass.Text))
+                    {
+                            MessageBox.Show("Sai tên đăng nhập");
+                            break;
+                        }
+                    
+
+                    }
+                
+               
+               
             }
+        }
+
+        private void txtUser_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }
