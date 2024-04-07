@@ -10,41 +10,50 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Demologinfirebase
 {
-    public partial class home : Form
+    public partial class Timkiem : Form
     {
-        public home()
-        {
-            InitializeComponent();
-        }
         IFirebaseConfig config = new FirebaseConfig()
         {
             AuthSecret = "b2nFnPzL2nVG9NwzcjBtlInSGZXdtWFusy70UYur",
             BasePath = "https://group14demofirebase-default-rtdb.firebaseio.com/",
         };
         IFirebaseClient client;
-        private void label1_Click(object sender, EventArgs e)
+        public Timkiem()
         {
-
+            InitializeComponent();
         }
-
-        private void button1_Click(object sender, EventArgs e)
+        public static string User = "";
+        private void bunifuButton2_Click(object sender, EventArgs e)
         {
             FirebaseResponse response = client.Get("Information/");
             Dictionary<string, register> result = response.ResultAs<Dictionary<string, register>>();
             foreach (var get in result)
             {
                 string usesrname = get.Value.Name;
+                string password = get.Value.Password;
                 string phone = get.Value.Phone;
-               if(phone == Form1.phone)
-                MessageBox.Show("Name: " + usesrname + "\nPhone Number: " + phone);
-                }
+
+                
+                    if(usesrname==textBox1.Text)
+                    {
+                        User = usesrname;
+                        MessageBox.Show("Tìm kiếm thành công.", "Thông báo ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        new Ketban().ShowDialog();
+                        break;
+                    }
+                    else {                       
+                    MessageBox.Show("Không tìm thấy tên người dùng.", "Thông báo ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                           break;
+                                       }
+                
+            }
         }
 
-        private void home_Load_1(object sender, EventArgs e)
+        private void Timkiem_Load(object sender, EventArgs e)
         {
             try
             {
@@ -56,30 +65,14 @@ namespace Demologinfirebase
             }
         }
 
-        private async void button2_Click(object sender, EventArgs e)
-        {
-            //new Update().ShowDialog();
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            Close();
-
-        }
-
-        private void bunifuButton2_Click(object sender, EventArgs e)
+        private void bunifuButton4_Click(object sender, EventArgs e)
         {
             Close();
         }
 
-        private void bunifuButton1_Click(object sender, EventArgs e)
+        private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            new Hosonguoidung().ShowDialog();
-        }
 
-        private void bunifuButton3_Click(object sender, EventArgs e)
-        {
-            new Timkiem().ShowDialog();
         }
     }
 }

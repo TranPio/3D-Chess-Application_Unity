@@ -91,5 +91,10 @@ namespace Demologinfirebase
                 MessageBox.Show("Connection failed");
             }
         }
+
+        private void bunifuButton4_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
     }
 }

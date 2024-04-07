@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace Demologinfirebase
 {
-    public partial class Hosonguoidung : Form
+    public partial class Ketban : Form
     {
         IFirebaseConfig config = new FirebaseConfig()
         {
@@ -21,12 +21,17 @@ namespace Demologinfirebase
             BasePath = "https://group14demofirebase-default-rtdb.firebaseio.com/",
         };
         IFirebaseClient client;
-        public Hosonguoidung()
+        public Ketban()
         {
             InitializeComponent();
         }
 
-        private void Hosonguoidung_Load(object sender, EventArgs e)
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Ketban_Load(object sender, EventArgs e)
         {
             try
             {
@@ -38,9 +43,9 @@ namespace Demologinfirebase
                     string usesrname = get.Value.Name;
                     string password = get.Value.Password;
                     string phone = get.Value.Phone;
-                    if (phone == Form1.phone)
+                    if (usesrname == Timkiem.User)
                     {
-                       textBox1.Text = usesrname;
+                        textBox1.Text = usesrname;
                         textBox2.Text = phone;
                     }
                 }
@@ -52,29 +57,14 @@ namespace Demologinfirebase
             }
         }
 
-        private void bunifuButton1_Click(object sender, EventArgs e)
-        {
-            new UpdateUsername().ShowDialog();
-        }
-
         private void bunifuButton3_Click(object sender, EventArgs e)
         {
-            new UpdatePassword().ShowDialog();
+
         }
 
         private void bunifuButton4_Click(object sender, EventArgs e)
         {
             Close();
-        }
-
-        private void bunifuButton5_Click(object sender, EventArgs e)
-        {
-            new Xoataikhoan().ShowDialog();
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }
