@@ -103,7 +103,7 @@ namespace Demologinfirebase
                     if (usesrname == txtUser.Text && password == txtPass.Text)
                     {
                         phone = get.Value.Phone;
-                        MessageBox.Show(" Đăng nhập thành công. Chào mừng " + txtUser.Text);
+                        MessageBox.Show(" Đăng nhập thành công. Chào mừng " + txtUser.Text, "Thông báo ", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         usesrname = txtUser.Text;
                         new home().ShowDialog();
                         txtUser.Text = "";
@@ -116,12 +116,12 @@ namespace Demologinfirebase
                     //}
                     if ((usesrname == txtUser.Text && password != txtPass.Text))
                     {
-                            MessageBox.Show("Sai mật khẩu.");
+                            MessageBox.Show("Sai mật khẩu.","Thông báo ",MessageBoxButtons.OK,MessageBoxIcon.Warning);
                             break;
                         }
                         if ((usesrname != txtUser.Text && password == txtPass.Text))
                     {
-                            MessageBox.Show("Sai tên đăng nhập");
+                            MessageBox.Show("Sai tên đăng nhập", "Thông báo ", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                             break;
                         }
                     
@@ -139,6 +139,11 @@ namespace Demologinfirebase
         }
 
         private void button1_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void bunifuButton4_Click(object sender, EventArgs e)
         {
             Close();
         }
