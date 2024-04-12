@@ -32,18 +32,23 @@
             Bunifu.UI.WinForms.BunifuButton.BunifuButton.BorderEdges borderEdges1 = new Bunifu.UI.WinForms.BunifuButton.BunifuButton.BorderEdges();
             Bunifu.UI.WinForms.BunifuButton.BunifuButton.BorderEdges borderEdges2 = new Bunifu.UI.WinForms.BunifuButton.BunifuButton.BorderEdges();
             Bunifu.UI.WinForms.BunifuButton.BunifuButton.BorderEdges borderEdges3 = new Bunifu.UI.WinForms.BunifuButton.BunifuButton.BorderEdges();
+            Bunifu.UI.WinForms.BunifuTextBox.StateProperties stateProperties1 = new Bunifu.UI.WinForms.BunifuTextBox.StateProperties();
+            Bunifu.UI.WinForms.BunifuTextBox.StateProperties stateProperties2 = new Bunifu.UI.WinForms.BunifuTextBox.StateProperties();
+            Bunifu.UI.WinForms.BunifuTextBox.StateProperties stateProperties3 = new Bunifu.UI.WinForms.BunifuTextBox.StateProperties();
+            Bunifu.UI.WinForms.BunifuTextBox.StateProperties stateProperties4 = new Bunifu.UI.WinForms.BunifuTextBox.StateProperties();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.bunifuButton1 = new Bunifu.UI.WinForms.BunifuButton.BunifuButton();
             this.bunifuButton2 = new Bunifu.UI.WinForms.BunifuButton.BunifuButton();
             this.bunifuButton3 = new Bunifu.UI.WinForms.BunifuButton.BunifuButton();
+            this.txtTimkiem = new Bunifu.UI.WinForms.BunifuTextBox();
             this.SuspendLayout();
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Broadway", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(42, 164);
+            this.label2.Location = new System.Drawing.Point(12, 22);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(87, 26);
             this.label2.TabIndex = 6;
@@ -54,7 +59,7 @@
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Broadway", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.label1.Location = new System.Drawing.Point(221, 23);
+            this.label1.Location = new System.Drawing.Point(230, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(329, 42);
             this.label1.TabIndex = 5;
@@ -108,7 +113,7 @@
             this.bunifuButton1.IdleIconLeftImage = ((System.Drawing.Image)(resources.GetObject("bunifuButton1.IdleIconLeftImage")));
             this.bunifuButton1.IdleIconRightImage = null;
             this.bunifuButton1.IndicateFocus = false;
-            this.bunifuButton1.Location = new System.Drawing.Point(546, 134);
+            this.bunifuButton1.Location = new System.Drawing.Point(571, 190);
             this.bunifuButton1.Margin = new System.Windows.Forms.Padding(4);
             this.bunifuButton1.Name = "bunifuButton1";
             this.bunifuButton1.OnDisabledState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(191)))), ((int)(((byte)(191)))));
@@ -257,7 +262,7 @@
             this.bunifuButton3.BackColor1 = System.Drawing.Color.Azure;
             this.bunifuButton3.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("bunifuButton3.BackgroundImage")));
             this.bunifuButton3.BorderStyle = Bunifu.UI.WinForms.BunifuButton.BunifuButton.BorderStyles.Solid;
-            this.bunifuButton3.ButtonText = "          Tìm kiếm";
+            this.bunifuButton3.ButtonText = "Nhấn để tìm kiếm ";
             this.bunifuButton3.ButtonTextMarginLeft = 0;
             this.bunifuButton3.ColorContrastOnClick = 45;
             this.bunifuButton3.ColorContrastOnHover = 45;
@@ -290,7 +295,7 @@
             this.bunifuButton3.IdleIconLeftImage = ((System.Drawing.Image)(resources.GetObject("bunifuButton3.IdleIconLeftImage")));
             this.bunifuButton3.IdleIconRightImage = null;
             this.bunifuButton3.IndicateFocus = false;
-            this.bunifuButton3.Location = new System.Drawing.Point(546, 220);
+            this.bunifuButton3.Location = new System.Drawing.Point(398, 79);
             this.bunifuButton3.Margin = new System.Windows.Forms.Padding(4);
             this.bunifuButton3.Name = "bunifuButton3";
             this.bunifuButton3.OnDisabledState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(191)))), ((int)(((byte)(191)))));
@@ -325,7 +330,7 @@
             this.bunifuButton3.OnPressedState.ForeColor = System.Drawing.Color.White;
             this.bunifuButton3.OnPressedState.IconLeftImage = null;
             this.bunifuButton3.OnPressedState.IconRightImage = null;
-            this.bunifuButton3.Size = new System.Drawing.Size(216, 56);
+            this.bunifuButton3.Size = new System.Drawing.Size(232, 43);
             this.bunifuButton3.TabIndex = 13;
             this.bunifuButton3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.bunifuButton3.TextAlignment = System.Windows.Forms.HorizontalAlignment.Center;
@@ -334,6 +339,81 @@
             this.bunifuButton3.UseDefaultRadiusAndThickness = true;
             this.bunifuButton3.Click += new System.EventHandler(this.bunifuButton3_Click);
             // 
+            // txtTimkiem
+            // 
+            this.txtTimkiem.AcceptsReturn = false;
+            this.txtTimkiem.AcceptsTab = false;
+            this.txtTimkiem.AnimationSpeed = 200;
+            this.txtTimkiem.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.None;
+            this.txtTimkiem.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.None;
+            this.txtTimkiem.BackColor = System.Drawing.Color.Transparent;
+            this.txtTimkiem.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("txtTimkiem.BackgroundImage")));
+            this.txtTimkiem.BorderColorActive = System.Drawing.Color.DodgerBlue;
+            this.txtTimkiem.BorderColorDisabled = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
+            this.txtTimkiem.BorderColorHover = System.Drawing.Color.FromArgb(((int)(((byte)(105)))), ((int)(((byte)(181)))), ((int)(((byte)(255)))));
+            this.txtTimkiem.BorderColorIdle = System.Drawing.Color.Silver;
+            this.txtTimkiem.BorderRadius = 1;
+            this.txtTimkiem.BorderThickness = 1;
+            this.txtTimkiem.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtTimkiem.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.txtTimkiem.DefaultFont = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
+            this.txtTimkiem.DefaultText = "";
+            this.txtTimkiem.FillColor = System.Drawing.Color.White;
+            this.txtTimkiem.HideSelection = true;
+            this.txtTimkiem.IconLeft = ((System.Drawing.Image)(resources.GetObject("txtTimkiem.IconLeft")));
+            this.txtTimkiem.IconLeftCursor = System.Windows.Forms.Cursors.IBeam;
+            this.txtTimkiem.IconPadding = 10;
+            this.txtTimkiem.IconRight = null;
+            this.txtTimkiem.IconRightCursor = System.Windows.Forms.Cursors.IBeam;
+            this.txtTimkiem.Lines = new string[0];
+            this.txtTimkiem.Location = new System.Drawing.Point(104, 79);
+            this.txtTimkiem.MaxLength = 32767;
+            this.txtTimkiem.MinimumSize = new System.Drawing.Size(1, 1);
+            this.txtTimkiem.Modified = false;
+            this.txtTimkiem.Multiline = false;
+            this.txtTimkiem.Name = "txtTimkiem";
+            stateProperties1.BorderColor = System.Drawing.Color.DodgerBlue;
+            stateProperties1.FillColor = System.Drawing.Color.Empty;
+            stateProperties1.ForeColor = System.Drawing.Color.Empty;
+            stateProperties1.PlaceholderForeColor = System.Drawing.Color.Empty;
+            this.txtTimkiem.OnActiveState = stateProperties1;
+            stateProperties2.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
+            stateProperties2.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            stateProperties2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            stateProperties2.PlaceholderForeColor = System.Drawing.Color.DarkGray;
+            this.txtTimkiem.OnDisabledState = stateProperties2;
+            stateProperties3.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(105)))), ((int)(((byte)(181)))), ((int)(((byte)(255)))));
+            stateProperties3.FillColor = System.Drawing.Color.Empty;
+            stateProperties3.ForeColor = System.Drawing.Color.Empty;
+            stateProperties3.PlaceholderForeColor = System.Drawing.Color.Empty;
+            this.txtTimkiem.OnHoverState = stateProperties3;
+            stateProperties4.BorderColor = System.Drawing.Color.Silver;
+            stateProperties4.FillColor = System.Drawing.Color.White;
+            stateProperties4.ForeColor = System.Drawing.Color.Empty;
+            stateProperties4.PlaceholderForeColor = System.Drawing.Color.Empty;
+            this.txtTimkiem.OnIdleState = stateProperties4;
+            this.txtTimkiem.Padding = new System.Windows.Forms.Padding(3);
+            this.txtTimkiem.PasswordChar = '\0';
+            this.txtTimkiem.PlaceholderForeColor = System.Drawing.Color.Silver;
+            this.txtTimkiem.PlaceholderText = "   Nhập để tìm kiếm";
+            this.txtTimkiem.ReadOnly = false;
+            this.txtTimkiem.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.txtTimkiem.SelectedText = "";
+            this.txtTimkiem.SelectionLength = 0;
+            this.txtTimkiem.SelectionStart = 0;
+            this.txtTimkiem.ShortcutsEnabled = true;
+            this.txtTimkiem.Size = new System.Drawing.Size(317, 44);
+            this.txtTimkiem.Style = Bunifu.UI.WinForms.BunifuTextBox._Style.Bunifu;
+            this.txtTimkiem.TabIndex = 14;
+            this.txtTimkiem.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.txtTimkiem.TextMarginBottom = 0;
+            this.txtTimkiem.TextMarginLeft = 3;
+            this.txtTimkiem.TextMarginTop = 0;
+            this.txtTimkiem.TextPlaceholder = "   Nhập để tìm kiếm";
+            this.txtTimkiem.UseSystemPasswordChar = false;
+            this.txtTimkiem.WordWrap = true;
+            this.txtTimkiem.TextChanged += new System.EventHandler(this.txtRegName_TextChanged);
+            // 
             // home
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -341,6 +421,7 @@
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.txtTimkiem);
             this.Controls.Add(this.bunifuButton3);
             this.Controls.Add(this.bunifuButton2);
             this.Controls.Add(this.bunifuButton1);
@@ -361,5 +442,6 @@
         private Bunifu.UI.WinForms.BunifuButton.BunifuButton bunifuButton1;
         private Bunifu.UI.WinForms.BunifuButton.BunifuButton bunifuButton2;
         private Bunifu.UI.WinForms.BunifuButton.BunifuButton bunifuButton3;
+        private Bunifu.UI.WinForms.BunifuTextBox txtTimkiem;
     }
 }

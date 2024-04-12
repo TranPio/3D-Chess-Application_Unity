@@ -43,7 +43,7 @@ namespace Demologinfirebase
                     string usesrname = get.Value.Name;
                     string password = get.Value.Password;
                     string phone = get.Value.Phone;
-                    if (usesrname == Timkiem.User)
+                    if (usesrname == home.User)
                     {
                         textBox1.Text = usesrname;
                         textBox2.Text = phone;

@@ -7,10 +7,12 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Demologinfirebase
 {
@@ -76,10 +78,51 @@ namespace Demologinfirebase
         {
             new Hosonguoidung().ShowDialog();
         }
+        public static string User = "";
 
-        private void bunifuButton3_Click(object sender, EventArgs e)
+        private async void bunifuButton3_Click(object sender, EventArgs e)
         {
-            new Timkiem().ShowDialog();
+            string searchTerm = txtTimkiem.Text; 
+
+            FirebaseResponse response = client.Get("Information/");
+            Dictionary<string, register> result = response.ResultAs<Dictionary<string, register>>();
+
+            bool userFound = false;
+            string foundUsername = "";
+            string foundPhone = "";
+
+            foreach (var get in result)
+            {
+                string usesrname = get.Value.Name;
+                string password = get.Value.Password;
+                string phone = get.Value.Phone;
+
+                if (usesrname.ToLower().Contains(searchTerm.ToLower())) 
+                {
+                    userFound = true;
+                    foundUsername = usesrname;
+                    foundPhone = phone;
+                    break;  
+                }
+            }
+
+            if (userFound)
+            {
+                User = foundUsername;
+                MessageBox.Show("Tìm kiếm thành công.", "Thông báo ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                new Ketban().ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show("Không tìm thấy tên người dùng.", "Thông báo ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+           
+        
+
+        private void txtRegName_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
