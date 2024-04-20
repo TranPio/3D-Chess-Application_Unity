@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName ="Scriptable Objects/Board/Layout")]
-public class BoardLayout : MonoBehaviour
+public class BoardLayout : ScriptableObject
 {
     [Serializable]
     private class BoardSquareSetup
