@@ -49,5 +49,8 @@ public class ChessGameController : MonoBehaviour
     {
         Piece newPiece = pieceCreator.CreatePiece(type).GetComponent<Piece>();
         newPiece.SetData(squareCoords, team, board);
+
+        Material teamMaterial = pieceCreator.GetTeamMaterial(team);
+        newPiece.SetMaterial(teamMaterial);
     }
 }

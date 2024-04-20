@@ -24,17 +24,17 @@ public abstract class Piece : MonoBehaviour
 
     public void SetMaterial(Material material)
     {
-
+        materialSetter.SetSingleMaterial(material);
     }
 
     public bool IsFromSameTeam(Piece piece)
     {
-
+        return team == piece.team;
     }
 
     public bool CanMoveTo(Vector2Int coords)
     {
-
+        return avaliableMoves.Contains(coords);
     }
 
     public virtual void MovePiece(Vector2Int coords)
@@ -44,11 +44,14 @@ public abstract class Piece : MonoBehaviour
 
     protected void TryToAddMove(Vector2Int coords)
     {
-
+        avaliableMoves.Add(coords);
     }
 
     public void SetData(Vector2Int coords,TeamColor team, Board board)
     {
-
+        this.team = team;
+        occupiedSquare = coords;
+        this.board = board;
+        transform.position = board.CalculatePositionFromCoordes(coords);
     }
 }
