@@ -1,0 +1,51 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[CreateAssetMenu(menuName ="Scriptable Objects/Board/Layout")]
+public class BoardLayout : MonoBehaviour
+{
+    [Serializable]
+    private class BoardSquareSetup
+    {
+        public Vector2Int position;
+        public PiecesType pieceType;
+        public TeamColor teamColor;
+    }
+    [SerializeField] 
+    private BoardSquareSetup[] boardSquare;
+    public int GetPiecesCount()
+    {
+        return boardSquare.Length;
+    }
+
+    public Vector2Int GetSquareCoordsAtIndes(int index)
+    {
+        if(boardSquare.Length<=index)
+        {
+            Debug.LogError("Index of piece is out of range");
+            return new Vector2Int(-1, -1);
+        }
+        return new Vector2Int(boardSquare[index].position.x - 1, boardSquare[index].position.y - 1);
+    }
+
+    public string GetSquarePieceNameAtIndes(int index)
+    {
+        if (boardSquare.Length <= index)
+        {
+            Debug.LogError("Index of piece is out of range");
+            return "";
+        }
+        return boardSquare[index].pieceType.ToString();
+    }
+    public TeamColor GetsquareTeamColorAtIndex(int index)
+    {
+        if (boardSquare.Length <= index)
+        {
+            Debug.LogError("Index of piece is out of range");
+            return TeamColor.Black;
+        }
+        return boardSquare[index].teamColor;
+    }
+}
