@@ -24,6 +24,8 @@ public abstract class Piece : MonoBehaviour
 
     public void SetMaterial(Material material)
     {
+        if (materialSetter == null)
+            materialSetter = GetComponent<MaterialSetter>();
         materialSetter.SetSingleMaterial(material);
     }
 
