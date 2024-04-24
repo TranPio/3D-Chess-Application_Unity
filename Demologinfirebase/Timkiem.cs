@@ -18,8 +18,8 @@ namespace Demologinfirebase
     {
         IFirebaseConfig config = new FirebaseConfig()
         {
-            AuthSecret = "b2nFnPzL2nVG9NwzcjBtlInSGZXdtWFusy70UYur",
-            BasePath = "https://group14demofirebase-default-rtdb.firebaseio.com/",
+            AuthSecret = "a8jIccFDg7Ojyc5bwxV5wfDGEoFNe4uwCvvZBZyf",
+            BasePath = "https://team14-covua-default-rtdb.firebaseio.com/",
         };
         IFirebaseClient client;
         public Timkiem()
@@ -35,7 +35,7 @@ namespace Demologinfirebase
             {
                 string usesrname = get.Value.Name;
                 string password = get.Value.Password;
-                string phone = get.Value.Phone;
+                string email = get.Value.Email;
 
                 
                     if(usesrname==textBox1.Text)

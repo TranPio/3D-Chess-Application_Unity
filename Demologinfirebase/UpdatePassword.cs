@@ -21,8 +21,8 @@ namespace Demologinfirebase
         }
         IFirebaseConfig config = new FirebaseConfig()
         {
-            AuthSecret = "b2nFnPzL2nVG9NwzcjBtlInSGZXdtWFusy70UYur",
-            BasePath = "https://group14demofirebase-default-rtdb.firebaseio.com/",
+            AuthSecret = "a8jIccFDg7Ojyc5bwxV5wfDGEoFNe4uwCvvZBZyf",
+            BasePath = "https://team14-covua-default-rtdb.firebaseio.com/",
         };
         IFirebaseClient client;
         private async void button1_Click(object sender, EventArgs e)
@@ -33,8 +33,8 @@ namespace Demologinfirebase
             {
                 string usesrname = get.Value.Name;
                 string password = get.Value.Password;
-                string phone = get.Value.Phone;
-                if (phone == Form1.phone)
+                string email = get.Value.Email;
+                if (email == Dangnhap.email)
                 {
                     if (textBox1.Text == password)
                     {
@@ -42,12 +42,12 @@ namespace Demologinfirebase
                         {
                             Name = usesrname,
                             Password = textBox2.Text,
-                            Phone = phone
+                            Email = email
                         };
                         if (textBox2.Text != password)
                         {
-                            SetResponse set = client.Set("Information/" + phone, data);
-                            MessageBox.Show("Đổi mật khẩu thành công cho  " + phone);
+                            SetResponse set = client.Set("Information/" + email, data);
+                            MessageBox.Show("Đổi mật khẩu thành công cho  " + email);
                             Close();
                         }
                         else

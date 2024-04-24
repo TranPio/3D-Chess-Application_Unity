@@ -24,8 +24,8 @@ namespace Demologinfirebase
         }
         IFirebaseConfig config = new FirebaseConfig()
         {
-            AuthSecret = "b2nFnPzL2nVG9NwzcjBtlInSGZXdtWFusy70UYur",
-            BasePath = "https://group14demofirebase-default-rtdb.firebaseio.com/",
+            AuthSecret = "a8jIccFDg7Ojyc5bwxV5wfDGEoFNe4uwCvvZBZyf",
+            BasePath = "https://team14-covua-default-rtdb.firebaseio.com/",
         };
         IFirebaseClient client;
         private void label1_Click(object sender, EventArgs e)
@@ -40,9 +40,9 @@ namespace Demologinfirebase
             foreach (var get in result)
             {
                 string usesrname = get.Value.Name;
-                string phone = get.Value.Phone;
-               if(phone == Form1.phone)
-                MessageBox.Show("Name: " + usesrname + "\nPhone Number: " + phone);
+                string email = get.Value.Email;
+               if(email == Dangnhap.email)
+                MessageBox.Show("Name: " + usesrname + "\nEmail: " + email);
                 }
         }
 
@@ -89,19 +89,19 @@ namespace Demologinfirebase
 
             bool userFound = false;
             string foundUsername = "";
-            string foundPhone = "";
+            string foundEmail = "";
 
             foreach (var get in result)
             {
                 string usesrname = get.Value.Name;
                 string password = get.Value.Password;
-                string phone = get.Value.Phone;
+                string email = get.Value.Email;
 
                 if (usesrname.ToLower().Contains(searchTerm.ToLower())) 
                 {
                     userFound = true;
                     foundUsername = usesrname;
-                    foundPhone = phone;
+                    foundEmail = email;
                     break;  
                 }
             }

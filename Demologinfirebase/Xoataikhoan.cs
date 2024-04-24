@@ -18,8 +18,8 @@ namespace Demologinfirebase
     {
         IFirebaseConfig config = new FirebaseConfig()
         {
-            AuthSecret = "b2nFnPzL2nVG9NwzcjBtlInSGZXdtWFusy70UYur",
-            BasePath = "https://group14demofirebase-default-rtdb.firebaseio.com/",
+            AuthSecret = "a8jIccFDg7Ojyc5bwxV5wfDGEoFNe4uwCvvZBZyf",
+            BasePath = "https://team14-covua-default-rtdb.firebaseio.com/",
         };
         IFirebaseClient client;
         public Xoataikhoan()
@@ -48,9 +48,9 @@ namespace Demologinfirebase
             {
                 string username = get.Value.Name;
                 string password = get.Value.Password;
-                string phone = get.Value.Phone;
+                string email = get.Value.Email;
 
-                if (phone == Form1.phone)
+                if (email == Dangnhap.email)
                 {
                     if (textBox1.Text == password)
                     {
@@ -63,7 +63,7 @@ namespace Demologinfirebase
                         if (dialogResult == DialogResult.Yes)
                         {
                             
-                            client.Delete("Information/" + phone);
+                            client.Delete("Information/" + email);
                             MessageBox.Show("Xóa tài khoản thành công");
                             this.Close();
                             break;

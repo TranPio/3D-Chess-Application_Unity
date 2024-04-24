@@ -17,8 +17,8 @@ namespace Demologinfirebase
     {
         IFirebaseConfig config = new FirebaseConfig()
         {
-            AuthSecret = "b2nFnPzL2nVG9NwzcjBtlInSGZXdtWFusy70UYur",
-            BasePath = "https://group14demofirebase-default-rtdb.firebaseio.com/",
+            AuthSecret = "a8jIccFDg7Ojyc5bwxV5wfDGEoFNe4uwCvvZBZyf",
+            BasePath = "https://team14-covua-default-rtdb.firebaseio.com/",
         };
         IFirebaseClient client;
         public UpdateUsername()
@@ -34,18 +34,18 @@ namespace Demologinfirebase
             {
                 string usesrname = get.Value.Name;
                 string password = get.Value.Password;
-                string phone = get.Value.Phone;
+                string email = get.Value.Email;
                 
-                if (phone == Form1.phone)
+                if (email == Dangnhap.email)
                 {
                     var data = new register
                     {
                         Name = textBox2.Text,
                         Password = password,
-                        Phone = phone
+                        Email = email
                     };
-                    SetResponse set = client.Set("Information/" + phone, data);
-                    MessageBox.Show("Đổi tên thành công cho  " + phone);
+                    SetResponse set = client.Set("Information/" + email, data);
+                    MessageBox.Show("Đổi tên thành công cho  " + email);
                     Close();
                 }
             }
@@ -73,8 +73,8 @@ namespace Demologinfirebase
                 {
                     string usesrname = get.Value.Name;
                     string password = get.Value.Password;
-                    string phone = get.Value.Phone;
-                    if (phone == Form1.phone)
+                    string email = get.Value.Email;
+                    if (email == Dangnhap.email)
                     {
                         if (textBox2.Text == usesrname)
                         { MessageBox.Show("Vui lòng nhập tên khác tên hiện tại "); }
