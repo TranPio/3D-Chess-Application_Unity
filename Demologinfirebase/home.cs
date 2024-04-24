@@ -124,5 +124,25 @@ namespace Demologinfirebase
         {
 
         }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            new Hosonguoidung().ShowDialog();
+        }
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            new Ban_be().ShowDialog();
+        }
+
+        private void button3_Click_1(object sender, EventArgs e)
+        {
+            new Bangxephang().ShowDialog();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            new Caidat().ShowDialog();
+        }
     }
 }
