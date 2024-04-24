@@ -153,11 +153,11 @@
   </data>
   <data name="TBAOEMAIL.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAAdkAAAAZCAYAAAB92FQCAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAACXSURBVHhe7dWxDQMxEANBlabSvnPZbyhxfpvNAEzYwC4A
-        IHTO2d89ZmZmNrJ9E/uL7HsAADOem1iRBYBhIgsAEZEFgIjIAkBEZAEgIrIAEBFZAIiILABERBYAIiIL
-        ABGRBYCIyAJARGQBICKyABARWQCIiCwAREQWACIiCwARkQWAiMgCQOQvsvs9zMzMbGT7JhYAmLfWB26c
-        u0+di0gmAAAAAElFTkSuQmCC
+        iVBORw0KGgoAAAANSUhEUgAAAlIAAAAZCAYAAAD638D1AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAACmSURBVHhe7daxDcMwAANBjabRvLkSG2rSyZ/2DmDDCX4A
+        APCHtdb87jIzMzOzo82dUU9I3QcAAGeunVFCCgDgJSEFABAJKQCASEgBAERCCgAgElIAAJGQAgCIhBQA
+        QCSkAAAiIQUAEAkpAIBISAEAREIKACASUgAAkZACAIiEFABAJKQAACIhBQAQCSkAgEhIAQBEPyE178PM
+        zMzMjjZ3RgEA8N4YH7wklkpxv4WZAAAAAElFTkSuQmCC
 </value>
   </data>
   <data name="TBPASS.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -172,7 +172,7 @@
   <data name="$this.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAABLAAAAMhCAYAAAD4vEinAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
-        EgAACxIB0t1+/AAA/7JJREFUeF7snQd4ZFd9vufeKRqNeu+9t5VWK2lVdiVt0/a+3m6ve++4g7ENhBIg
+        EQAACxEBf2RfkQAA/7JJREFUeF7snQd4ZFd9vufeKRqNeu+9t5VWK2lVdiVt0/a+3m6ve++4g7ENhBIg
         BINpxpAYOwETMATTDMT/EFPsACbEFEMwAQwEMDYQQzDF3//8ztw7Oyuf0Yw0KiPpe5/nfWbm3HvPPTNz
         R3Pn0znneuaQXOWY8grle5UPKX/g+KwSlNKl7djYGN70pjfh/vvvxw9+8AM8++yzIIQQQgghSwM5t5Nz
         vIceekif88m5n+mckFK6JJVs5zGlZD2S+Uj2IxnQokFCK2m0PAGGVJQuQ3Nzc3HLLbcwrCKEEEIIWYZI

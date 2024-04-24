@@ -23,8 +23,8 @@ namespace CoVua
         }
         IFirebaseConfig config = new FirebaseConfig()
         {
-            AuthSecret = "a8jIccFDg7Ojyc5bwxV5wfDGEoFNe4uwCvvZBZyf",
-            BasePath = "https://team14-covua-default-rtdb.firebaseio.com/",
+            AuthSecret = "NTJq136Kdo8cmFkPh3Fml88nvgEXl2Md6Bw6JbFS",
+            BasePath = "https://team14-database-default-rtdb.firebaseio.com/",
         };
         IFirebaseClient client;
         public static string email = "";
