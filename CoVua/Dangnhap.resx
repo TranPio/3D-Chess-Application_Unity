@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="bunifuTextBox1.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="txtUser.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAXEAAAA3CAYAAAD68XphAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
         YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAADySURBVHhe7dTBCcAgAARBS7M0Ozcx+EkJCzNwnytgBwBx
@@ -128,7 +128,7 @@
         Ig4QJuIAYSIOECbiAGG/iM9zmJlZZvMmHICmMR40YS38u0SUPAAAAABJRU5ErkJggg==
 </value>
   </data>
-  <data name="bunifuTextBox2.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="txtPass.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAWoAAAA3CAYAAAAlvwB+AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
         YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAD0SURBVHhe7dQ5DcAwAARBQzM0M3ceuQmDjTQjXXMAdgDw
@@ -141,7 +141,7 @@
   <data name="$this.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAABLAAAAMgCAYAAAAz4JsCAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
-        EgAACxIB0t1+/AAA/7JJREFUeF7s/QeYJEd9/49P94Tdnc0555zz3uZwOSfdne5OJ51yzgFJCBGFgJ+x
+        EQAACxEBf2RfkQAA/7JJREFUeF7s/QeYJEd9/49P94Tdnc0555zz3uZwOSfdne5OJ51yzgFJCBGFgJ+x
         ycEgECAZ20QbEWwwxmBhI+CPAAEG20gYg7EEX4lsRHr/61PTvTc3qu2d2dndm917v57n9cxMdXd1T0/P
         Tvd7q6p9K0iecp/yBuX9ykeVTyhBKaWUUkoppZRSSte0kvF8Rvlh5YuUM0rJgtYEsqGy0fIGTG+OUkop
         pZRSSimllK5fJROSxky1ypRDUjaGVnRBLcsyllNKKaWUUkoppXTdKlmRZEZnHAZXlFJKKaWUUkoppdRL
