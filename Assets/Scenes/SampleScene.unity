@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 9d58159621971dd4ba41447b1e14cba1, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
+  m_IndirectSpecularColor: {r: 0.23928697, g: 0.36813465, b: 0.48233387, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -328,7 +328,7 @@ Transform:
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
   m_LocalRotation: {x: 0.42261827, y: 0, z: 0, w: 0.9063079}
-  m_LocalPosition: {x: 0, y: 10, z: -9}
+  m_LocalPosition: {x: 0, y: 9.87, z: -9.16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -477,15 +477,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileMaterial: {fileID: 2100000, guid: 3d951628aae717b48b155ea50918694f, type: 2}
   tileSize: 1
-  yOffset: 0.2
+  yOffset: 0.005
   boardCenter: {x: 0, y: 0, z: 0}
+  deathSize: 0.5
+  deathSpacing: 0.5
+  dragOffset: 0.5
   prefabs:
-  - {fileID: 7353687647324100644, guid: da821c16c69e76f4abd79048bff9b872, type: 3}
-  - {fileID: 2633682416996530663, guid: 82547b105753dd84d9d5ed1ee6385d52, type: 3}
-  - {fileID: 7904579757829077348, guid: a7af8b270a17a9f4e9ae47c0551ba906, type: 3}
-  - {fileID: 3536304281913966312, guid: 292a09a3e2254a542ae4a328223bf935, type: 3}
-  - {fileID: 2891543378114388136, guid: 877d886ec801aac4aa72dd30f35e83d8, type: 3}
-  - {fileID: 8019899009798220559, guid: 2f847de22f2d760408a1e26282929a97, type: 3}
+  - {fileID: 521387539323092390, guid: 469a101212b930b4c9a1e16e195d5111, type: 3}
+  - {fileID: 6436395263900630066, guid: 055afad8909f982418005f0678fdc698, type: 3}
+  - {fileID: 7728607720669756319, guid: 7179bb99b809da548895733f08e7864e, type: 3}
+  - {fileID: 4743146741723677983, guid: 2332bc5e77f2349428cc5bd7da3f5bbd, type: 3}
+  - {fileID: 9030904781472289212, guid: 8579d2fba97e8f044832cf5b9863aae2, type: 3}
+  - {fileID: 3407238629321252614, guid: ef77c9baf11569042b5e4d34fc88398d, type: 3}
   teamMaterials:
   - {fileID: 2100000, guid: 99f8b7d199afa954cb36809e1078e071, type: 2}
   - {fileID: 2100000, guid: 025077210c59d2942b6704db1f6aaf3b, type: 2}
