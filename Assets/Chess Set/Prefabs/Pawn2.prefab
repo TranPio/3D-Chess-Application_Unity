@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 33000012760542366}
   - component: {fileID: 23000012148006776}
   m_Layer: 0
-  m_Name: Chess Pawn White
+  m_Name: Pawn2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
