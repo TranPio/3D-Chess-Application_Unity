@@ -92,7 +92,7 @@
             this.txtRegName.BorderThickness = 1;
             this.txtRegName.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtRegName.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.txtRegName.DefaultFont = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
+            this.txtRegName.DefaultFont = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
             this.txtRegName.DefaultText = "";
             this.txtRegName.FillColor = System.Drawing.Color.White;
             this.txtRegName.ForeColor = System.Drawing.Color.Black;
@@ -139,7 +139,7 @@
             this.txtRegName.SelectionLength = 0;
             this.txtRegName.SelectionStart = 0;
             this.txtRegName.ShortcutsEnabled = true;
-            this.txtRegName.Size = new System.Drawing.Size(362, 55);
+            this.txtRegName.Size = new System.Drawing.Size(362, 54);
             this.txtRegName.Style = Bunifu.UI.WinForms.BunifuTextBox._Style.Bunifu;
             this.txtRegName.TabIndex = 1;
             this.txtRegName.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
@@ -173,7 +173,7 @@
             this.txtEmail.BorderThickness = 1;
             this.txtEmail.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtEmail.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.txtEmail.DefaultFont = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
+            this.txtEmail.DefaultFont = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
             this.txtEmail.DefaultText = "";
             this.txtEmail.FillColor = System.Drawing.Color.White;
             this.txtEmail.ForeColor = System.Drawing.Color.Black;
@@ -220,7 +220,7 @@
             this.txtEmail.SelectionLength = 0;
             this.txtEmail.SelectionStart = 0;
             this.txtEmail.ShortcutsEnabled = true;
-            this.txtEmail.Size = new System.Drawing.Size(362, 53);
+            this.txtEmail.Size = new System.Drawing.Size(362, 54);
             this.txtEmail.Style = Bunifu.UI.WinForms.BunifuTextBox._Style.Bunifu;
             this.txtEmail.TabIndex = 3;
             this.txtEmail.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
@@ -249,7 +249,7 @@
             this.txtRegPass.BorderThickness = 1;
             this.txtRegPass.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtRegPass.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.txtRegPass.DefaultFont = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
+            this.txtRegPass.DefaultFont = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(163)));
             this.txtRegPass.DefaultText = "";
             this.txtRegPass.FillColor = System.Drawing.Color.White;
             this.txtRegPass.ForeColor = System.Drawing.Color.Black;
@@ -296,7 +296,7 @@
             this.txtRegPass.SelectionLength = 0;
             this.txtRegPass.SelectionStart = 0;
             this.txtRegPass.ShortcutsEnabled = true;
-            this.txtRegPass.Size = new System.Drawing.Size(362, 55);
+            this.txtRegPass.Size = new System.Drawing.Size(362, 54);
             this.txtRegPass.Style = Bunifu.UI.WinForms.BunifuTextBox._Style.Bunifu;
             this.txtRegPass.TabIndex = 4;
             this.txtRegPass.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;

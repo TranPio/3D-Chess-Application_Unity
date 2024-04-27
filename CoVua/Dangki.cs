@@ -33,11 +33,11 @@ namespace CoVua
         {
 
         }
-        private bool IsValidEmail(string email)
-        {
-            string regex = @"^[\w\.-]+@[\w\.-]+\.[a-zA-Z]{2,}$";
-            return Regex.Match(email, regex).Success;
-        }
+       // private bool IsValidEmail(string email)
+        //{
+        //    string regex = @"^[\w\.-]+@[\w\.-]+\.[a-zA-Z]{2,}$";
+            //return Regex.Match(email, regex).Success;
+        //}
         private bool IsValidPassword(string password)
         {
             string regex = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^\s]{8,}$";
@@ -50,12 +50,12 @@ namespace CoVua
                 MessageBox.Show("Vui lòng điền đầy đủ thông tin ","Lỗi",MessageBoxButtons.OK,MessageBoxIcon.Hand);
                 return;
             }
-            else
-            if (!IsValidEmail(txtEmail.Text))
-            {
-                TBAOEMAIL.Text = "Vui lòng điền đúng định dạng email abc@gmail.com";
-                return;
-            }
+           // else
+           // if (!IsValidEmail(txtEmail.Text))
+            //{
+              //  TBAOEMAIL.Text = "Vui lòng điền đúng định dạng email abc@gmail.com";
+                //return;
+            //}
             else if (!IsValidPassword(txtRegPass.Text))
             {
                 TBPASS.Text = "Mật khẩu phải chứa ít nhất 8 ký tự, 1 chữ hoa, 1 chữ thường và 1 số";
@@ -69,7 +69,10 @@ namespace CoVua
                     Password = txtRegPass.Text,
                     Email = txtEmail.Text
                 };
-                FirebaseResponse response = client.Set("Information/" + txtEmail.Text, register);
+                //string encodedEmail = System.Uri.EscapeDataString(txtEmail.Text);
+                string encodedEmail = txtEmail.Text.Replace(".", "-");
+                FirebaseResponse response = client.Set("Information/" + encodedEmail, register);
+               // FirebaseResponse response = client.Set("Information/" + txtEmail.Text, register);
                 register res = response.ResultAs<register>();
                 register todo = new register()
                 {
