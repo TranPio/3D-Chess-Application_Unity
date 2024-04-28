@@ -211,25 +211,18 @@ public class ChessBoard : MonoBehaviour
         chessPieces[5, 0] = SpawnSinglePiece(ChessPieceType.Bishop, whiteTeam);
         chessPieces[6, 0] = SpawnSinglePiece(ChessPieceType.Knight, whiteTeam);
         chessPieces[7, 0] = SpawnSinglePiece(ChessPieceType.Rook, whiteTeam);
-        //chessPieces[0, 1] = SpawnSinglePiece(ChessPieceType.Pawn, whiteTeam);
-        //chessPieces[1, 1] = SpawnSinglePiece(ChessPieceType.Pawn, whiteTeam);
-        //chessPieces[2, 1] = SpawnSinglePiece(ChessPieceType.Pawn, whiteTeam);
-        //chessPieces[3, 1] = SpawnSinglePiece(ChessPieceType.Pawn, whiteTeam);
-        //chessPieces[4, 1] = SpawnSinglePiece(ChessPieceType.Pawn, whiteTeam);
-        //chessPieces[5, 1] = SpawnSinglePiece(ChessPieceType.Pawn, whiteTeam);
-        //chessPieces[6, 1] = SpawnSinglePiece(ChessPieceType.Pawn, whiteTeam);
-        //chessPieces[7, 1] = SpawnSinglePiece(ChessPieceType.Pawn, whiteTeam);
+     
 
         for (int i = 0; i < TILE_COUNT_X; i++)
         {
             chessPieces[i, 1] = SpawnSinglePiece(ChessPieceType.Pawn, whiteTeam);
-                    
+
             //ChessPiece pawn = chessPieces[i, 1];
 
             //pawn = SpawnSinglePiece(ChessPieceType.Pawn, whiteTeam);
 
-           // chessPieces[i,1].SetPosition(new Vector3(i * tileSize, yOffset +0.3f, 1 * tileSize) - bounds + new Vector3(tileSize / 2, 0.3f, tileSize / 2));
-            
+            // chessPieces[i,1].SetPosition(new Vector3(i * tileSize, yOffset +0.3f, 1 * tileSize) - bounds + new Vector3(tileSize / 2, 0.3f, tileSize / 2));
+
         }
 
         //Black team
@@ -383,6 +376,52 @@ public class ChessBoard : MonoBehaviour
                     chessPieces[enemyPawn.curentX, enemyPawn.curentY] = null;
                 }
             }
+
+        }
+
+        if(specialMove==SpecialMove.Castling)
+        {
+            Vector2Int[] lastMove= moveList[moveList.Count-1];
+
+            //left Rook
+            if (lastMove[1].x==2)
+            {
+                if (lastMove[1].y==0) //White side
+                {
+                    ChessPiece rook = chessPieces[0, 0];
+                    chessPieces[3, 0] = rook;
+                    PositionSinglePiece(3, 0);
+                    chessPieces[0, 0] = null;
+                }
+                else if (lastMove[1].y==7) //Black side
+                {
+                    ChessPiece rook = chessPieces[0, 7];
+                    chessPieces[3, 7] = rook;
+                    PositionSinglePiece(3, 7);
+                    chessPieces[0, 7] = null;
+                }
+            }
+
+
+            //Right Rook
+            if (lastMove[1].x == 6)
+            {
+                if (lastMove[1].y == 0) //White side
+                {
+                    ChessPiece rook = chessPieces[7, 0];
+                    chessPieces[5, 0] = rook;
+                    PositionSinglePiece(5, 0);
+                    chessPieces[7, 0] = null;
+                }
+                else if (lastMove[1].y == 7) //Black side
+                {
+                    ChessPiece rook = chessPieces[7, 7];
+                    chessPieces[5, 7] = rook;
+                    PositionSinglePiece(5, 7);
+                    chessPieces[7, 7] = null;
+                }
+            }
+
 
         }
     }
