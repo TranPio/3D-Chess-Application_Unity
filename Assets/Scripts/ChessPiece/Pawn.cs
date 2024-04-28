@@ -42,6 +42,9 @@ public class Pawn : ChessPiece
     {
         int direction = (team==0)? 1 : -1;
 
+        if ((team == 0 && curentY == 6) || (team == 1 && curentY == 1))
+            return SpecialMove.Promotion;
+
         //En passant
         if(moveList.Count>0)
         {
