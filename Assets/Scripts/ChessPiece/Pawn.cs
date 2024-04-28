@@ -37,4 +37,41 @@ public class Pawn : ChessPiece
 
         return r;
     }
+
+    public override SpecialMove GetSpecialMoves(ref ChessPiece[,] board, ref List<Vector2Int[]> moveList, ref List<Vector2Int> availableMoves)
+    {
+        int direction = (team==0)? 1 : -1;
+
+        //En passant
+        if(moveList.Count>0)
+        {
+
+            Vector2Int[] lastMove = moveList[moveList.Count - 1];
+            if (board[lastMove[1].x, lastMove[1].y].type==ChessPieceType.Pawn) // if the last piece moved was a pawn
+            {
+                if (Mathf.Abs(lastMove[0].y - lastMove[1].y)==2) // if the last move was a +2 in either direction
+                {
+                    if (board[lastMove[1].x, lastMove[1].y].team != team) // if the move was from the other team
+                    {
+                        if (lastMove[1].y==curentY) // if both pawns are on the samw Y
+                        {
+                            if (lastMove[1].x==curentX-1) //Landed Left
+                            {
+                                availableMoves.Add(new Vector2Int(curentX - 1, curentY + direction));
+                                return SpecialMove.EnPassant;
+                            }
+                            if (lastMove[1].x == curentX + 1) //Landed right
+                            {
+                                availableMoves.Add(new Vector2Int(curentX + 1, curentY + direction));
+                                return SpecialMove.EnPassant;
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return SpecialMove.None;
+    }
 }
