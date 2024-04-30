@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/firebase_database_url,@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id">
+  <string name="firebase_database_url" translatable="false">https://team14-database-default-rtdb.firebaseio.com</string>
+  <string name="gcm_defaultSenderId" translatable="false">214552480712</string>
+  <string name="google_storage_bucket" translatable="false">team14-database.appspot.com</string>
+  <string name="project_id" translatable="false">team14-database</string>
+  <string name="google_api_key" translatable="false">AIzaSyBNIXa3z_E2-Hg3kqgzI_fJbIut0MFjOvA</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyBNIXa3z_E2-Hg3kqgzI_fJbIut0MFjOvA</string>
+  <string name="google_app_id" translatable="false">1:214552480712:android:aef18b91a9d57455f50efd</string>
+</resources>
