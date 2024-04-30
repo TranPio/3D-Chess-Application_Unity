@@ -1123,3 +1123,6 @@ Assets/Plugins.meta
 /Assets/Plugins/tvOS/Firebase*
 /Assets/Plugins/tvOS.meta
 /Assets/Firebase/Plugins/x86_64/
+
+FirebaseCppApp-11_9_0.bundle
+FirebaseCppApp-11_9_0.so 
