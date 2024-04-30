@@ -993,6 +993,7 @@ crashlytics-build.properties
 /Assets/Plugins/iOS/Firebase*
 /Assets/Plugins/x86_64/Firebase/
 /Assets/Plugins/x86_64/Firebase*
+/Assets/Firebase/Plugins/x86_64/
 /Assets/Parse/
 /Assets/Parse.meta
 /remote_config_data
@@ -1026,6 +1027,7 @@ crashlytics-build.properties
 /Assets/Plugins/iOS/Firebase*
 /Assets/Plugins/x86_64/Firebase/
 /Assets/Plugins/x86_64/Firebase*
+/Assets/Firebase/Plugins/x86_64/
 /Assets/Parse/
 /Assets/Parse.meta
 /remote_config_data
@@ -1120,3 +1122,4 @@ Assets/Plugins.meta
 /Assets/Plugins/tvOS/Firebase/
 /Assets/Plugins/tvOS/Firebase*
 /Assets/Plugins/tvOS.meta
+/Assets/Firebase/Plugins/x86_64/
