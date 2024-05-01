@@ -17,6 +17,9 @@ using System.Net.Mime;
 using UnityEditor.VersionControl;
 using Google;
 using System.Net;
+using UnityEngine.Networking;
+using System.Security.Policy;
+
 
 
 
@@ -29,7 +32,12 @@ public class FireBase : MonoBehaviour
     public string GoogleWebAPI = "214552480712-4puo48o8qgurbipl5dton1iq2sq5q4fs.apps.googleusercontent.com";
     private GoogleSignInConfiguration configuration;
     public Image ProfileAva;
+    public GameObject ProfileUpdateAva;
+    public InputField urlProfileAva;
     public string imageUrl;
+   // private string defaultUserImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrIMwQF5tiqO-E-rYuz7TT_tZ4ITeDzK3a-g&usqp=CAU";
+    private string defaultUserImage = "https://img.freepik.com/premium-vector/cute-boy-thinking-cartoon-avatar_138676-2439.jpg";
+
 
     Firebase.DependencyStatus dependencyStatus = Firebase.DependencyStatus.UnavailableOther;
     Firebase.Auth.FirebaseAuth auth;
@@ -58,6 +66,10 @@ public class FireBase : MonoBehaviour
         });
         hienmksignup.onValueChanged.AddListener(delegate { TogglePasswordVisibility(passwordsignup, hienmksignup); });
         hienmklogin.onValueChanged.AddListener(delegate { TogglePasswordVisibility(passwordlogin, hienmklogin); });
+        if (isSignIn)
+        {
+           LoadProfileImage(defaultUserImage);
+        }
     }
     public void OpenLogin()
     {
@@ -137,6 +149,21 @@ public class FireBase : MonoBehaviour
             Tbao("Lỗi!", "Không gửi được email xác minh tài khoản");
         }
 
+    }
+    public void OpenSetAva()
+    {
+        ProfileUpdateAva.SetActive(true);
+        profilepanel.SetActive(true);
+        settingLogout.SetActive(false);
+        ConfirmAcc.SetActive(false);
+        homepanel.SetActive(false);
+        loginpanel.SetActive(false);
+        signuppanel.SetActive(false);
+        forgetpasspanel.SetActive(false);
+    }
+    public void CloseSetAva()
+    {
+        ProfileUpdateAva.SetActive(false);
     }
     public void CloseTbaoNe()
     {
@@ -371,6 +398,17 @@ public class FireBase : MonoBehaviour
                 Debug.Log("Đăng nhập thành công");
                 Tbao("", "Đăng nhập thành công");
                 OpenHome();
+                UpdateProfile(user.DisplayName);
+                if(rememberMe.isOn)
+                {
+                    PlayerPrefs.SetString("email", email);
+                    PlayerPrefs.SetString("password", password);
+                    PlayerPrefs.Save();
+                }
+                if(result.User.PhotoUrl != null)
+                {
+                    LoadProfileImage(result.User.PhotoUrl.ToString());
+                }
             }
             else
             {
@@ -420,7 +458,7 @@ public class FireBase : MonoBehaviour
             Firebase.Auth.UserProfile profile = new Firebase.Auth.UserProfile
             {
                 DisplayName = Username,
-                PhotoUrl = new System.Uri("https://dummyimage.com/200"),
+                PhotoUrl = new Uri(defaultUserImage),
             };
             user.UpdateUserProfileAsync(profile).ContinueWith(task => {
                 if (task.IsCanceled)
@@ -448,7 +486,7 @@ public class FireBase : MonoBehaviour
                     isSigned = true;
                     profileName.text = "" + user.DisplayName;
                     profileEmail.text = "" + user.Email;
-                
+                LoadProfileImage(defaultUserImage);
             }
            
         }
@@ -575,6 +613,58 @@ public class FireBase : MonoBehaviour
         WWW www = new WWW(imageUri);
         yield return www;
         ProfileAva.sprite = Sprite.Create(www.texture, new Rect(0, 0, www.texture.width, www.texture.height), new Vector2(0, 0));
+    }
+    public void LoadProfileImage(string url)
+    {
+        StartCoroutine(LoadProfileImageIE(url));    
+    }
+    public void UpdateProfilePicture()
+    {
+        StartCoroutine(UpdateProfilePictureIE());
+    }
+    private IEnumerator UpdateProfilePictureIE()
+    {
+        Firebase.Auth.FirebaseUser user = auth.CurrentUser;
+        if (user != null)
+        {
+            string url = GetProfilePicture();
+            Firebase.Auth.UserProfile profile = new Firebase.Auth.UserProfile
+            {
+                PhotoUrl = new System.Uri(url),
+            };
+            var profileUpdateTask = user.UpdateUserProfileAsync(profile);
+            yield return new WaitUntil(() => profileUpdateTask.IsCompleted);
+            if (profileUpdateTask.Exception != null)
+            {
+                Debug.LogError("UpdateUserProfileAsync encountered an error: " + profileUpdateTask.Exception);
+            }
+            else
+            {
+                LoadProfileImage(user.PhotoUrl.ToString());
+                Debug.Log("User profile updated successfully.");
+                Tbao("Thành công!", "Cập nhật ảnh đại diện thành công");
+            }
+        }
+        yield return null;
+    }
+    public IEnumerator LoadProfileImageIE(string url)
+    {
+        UnityWebRequest www = UnityWebRequestTexture.GetTexture(url);
+        yield return www.SendWebRequest();
+        if (www.isNetworkError || www.isHttpError)
+        {
+            Debug.Log(www.error);
+        }
+        else
+        {
+            Texture2D texture = ((DownloadHandlerTexture)www.downloadHandler).texture;
+            //Texture2D texture = DownloadHandlerTexture.GetContent(www);
+            ProfileAva.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0, 0));
+        }
+    }
+    public string GetProfilePicture()
+    {
+        return urlProfileAva.text;
     }
 }
 
