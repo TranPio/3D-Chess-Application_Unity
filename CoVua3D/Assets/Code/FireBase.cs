@@ -15,16 +15,23 @@ using System.Text.RegularExpressions;
 using static UnityEditor.ShaderData;
 using System.Net.Mime;
 using UnityEditor.VersionControl;
+using Google;
+using System.Net;
 
 
 
 public class FireBase : MonoBehaviour
 {
-    public GameObject loginpanel, signuppanel, homepanel, profilepanel, forgetpasspanel, TbaoPanel, CloseTbaone, settingLogout;
+    public GameObject loginpanel, signuppanel, homepanel, profilepanel, forgetpasspanel, TbaoPanel, CloseTbaone, settingLogout, ConfirmAcc;
     public InputField emaillogin, passwordlogin, usernamesignup, emailsignup, passwordsignup, forgetpass;
-    public Text tbao_Text, tbao_Mess, profileName, profileEmail, tbaomksignup, tbaomklogin, tbaoemailsignup, tbaoemaillogin;
+    public Text tbao_Text, tbao_Mess, profileName, profileEmail, tbaomksignup, tbaomklogin, tbaoemailsignup, tbaoemaillogin, emailconfirm, emailcf2;
     public Toggle rememberMe, hienmklogin, hienmksignup;
+    public string GoogleWebAPI = "214552480712-4puo48o8qgurbipl5dton1iq2sq5q4fs.apps.googleusercontent.com";
+    private GoogleSignInConfiguration configuration;
+    public Image ProfileAva;
+    public string imageUrl;
 
+    Firebase.DependencyStatus dependencyStatus = Firebase.DependencyStatus.UnavailableOther;
     Firebase.Auth.FirebaseAuth auth;
     Firebase.Auth.FirebaseUser user;
     bool isSignIn = false;
@@ -60,6 +67,7 @@ public class FireBase : MonoBehaviour
         profilepanel.SetActive(false);
         forgetpasspanel.SetActive(false);
         settingLogout.SetActive(false);
+        ConfirmAcc.SetActive(false);
     }
     public void OpenSignup()
     {
@@ -69,6 +77,7 @@ public class FireBase : MonoBehaviour
         profilepanel.SetActive(false);
         forgetpasspanel.SetActive(false);
         settingLogout.SetActive(false);
+        ConfirmAcc.SetActive(false);
     }
     public void OpenSetting()
     {
@@ -78,6 +87,7 @@ public class FireBase : MonoBehaviour
         homepanel.SetActive(false);
         profilepanel.SetActive(false);
         forgetpasspanel.SetActive(false);
+        ConfirmAcc.SetActive(false);
     }
     public void OpenHome()
     {
@@ -87,6 +97,7 @@ public class FireBase : MonoBehaviour
         profilepanel.SetActive(false);
         forgetpasspanel.SetActive(false);
         settingLogout.SetActive(false);
+        ConfirmAcc.SetActive(false);
     }
     public void OpenProfile()
     {
@@ -96,6 +107,7 @@ public class FireBase : MonoBehaviour
         profilepanel.SetActive(true);
         forgetpasspanel.SetActive(false);
         settingLogout.SetActive(false);
+        ConfirmAcc.SetActive(false);
     }
     public void Openforgetpass()
     {
@@ -105,12 +117,27 @@ public class FireBase : MonoBehaviour
         profilepanel.SetActive(false);
         forgetpasspanel.SetActive(true);
         settingLogout.SetActive(false);
+        ConfirmAcc.SetActive(false);
     }
-    public void Hienmk()
+    public void OpenConfirmAcc(bool isEmailsent, string emailcf)
     {
-        
-    }
+        ConfirmAcc.SetActive(true);
+        loginpanel.SetActive(false);
+        signuppanel.SetActive(false);
+        homepanel.SetActive(false);
+        profilepanel.SetActive(false);
+        forgetpasspanel.SetActive(false);
+        settingLogout.SetActive(false);
+       if (isEmailsent)
+        {
+            emailconfirm.text = "" + emailcf;
+        }
+        else
+        {
+            Tbao("Lỗi!", "Không gửi được email xác minh tài khoản");
+        }
 
+    }
     public void CloseTbaoNe()
     {
         CloseTbaone.SetActive(false);
@@ -135,12 +162,51 @@ public class FireBase : MonoBehaviour
         string regex = @"^[\w!#$%&'*+/=?^`{|}~-]+(?:\.[\w!#$%&'*+/=?^`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[a-zA-Z]{2,}$";
         return Regex.Match(trimmedEmail, regex).Success;
     }
-    //private bool KiemtraEmail()
-    //{
-    //    AuthError.EmailAlreadyInUse:
-    //            message = "Email của bạn đã tồn tại";
-    //}
 
+    public void SendMailConfirm()
+    {
+        StartCoroutine(SendEmailVerificationAsync());
+    }
+
+    private IEnumerator SendEmailVerificationAsync()
+    {
+        if (user != null)
+        {
+            var sendEmailTask = user.SendEmailVerificationAsync();
+            yield return new WaitUntil(() => sendEmailTask.IsCompleted);
+            if (sendEmailTask.Exception != null)
+            {
+                FirebaseException firebaseEx = sendEmailTask.Exception.GetBaseException() as FirebaseException;
+                AuthError errorCode = (AuthError)firebaseEx.ErrorCode;
+                switch (errorCode)
+                {
+                    case AuthError.Cancelled:
+                        Debug.LogError("SendEmailVerificationAsync was canceled.");
+                        Tbao("Lỗi!", "SendEmailVerificationAsync was canceled.");
+                        break;
+                    case AuthError.InvalidEmail:
+                        Debug.LogError("SendEmailVerificationAsync encountered an error: Invalid email.");
+                        Tbao("Lỗi!", "SendEmailVerificationAsync encountered an error: Invalid email.");
+                        break;
+                    case AuthError.TooManyRequests:
+                        Debug.LogError("SendEmailVerificationAsync encountered an error: Too many requests.");
+                        Tbao("Lỗi!", "SendEmailVerificationAsync encountered an error: Too many requests.");
+                        break;
+                    case AuthError.InvalidRecipientEmail:
+                        Debug.LogError("SendEmailVerificationAsync encountered an error: Invalid recipient email.");
+                        Tbao("Lỗi!", "SendEmailVerificationAsync encountered an error: Invalid recipient email.");
+                        break;
+                }
+                OpenConfirmAcc(false, user.Email);
+            }
+            else
+            {
+                Debug.Log("Email sent successfully.");
+                OpenConfirmAcc(true, user.Email);
+            }
+
+        }
+    }
     public void Login()
     {
         tbaoemaillogin.text = "";
@@ -162,8 +228,7 @@ public class FireBase : MonoBehaviour
             return;
         }
         SigninUser(emaillogin.text, passwordlogin.text);
-        Debug.Log("Đăng nhập thành công");
-        Tbao("", "Đăng nhập thành công");
+        
         //OpenHome();
     }
     public void Signup()
@@ -197,9 +262,8 @@ public class FireBase : MonoBehaviour
             return;
            
         }
-        Debug.Log("Kiểm tra email của bạn");
-        Tbao("", "Vui lòng kiểm tra email của bạn");
-        OpenLogin();
+        //Debug.Log("Kiểm tra email của bạn");
+        forgetPasswordsubmit(forgetpass.text);
     }
     public void Tbao(string title, string message)
     {
@@ -242,7 +306,8 @@ public class FireBase : MonoBehaviour
                         var errorCode = (AuthError)firebaseEx.ErrorCode;
                         if (errorCode == AuthError.EmailAlreadyInUse)
                         {
-                            Tbao("Lỗi!", GetErrorMessage(errorCode));
+                            Tbao("Lỗi!", "Email đã tồn tại. Vui lòng đăng ký bằng email khác!");
+                            break;
                         }
                         else
                         {
@@ -256,8 +321,15 @@ public class FireBase : MonoBehaviour
             Firebase.Auth.AuthResult result = task.Result;
             Debug.LogFormat("Firebase user created successfully: {0} ({1})",
                 result.User.DisplayName, result.User.UserId);
-            UpdateProfile(username);
-            OpenLogin();
+            if (user.IsEmailVerified)
+            {
+                UpdateProfile(username);
+                OpenLogin();
+            }
+            else
+            {
+                SendMailConfirm();
+            }
         });
         UpdateProfile(username);
        usernamesignup.text = "";
@@ -294,7 +366,16 @@ public class FireBase : MonoBehaviour
                 result.User.DisplayName, result.User.UserId);
             profileName.text = ""+ result.User.DisplayName;
             profileEmail.text = ""+ result.User.Email;
-            OpenHome();
+            if(user.IsEmailVerified)
+            {
+                Debug.Log("Đăng nhập thành công");
+                Tbao("", "Đăng nhập thành công");
+                OpenHome();
+            }
+            else
+            {
+                SendMailConfirm();
+            }
         });
         emaillogin.text = "";
         passwordlogin.text = "";
@@ -397,6 +478,103 @@ public class FireBase : MonoBehaviour
                 break;
         }
         return message;
+    }
+    void forgetPasswordsubmit(string forgetpassemail )
+    {
+        auth.SendPasswordResetEmailAsync(forgetpassemail).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCanceled)
+            {
+                Debug.LogError("SendPasswordResetEmailAsync đã bị hủy.");
+                return;
+            }
+            if (task.IsFaulted)
+            {
+                Debug.LogError("SendPasswordResetEmailAsync encountered an error: " + task.Exception);
+                foreach (Exception exception in task.Exception.Flatten().InnerExceptions)
+                {
+                    Firebase.FirebaseException firebaseEx = exception as Firebase.FirebaseException;
+                    if (firebaseEx != null)
+                    {
+                        var errorCode = (AuthError)firebaseEx.ErrorCode;
+                            Tbao("Lỗi!", GetErrorMessage(errorCode));
+                    }
+                }
+                return;
+            }
+            Tbao("Thành công!", "Email đặt lại mật khẩu đã được gửi thành công.");
+            Debug.Log("Email đặt lại mật khẩu đã được gửi thành công.");
+        });
+    }
+    void Awake()
+    {
+        configuration = new GoogleSignInConfiguration
+        {
+            WebClientId = GoogleWebAPI,
+            RequestIdToken = true
+        };
+    }
+    public void GoogleSigninClick()
+    {
+        GoogleSignIn.Configuration = configuration;
+        GoogleSignIn.Configuration.UseGameSignIn = false;
+        GoogleSignIn.Configuration.RequestIdToken = true;
+        GoogleSignIn.Configuration.RequestEmail = true;
+
+        GoogleSignIn.DefaultInstance.SignIn().ContinueWith(
+        OnGoogleAuthenticatedFinished);
+    }
+    void OnGoogleAuthenticatedFinished(Task<GoogleSignInUser> task)
+    {
+        if (task.IsFaulted)
+        {
+            Debug.LogError("Fault");
+        }
+        else if (task.IsCanceled)
+        {
+            Debug.Log("Login Canceled");
+        }
+        else
+        {
+            Firebase.Auth.Credential credential = Firebase.Auth.GoogleAuthProvider.GetCredential(task.Result.IdToken, null);
+            auth.SignInWithCredentialAsync(credential).ContinueWithOnMainThread(task =>
+            {
+                if(task.IsCanceled)
+                {
+                    Debug.LogError("SignInWithCredentialAsync was canceled.");
+                    return;
+                }
+                if (task.IsFaulted)
+                {
+                    Debug.LogError("SignInWithCredentialAsync encountered an error: " + task.Exception);
+                    return;
+                }
+
+                user = auth.CurrentUser;
+                profileName.text = "" + user.DisplayName;
+                profileEmail.text = "" + user.Email;
+                Tbao("Thành công!", "Đăng nhập thành công");
+                OpenHome();
+
+                //StartCoroutine(Lo)
+                StartCoroutine(LoadImage(CheckImageUrl(user.PhotoUrl.ToString())));
+                //S
+            });
+        }
+    }
+    private string CheckImageUrl(string url)
+    {
+        if (!string.IsNullOrEmpty(url))
+        {
+            return url;
+        }
+        return imageUrl;
+    }
+    IEnumerator LoadImage(string imageUri)
+    {
+        WWW www = new WWW(imageUri);
+        yield return www;
+        ProfileAva.sprite = Sprite.Create(www.texture, new Rect(0, 0, www.texture.width, www.texture.height), new Vector2(0, 0));
     }
 }
 
