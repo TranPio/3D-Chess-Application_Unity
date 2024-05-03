@@ -19,7 +19,8 @@ using Google;
 using System.Net;
 using UnityEngine.Networking;
 using System.Security.Policy;
-
+using Firebase.Database;
+using Firebase.Unity;
 
 
 
@@ -35,11 +36,14 @@ public class FireBase : MonoBehaviour
     public GameObject ProfileUpdateAva;
     public InputField urlProfileAva;
     public string imageUrl;
-   // private string defaultUserImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrIMwQF5tiqO-E-rYuz7TT_tZ4ITeDzK3a-g&usqp=CAU";
+    // private string defaultUserImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrIMwQF5tiqO-E-rYuz7TT_tZ4ITeDzK3a-g&usqp=CAU";
     private string defaultUserImage = "https://img.freepik.com/premium-vector/cute-boy-thinking-cartoon-avatar_138676-2439.jpg";
 
 
-    Firebase.DependencyStatus dependencyStatus = Firebase.DependencyStatus.UnavailableOther;
+    //REALTIME DATABASE
+    public string DTBURL = "https://team14-database-default-rtdb.firebaseio.com/";
+    DatabaseReference reference;
+    // Firebase.DependencyStatus dependencyStatus = Firebase.DependencyStatus.UnavailableOther;
     Firebase.Auth.FirebaseAuth auth;
     Firebase.Auth.FirebaseUser user;
     bool isSignIn = false;
@@ -51,8 +55,11 @@ public class FireBase : MonoBehaviour
 
     void Start()
     {
+
         Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
-        { 
+        {
+            FirebaseApp.DefaultInstance.Options.DatabaseUrl = new Uri(DTBURL);
+            reference = FirebaseDatabase.DefaultInstance.RootReference;
             Firebase.DependencyStatus dependencyStatus = task.Result;
             if (dependencyStatus == Firebase.DependencyStatus.Available)
             {
@@ -68,9 +75,10 @@ public class FireBase : MonoBehaviour
         hienmklogin.onValueChanged.AddListener(delegate { TogglePasswordVisibility(passwordlogin, hienmklogin); });
         if (isSignIn)
         {
-           LoadProfileImage(defaultUserImage);
+            LoadProfileImage(defaultUserImage);
         }
     }
+
     public void OpenLogin()
     {
         loginpanel.SetActive(true);
@@ -140,7 +148,7 @@ public class FireBase : MonoBehaviour
         profilepanel.SetActive(false);
         forgetpasspanel.SetActive(false);
         settingLogout.SetActive(false);
-       if (isEmailsent)
+        if (isEmailsent)
         {
             emailconfirm.text = "" + emailcf;
         }
@@ -185,7 +193,7 @@ public class FireBase : MonoBehaviour
             return false;
         }
 
-        string trimmedEmail = email.Trim(); 
+        string trimmedEmail = email.Trim();
         string regex = @"^[\w!#$%&'*+/=?^`{|}~-]+(?:\.[\w!#$%&'*+/=?^`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[a-zA-Z]{2,}$";
         return Regex.Match(trimmedEmail, regex).Success;
     }
@@ -255,7 +263,7 @@ public class FireBase : MonoBehaviour
             return;
         }
         SigninUser(emaillogin.text, passwordlogin.text);
-        
+
         //OpenHome();
     }
     public void Signup()
@@ -269,16 +277,20 @@ public class FireBase : MonoBehaviour
             return;
         }
         else if (!IsValidEmail(emailsignup.text))
-           {
+        {
             tbaoemailsignup.text = "Vui lòng điền đúng định dạng email abc@gmail.com";
-           return;
-           }
+            return;
+        }
         else if (!IsValidPassword(passwordsignup.text))
         {
             tbaomksignup.text = "Mật khẩu phải chứa ít nhất 8 ký tự, 1 chữ hoa, 1 chữ thường và 1 số";
             return;
         }
         CreateUser(emailsignup.text, passwordsignup.text, usernamesignup.text);
+        SaveUserData(usernamesignup.text, emailsignup.text, passwordsignup.text);
+        usernamesignup.text = "";
+        emailsignup.text = "";
+        passwordsignup.text = "";
     }
     public void ForgetPass()
     {
@@ -287,22 +299,22 @@ public class FireBase : MonoBehaviour
             Debug.Log("Vui lòng điền địa chỉ email");
             Tbao("Lỗi!", "Vui lòng điền địa chỉ email");
             return;
-           
+
         }
         //Debug.Log("Kiểm tra email của bạn");
         forgetPasswordsubmit(forgetpass.text);
     }
     public void Tbao(string title, string message)
     {
-        tbao_Text.text =""+ title;
+        tbao_Text.text = "" + title;
         tbao_Mess.text = "" + message;
         TbaoPanel.SetActive(true);
 
     }
     public void CloseTbao()
     {
-        tbao_Text.text = "" ;
-        tbao_Mess.text = "" ;
+        tbao_Text.text = "";
+        tbao_Mess.text = "";
         TbaoPanel.SetActive(false);
 
     }
@@ -316,7 +328,8 @@ public class FireBase : MonoBehaviour
 
     void CreateUser(string email, string password, string username)
     {
-        auth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(task => {
+        auth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(task =>
+        {
             if (task.IsCanceled)
             {
                 Debug.LogError("CreateUserWithEmailAndPasswordAsync was canceled.");
@@ -338,7 +351,7 @@ public class FireBase : MonoBehaviour
                         }
                         else
                         {
-                           // Debug.Log("Đăng ký thành công");
+                            // Debug.Log("Đăng ký thành công");
                             Tbao("", "Đăng ký thành công");
                         }
                     }
@@ -348,25 +361,33 @@ public class FireBase : MonoBehaviour
             Firebase.Auth.AuthResult result = task.Result;
             Debug.LogFormat("Firebase user created successfully: {0} ({1})",
                 result.User.DisplayName, result.User.UserId);
-            if (user.IsEmailVerified)
+            //  SaveUserData
+            // Kiểm tra và đảm bảo rằng đối tượng user không null trước khi truy cập Password
+            if (user != null)
             {
-                UpdateProfile(username);
-                OpenLogin();
-            }
-            else
-            {
-                SendMailConfirm();
+
+                // Nếu user không null, thực hiện các hành động khác
+                if (user.IsEmailVerified)
+                {
+                    UpdateProfile(username);
+                    OpenLogin();
+
+                }
+                else
+                {
+                    SendMailConfirm();
+                }
             }
         });
         UpdateProfile(username);
-       usernamesignup.text = "";
-        emailsignup.text = "";
-        passwordsignup.text = "";
+
     }
+
 
     public void SigninUser(string email, string password)
     {
-        auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(task => {
+        auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(task =>
+        {
             if (task.IsCanceled)
             {
                 Debug.LogError("SignInWithEmailAndPasswordAsync was canceled.");
@@ -391,21 +412,21 @@ public class FireBase : MonoBehaviour
             Firebase.Auth.AuthResult result = task.Result;
             Debug.LogFormat("User signed in successfully: {0} ({1})",
                 result.User.DisplayName, result.User.UserId);
-            profileName.text = ""+ result.User.DisplayName;
-            profileEmail.text = ""+ result.User.Email;
-            if(user.IsEmailVerified)
+            profileName.text = "" + result.User.DisplayName;
+            profileEmail.text = "" + result.User.Email;
+            if (user.IsEmailVerified)
             {
                 Debug.Log("Đăng nhập thành công");
                 Tbao("", "Đăng nhập thành công");
                 OpenHome();
                 UpdateProfile(user.DisplayName);
-                if(rememberMe.isOn)
+                if (rememberMe.isOn)
                 {
                     PlayerPrefs.SetString("email", email);
                     PlayerPrefs.SetString("password", password);
                     PlayerPrefs.Save();
                 }
-                if(result.User.PhotoUrl != null)
+                if (result.User.PhotoUrl != null)
                 {
                     LoadProfileImage(result.User.PhotoUrl.ToString());
                 }
@@ -428,6 +449,11 @@ public class FireBase : MonoBehaviour
 
     void AuthStateChanged(object sender, System.EventArgs eventArgs)
     {
+        if (auth == null)
+        {
+            Debug.LogError("Firebase Auth is not initialized");
+            return;
+        }
         if (auth.CurrentUser != user)
         {
             bool signedIn = user != auth.CurrentUser && auth.CurrentUser != null
@@ -441,6 +467,7 @@ public class FireBase : MonoBehaviour
             {
                 Debug.Log("Signed in " + user.UserId);
                 isSignIn = true;
+                GetUsernameFromDatabase(user.Email);
             }
         }
     }
@@ -460,7 +487,8 @@ public class FireBase : MonoBehaviour
                 DisplayName = Username,
                 PhotoUrl = new Uri(defaultUserImage),
             };
-            user.UpdateUserProfileAsync(profile).ContinueWith(task => {
+            user.UpdateUserProfileAsync(profile).ContinueWith(task =>
+            {
                 if (task.IsCanceled)
                 {
                     Debug.LogError("UpdateUserProfileAsync was canceled.");
@@ -481,14 +509,14 @@ public class FireBase : MonoBehaviour
     {
         if (isSignIn)
         {
-            if(!isSigned)
+            if (!isSigned)
             {
-                    isSigned = true;
-                    profileName.text = "" + user.DisplayName;
-                    profileEmail.text = "" + user.Email;
+                isSigned = true;
+                profileName.text = "" + user.DisplayName;
+                profileEmail.text = "" + user.Email;
                 LoadProfileImage(defaultUserImage);
             }
-           
+
         }
     }
     private static string GetErrorMessage(AuthError errorCode)
@@ -517,7 +545,7 @@ public class FireBase : MonoBehaviour
         }
         return message;
     }
-    void forgetPasswordsubmit(string forgetpassemail )
+    void forgetPasswordsubmit(string forgetpassemail)
     {
         auth.SendPasswordResetEmailAsync(forgetpassemail).ContinueWithOnMainThread(task =>
         {
@@ -535,7 +563,7 @@ public class FireBase : MonoBehaviour
                     if (firebaseEx != null)
                     {
                         var errorCode = (AuthError)firebaseEx.ErrorCode;
-                            Tbao("Lỗi!", GetErrorMessage(errorCode));
+                        Tbao("Lỗi!", GetErrorMessage(errorCode));
                     }
                 }
                 return;
@@ -577,7 +605,7 @@ public class FireBase : MonoBehaviour
             Firebase.Auth.Credential credential = Firebase.Auth.GoogleAuthProvider.GetCredential(task.Result.IdToken, null);
             auth.SignInWithCredentialAsync(credential).ContinueWithOnMainThread(task =>
             {
-                if(task.IsCanceled)
+                if (task.IsCanceled)
                 {
                     Debug.LogError("SignInWithCredentialAsync was canceled.");
                     return;
@@ -616,7 +644,7 @@ public class FireBase : MonoBehaviour
     }
     public void LoadProfileImage(string url)
     {
-        StartCoroutine(LoadProfileImageIE(url));    
+        StartCoroutine(LoadProfileImageIE(url));
     }
     public void UpdateProfilePicture()
     {
@@ -666,5 +694,63 @@ public class FireBase : MonoBehaviour
     {
         return urlProfileAva.text;
     }
-}
+    //REALTIME DATABASE
 
+
+
+    public void SaveUserData(string username, string email, string password)
+    {
+
+
+        User user = new User(username, email, password);
+        string json = JsonUtility.ToJson(user);
+        reference.Child("Users").Child(username).SetRawJsonValueAsync(json)
+          .ContinueWith(task =>
+           {
+               if (task.IsCompleted)
+               {
+                   Debug.Log("Data Saved");
+               }
+               else
+               {
+                   Debug.Log("Data Not Saved");
+               }
+           });
+
+    }
+    void GetUsernameFromDatabase(string email)
+    {
+        reference.Child("Users").OrderByChild("email").EqualTo(email)
+            .GetValueAsync().ContinueWith(task =>
+            {
+                if (task.IsCompleted)
+                {
+                    DataSnapshot snapshot = task.Result;
+                    if (snapshot != null && snapshot.ChildrenCount > 0)
+                    {
+                        foreach (var childSnapshot in snapshot.Children)
+                        {
+                            // Lấy tên người dùng từ cơ sở dữ liệu
+                            string username = childSnapshot.Child("username").Value.ToString();
+                            // Hiển thị tên người dùng trên giao diện
+                            profileName.text = username;
+                        }
+                    }
+                }
+            });
+
+    }
+}
+public class User
+{
+    public string username;
+    public string email;
+    public string password;
+
+    public User(string _username, string _email, string _password)
+    {
+        username = _username;
+        email = _email;
+        password = _password;
+    }
+}
