@@ -19,16 +19,16 @@ public class Client : MonoBehaviour
 
     private bool isActive = false;
   
-    //Methods
+  
     public Action connectionDropped;
-
+    //Methods
     public void Init(string ip,ushort port)
     {
         driver = NetworkDriver.Create();
         NetworkEndpoint endpoint = NetworkEndpoint.Parse(ip, port);
 
-        connection = driver .Connect(endpoint);
-        Debug.Log("Attemping to connect to Server on" + endpoint.Address);
+        connection = driver.Connect(endpoint);
+        Debug.Log("Attemping to connect to Server on " + endpoint.Address);
 
         isActive = true;
 
@@ -48,9 +48,9 @@ public class Client : MonoBehaviour
     {
         Shutdown();
     }
-    private void Update()
+    public void Update()
     {
-        if ((!isActive))
+        if (!isActive)
         {
             return;
         }
@@ -80,7 +80,7 @@ public class Client : MonoBehaviour
         {
             if(cmd == NetworkEvent.Type.Connect)
             {
-                // SendToServer(new NetWelcome());
+                SendToServer(new NetWelcome());
                 Debug.Log("we're connected");
             }
             else if(cmd== NetworkEvent.Type.Data)
@@ -99,7 +99,7 @@ public class Client : MonoBehaviour
 
     }
     
-    private void SendToServer(NetMessage msg)
+    public void SendToServer(NetMessage msg)
     {
         DataStreamWriter writer;
         driver.BeginSend(connection, out writer);
