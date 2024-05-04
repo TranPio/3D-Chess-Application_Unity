@@ -21,7 +21,8 @@ using UnityEngine.Networking;
 using System.Security.Policy;
 using Firebase.Database;
 using Firebase.Unity;
-
+using UI.Dates;
+using TMPro;
 
 
 public class FireBase : MonoBehaviour
@@ -77,6 +78,7 @@ public class FireBase : MonoBehaviour
         {
             LoadProfileImage(defaultUserImage);
         }
+        DisplayUserProfileInfo();
     }
 
     public void OpenLogin()
@@ -709,6 +711,7 @@ public class FireBase : MonoBehaviour
            {
                if (task.IsCompleted)
                {
+
                    Debug.Log("Data Saved");
                }
                else
@@ -740,6 +743,106 @@ public class FireBase : MonoBehaviour
             });
 
     }
+    //Bổ sung thông tin người dùng
+    public InputField Quequan;
+    public TMP_InputField Ngaysinh;
+    public Toggle GtinhNam, GtinhNu;
+    public GameObject Bosungthongtin;
+    public Text ProfileNgsinh, ProfileQuequan, ProfileGtinh, ProfileName2, ProfileEmail2;
+    public void OpenBosungthongtin()
+    {
+        Bosungthongtin.SetActive(true);
+        profilepanel.SetActive(false);
+        settingLogout.SetActive(false);
+        ConfirmAcc.SetActive(false);
+        homepanel.SetActive(false);
+        loginpanel.SetActive(false);
+        signuppanel.SetActive(false);
+        forgetpasspanel.SetActive(false);
+    }
+    public void CloseBosungthongtin()
+    {
+        Bosungthongtin.SetActive(false);
+        profilepanel.SetActive(true);
+    }
+    public void Bosungthongtinne()
+    {
+        // Lấy thông tin người dùng từ giao diện
+        string quequanValue = Quequan.text;
+        string ngaysinhValue = Ngaysinh.text;
+        string gioitinhValue = GtinhNam.isOn ? "Nam" : "Nữ";
+
+        // Kiểm tra xem người dùng hiện tại đã đăng nhập chưa
+        if (user != null && user.Email == profileEmail.text)
+        {
+            // Tạo một đối tượng mới chứa thông tin cần bổ sung
+            ThongTinBoSung thongTin = new ThongTinBoSung(quequanValue, ngaysinhValue, gioitinhValue);
+
+            // Chuyển đối tượng thành dạng JSON
+            string json = JsonUtility.ToJson(thongTin);
+
+            // Thực hiện cập nhật lên Realtime Database
+            reference.Child("Users").Child(user.DisplayName).Child("ThongTinBoSung").SetRawJsonValueAsync(json)
+                .ContinueWith(task =>
+                {
+                    if (task.IsCompleted)
+                    {
+                        Debug.Log("Thông tin người dùng đã được cập nhật thành công");
+                        Tbao("Thành công!", "Thông tin người dùng đã được cập nhật thành công");
+                    }
+                    else
+                    {
+                        Debug.Log("Cập nhật thông tin người dùng thất bại");
+                    }
+                });
+        }
+        else
+        {
+            Debug.Log("Người dùng hiện tại không được phép cập nhật thông tin");
+            // Hiển thị thông báo hoặc xử lý khác khi người dùng không được phép cập nhật thông tin
+        }
+    }
+
+    public void DisplayUserProfileInfo()
+    {
+        Firebase.Auth.FirebaseUser user = auth.CurrentUser;
+        // Kiểm tra xem người dùng đã đăng nhập chưa
+        if (user != null)
+        {
+            // Hiển thị tên người dùng
+            profileName.text = user.DisplayName;
+
+            // Hiển thị email
+            profileEmail.text = user.Email;
+            ProfileName2.text=profileName.text;
+            ProfileEmail2.text = profileEmail.text;
+
+            // Lấy thông tin bổ sung từ Realtime Database
+            reference.Child("Users").Child(user.DisplayName).Child("ThongTinBoSung").GetValueAsync().ContinueWith(task =>
+            {
+                if (task.IsCompleted)
+                {
+                    DataSnapshot snapshot = task.Result;
+                    if (snapshot != null && snapshot.ChildrenCount > 0)
+                    {
+                        // Lấy thông tin từ snapshot
+                        string quequan = snapshot.Child("quequan").Value.ToString();
+                        string ngaysinh = snapshot.Child("ngaysinh").Value.ToString();
+                        string gioitinh = snapshot.Child("gioitinh").Value.ToString();
+
+                        // Hiển thị thông tin bổ sung
+                        ProfileNgsinh.text = ngaysinh;
+                        ProfileQuequan.text = quequan;
+                        ProfileGtinh.text = gioitinh;
+                    }
+                }
+            });
+        }
+    }
+
+
+    // Tìm kiếm người dùng theo tên trên REALTIME DATABASE
+
 }
 public class User
 {
@@ -752,5 +855,18 @@ public class User
         username = _username;
         email = _email;
         password = _password;
+    }
+}
+public class ThongTinBoSung
+{
+    public string quequan;
+    public string ngaysinh;
+    public string gioitinh;
+
+    public ThongTinBoSung(string _quequan, string _ngaysinh, string _gioitinh)
+    {
+        quequan = _quequan;
+        ngaysinh = _ngaysinh;
+        gioitinh = _gioitinh;
     }
 }
