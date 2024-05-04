@@ -1,7 +1,6 @@
 using System;
 using Unity.Collections;
 using Unity.Networking.Transport;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Server : MonoBehaviour
@@ -25,11 +24,12 @@ public class Server : MonoBehaviour
     public Action connectionDropped;
     public void Init(ushort port)
     {
+        //init the driver
         driver = NetworkDriver.Create();
         NetworkEndpoint endpoint = NetworkEndpoint.AnyIpv4;
         endpoint.Port = port;
 
-        if(driver.Bind(endpoint)!=0)
+        if(driver.Bind(endpoint) != 0)
         {
             Debug.Log("Unable to bind on port " + endpoint.Port);
             return;
@@ -41,7 +41,7 @@ public class Server : MonoBehaviour
             Debug.Log("Currently listening on port " + endpoint.Port);
         }
 
-        connections=new NativeList<NetworkConnection>(2,Allocator.Persistent);
+        connections = new NativeList<NetworkConnection>(2,Allocator.Persistent);
         isActive = true;
     }
     public void Shutdown()
@@ -49,8 +49,9 @@ public class Server : MonoBehaviour
         if(isActive)
         {
             driver.Dispose();
-            isActive = false;
+           
             connections.Dispose();
+            isActive = false;
         }
     }
     public void OnDestroy()
@@ -58,7 +59,7 @@ public class Server : MonoBehaviour
         Shutdown();
     }
 
-    private void Update()
+    public void Update()
     {
         if ((!isActive))
         {
@@ -79,10 +80,10 @@ public class Server : MonoBehaviour
     {
         if ((Time.time-lastKeepAlive>keepAliveTickRate))
         {
-            {
+            
                 lastKeepAlive=Time.time;
                 Broadcast(new NetKeepAlive());
-            }
+            
         }
     }
     private void CleanupConnections()
@@ -120,12 +121,13 @@ public class Server : MonoBehaviour
                     NetUtility.OnData(stream, connections[i], this);
 
                 }
-                else
+                else if(cmd==NetworkEvent.Type.Disconnect)
                 {
                     Debug.Log("Client disconnect from server");
                     connections[i]=default(NetworkConnection);
                     connectionDropped?.Invoke();
-                    Shutdown();
+                    Shutdown(); //this does not happen usually, its just because we're in a two person game
+
                 }
             }
         }
