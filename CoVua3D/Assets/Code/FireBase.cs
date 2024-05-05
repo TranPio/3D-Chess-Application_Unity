@@ -22,7 +22,8 @@ using System.Security.Policy;
 using Firebase.Database;
 using Firebase.Unity;
 using UI.Dates;
-using TMPro;
+
+
 
 
 public class FireBase : MonoBehaviour
@@ -37,6 +38,7 @@ public class FireBase : MonoBehaviour
     public GameObject ProfileUpdateAva;
     public InputField urlProfileAva;
     public string imageUrl;
+    public static bool isLoginSignupPage = false;
     // private string defaultUserImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrIMwQF5tiqO-E-rYuz7TT_tZ4ITeDzK3a-g&usqp=CAU";
     private string defaultUserImage = "https://img.freepik.com/premium-vector/cute-boy-thinking-cartoon-avatar_138676-2439.jpg";
 
@@ -78,7 +80,8 @@ public class FireBase : MonoBehaviour
         {
             LoadProfileImage(defaultUserImage);
         }
-        DisplayUserProfileInfo();
+
+        
     }
 
     public void OpenLogin()
@@ -90,6 +93,10 @@ public class FireBase : MonoBehaviour
         forgetpasspanel.SetActive(false);
         settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
+        isLoginSignupPage = true;
+        AudioManager audioManager = FindObjectOfType<AudioManager>();
+        if (audioManager != null)
+            audioManager.PlayBackgroundMusic();
     }
     public void OpenSignup()
     {
@@ -100,6 +107,10 @@ public class FireBase : MonoBehaviour
         forgetpasspanel.SetActive(false);
         settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
+        isLoginSignupPage = true;
+        AudioManager audioManager = FindObjectOfType<AudioManager>();
+        if (audioManager != null)
+            audioManager.PlayBackgroundMusic();
     }
     public void OpenSetting()
     {
@@ -110,6 +121,7 @@ public class FireBase : MonoBehaviour
         profilepanel.SetActive(false);
         forgetpasspanel.SetActive(false);
         ConfirmAcc.SetActive(false);
+        isLoginSignupPage = false;
     }
     public void OpenHome()
     {
@@ -120,6 +132,10 @@ public class FireBase : MonoBehaviour
         forgetpasspanel.SetActive(false);
         settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
+        isLoginSignupPage = false;
+        AudioManager audioManager = FindObjectOfType<AudioManager>();
+        if (audioManager != null)
+            audioManager.PlayBackgroundMusic();
     }
     public void OpenProfile()
     {
@@ -130,6 +146,7 @@ public class FireBase : MonoBehaviour
         forgetpasspanel.SetActive(false);
         settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
+        isLoginSignupPage = false;
     }
     public void Openforgetpass()
     {
@@ -140,6 +157,7 @@ public class FireBase : MonoBehaviour
         forgetpasspanel.SetActive(true);
         settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
+        isLoginSignupPage = false;
     }
     public void OpenConfirmAcc(bool isEmailsent, string emailcf)
     {
@@ -150,6 +168,7 @@ public class FireBase : MonoBehaviour
         profilepanel.SetActive(false);
         forgetpasspanel.SetActive(false);
         settingLogout.SetActive(false);
+        isLoginSignupPage = false;
         if (isEmailsent)
         {
             emailconfirm.text = "" + emailcf;
@@ -256,7 +275,7 @@ public class FireBase : MonoBehaviour
         }
         else if (!IsValidEmail(emaillogin.text))
         {
-            tbaoemaillogin.text = "Vui lòng điền đúng định dạng email abc@gmail.com";
+            tbaoemaillogin.text = "Vui lòng điền đúng định dạng Email";
             return;
         }
         else if (!IsValidPassword(passwordlogin.text))
@@ -280,7 +299,7 @@ public class FireBase : MonoBehaviour
         }
         else if (!IsValidEmail(emailsignup.text))
         {
-            tbaoemailsignup.text = "Vui lòng điền đúng định dạng email abc@gmail.com";
+            tbaoemailsignup.text = "Vui lòng điền đúng định dạng Email";
             return;
         }
         else if (!IsValidPassword(passwordsignup.text))
@@ -414,8 +433,8 @@ public class FireBase : MonoBehaviour
             Firebase.Auth.AuthResult result = task.Result;
             Debug.LogFormat("User signed in successfully: {0} ({1})",
                 result.User.DisplayName, result.User.UserId);
-            profileName.text = "" + result.User.DisplayName;
-            profileEmail.text = "" + result.User.Email;
+          //  profileName.text = "" + result.User.DisplayName;
+            //profileEmail.text = "" + result.User.Email;
             if (user.IsEmailVerified)
             {
                 Debug.Log("Đăng nhập thành công");
@@ -518,7 +537,6 @@ public class FireBase : MonoBehaviour
                 profileEmail.text = "" + user.Email;
                 LoadProfileImage(defaultUserImage);
             }
-
         }
     }
     private static string GetErrorMessage(AuthError errorCode)
@@ -759,6 +777,15 @@ public class FireBase : MonoBehaviour
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
         forgetpasspanel.SetActive(false);
+        if(Bosungthongtin==true)
+        {
+            ProfileName2.text = profileName.text;
+            ProfileEmail2.text = profileEmail.text;
+            Quequan.text = ProfileQuequan.text;
+            Ngaysinh.text = ProfileNgsinh.text;
+            GtinhNam.isOn = ProfileGtinh.text == "Nam";
+            GtinhNu.isOn = ProfileGtinh.text == "Nữ";
+        }
     }
     public void CloseBosungthongtin()
     {
@@ -767,13 +794,14 @@ public class FireBase : MonoBehaviour
     }
     public void Bosungthongtinne()
     {
+        Firebase.Auth.FirebaseUser user = auth.CurrentUser;
         // Lấy thông tin người dùng từ giao diện
         string quequanValue = Quequan.text;
         string ngaysinhValue = Ngaysinh.text;
         string gioitinhValue = GtinhNam.isOn ? "Nam" : "Nữ";
 
         // Kiểm tra xem người dùng hiện tại đã đăng nhập chưa
-        if (user != null && user.Email == profileEmail.text)
+        if (user != null && user.DisplayName == profileName.text)
         {
             // Tạo một đối tượng mới chứa thông tin cần bổ sung
             ThongTinBoSung thongTin = new ThongTinBoSung(quequanValue, ngaysinhValue, gioitinhValue);
@@ -803,22 +831,15 @@ public class FireBase : MonoBehaviour
         }
     }
 
+
     public void DisplayUserProfileInfo()
     {
         Firebase.Auth.FirebaseUser user = auth.CurrentUser;
         // Kiểm tra xem người dùng đã đăng nhập chưa
         if (user != null)
         {
-            // Hiển thị tên người dùng
-            profileName.text = user.DisplayName;
-
-            // Hiển thị email
-            profileEmail.text = user.Email;
-            ProfileName2.text=profileName.text;
-            ProfileEmail2.text = profileEmail.text;
-
-            // Lấy thông tin bổ sung từ Realtime Database
-            reference.Child("Users").Child(user.DisplayName).Child("ThongTinBoSung").GetValueAsync().ContinueWith(task =>
+            // Lấy thông tin người dùng từ Realtime Database
+            reference.Child("Users").Child(user.DisplayName).GetValueAsync().ContinueWith(task =>
             {
                 if (task.IsCompleted)
                 {
@@ -826,13 +847,19 @@ public class FireBase : MonoBehaviour
                     if (snapshot != null && snapshot.ChildrenCount > 0)
                     {
                         // Lấy thông tin từ snapshot
-                        string quequan = snapshot.Child("quequan").Value.ToString();
-                        string ngaysinh = snapshot.Child("ngaysinh").Value.ToString();
+                        string username = snapshot.Child("username").Value.ToString();
+                        string email = snapshot.Child("email").Value.ToString(); // Đã thêm dòng này
                         string gioitinh = snapshot.Child("gioitinh").Value.ToString();
+                        string ngaysinh = snapshot.Child("ngaysinh").Value.ToString();
+                        string quequan = snapshot.Child("quequan").Value.ToString();
 
-                        // Hiển thị thông tin bổ sung
-                        ProfileNgsinh.text = ngaysinh;
+                        // Hiển thị thông tin người dùng
+                        profileName.text = username;
+                        profileEmail.text = email; // Đã thêm dòng này
+                        ProfileName2.text = profileName.text;
+                        ProfileEmail2.text = profileEmail.text;
                         ProfileQuequan.text = quequan;
+                        ProfileNgsinh.text = ngaysinh;
                         ProfileGtinh.text = gioitinh;
                     }
                 }
@@ -841,8 +868,32 @@ public class FireBase : MonoBehaviour
     }
 
 
-    // Tìm kiếm người dùng theo tên trên REALTIME DATABASE
 
+    // Tìm kiếm người dùng theo tên trên REALTIME DATABASE
+    public GameObject timkiempanel;
+    public void Opentimkiem()
+    {
+        timkiempanel.SetActive(true);
+        profilepanel.SetActive(false);
+        settingLogout.SetActive(false);
+        ConfirmAcc.SetActive(false);
+        homepanel.SetActive(true);
+        loginpanel.SetActive(false);
+        signuppanel.SetActive(false);
+        forgetpasspanel.SetActive(false);
+
+    }
+    public void Closetimkiem()
+    {
+        timkiempanel.SetActive(false);
+        profilepanel.SetActive(false);
+        settingLogout.SetActive(false);
+        ConfirmAcc.SetActive(false);
+        homepanel.SetActive(true);
+        loginpanel.SetActive(false);
+        signuppanel.SetActive(false);
+        forgetpasspanel.SetActive(false);
+    }
 }
 public class User
 {
