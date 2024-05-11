@@ -58,7 +58,8 @@ public class FireBase : MonoBehaviour
 
     void Start()
     {
-
+        hienmksignup.onValueChanged.AddListener(delegate { TogglePasswordVisibility(passwordsignup, hienmksignup); });
+        hienmklogin.onValueChanged.AddListener(delegate { TogglePasswordVisibility(passwordlogin, hienmklogin); });
         Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
         {
             FirebaseApp.DefaultInstance.Options.DatabaseUrl = new Uri(DTBURL);
@@ -74,8 +75,7 @@ public class FireBase : MonoBehaviour
                                      "Could not resolve all Firebase dependencies: {0}", dependencyStatus));
             }
         });
-        hienmksignup.onValueChanged.AddListener(delegate { TogglePasswordVisibility(passwordsignup, hienmksignup); });
-        hienmklogin.onValueChanged.AddListener(delegate { TogglePasswordVisibility(passwordlogin, hienmklogin); });
+        
         if (isSignIn)
         {
             LoadProfileImage(defaultUserImage);
@@ -91,6 +91,7 @@ public class FireBase : MonoBehaviour
         homepanel.SetActive(false);
         profilepanel.SetActive(false);
         forgetpasspanel.SetActive(false);
+        xacnhandkmk.SetActive(false);
         settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
         isLoginSignupPage = true;
@@ -101,6 +102,7 @@ public class FireBase : MonoBehaviour
     public void OpenSignup()
     {
         loginpanel.SetActive(false);
+        xacnhandkmk.SetActive(false);
         signuppanel.SetActive(true);
         homepanel.SetActive(false);
         profilepanel.SetActive(false);
@@ -116,6 +118,7 @@ public class FireBase : MonoBehaviour
     {
         settingLogout.SetActive(true);
         loginpanel.SetActive(false);
+        xacnhandkmk.SetActive(false);
         signuppanel.SetActive(false);
         homepanel.SetActive(false);
         profilepanel.SetActive(false);
@@ -127,6 +130,7 @@ public class FireBase : MonoBehaviour
     {
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
+        xacnhandkmk.SetActive(false);
         homepanel.SetActive(true);
         profilepanel.SetActive(false);
         forgetpasspanel.SetActive(false);
@@ -142,6 +146,7 @@ public class FireBase : MonoBehaviour
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
         homepanel.SetActive(false);
+        xacnhandkmk.SetActive(false);
         profilepanel.SetActive(true);
         forgetpasspanel.SetActive(false);
         settingLogout.SetActive(false);
@@ -153,6 +158,7 @@ public class FireBase : MonoBehaviour
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
         homepanel.SetActive(false);
+        xacnhandkmk.SetActive(false);
         profilepanel.SetActive(false);
         forgetpasspanel.SetActive(true);
         settingLogout.SetActive(false);
@@ -163,6 +169,7 @@ public class FireBase : MonoBehaviour
     {
         ConfirmAcc.SetActive(true);
         loginpanel.SetActive(false);
+        xacnhandkmk.SetActive(false);
         signuppanel.SetActive(false);
         homepanel.SetActive(false);
         profilepanel.SetActive(false);
@@ -186,6 +193,7 @@ public class FireBase : MonoBehaviour
         settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
         homepanel.SetActive(false);
+        xacnhandkmk.SetActive(false);
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
         forgetpasspanel.SetActive(false);
@@ -592,6 +600,75 @@ public class FireBase : MonoBehaviour
             Debug.Log("Email đặt lại mật khẩu đã được gửi thành công.");
         });
     }
+    //Đặt lại mật khẩu bằng email
+    public GameObject xacnhandkmk, doimatkhau;
+    public void OpenXacnhandkmk()
+    {
+        xacnhandkmk.SetActive(true);
+        doimatkhau.SetActive(true);
+        profilepanel.SetActive(false);
+        settingLogout.SetActive(false);
+        ConfirmAcc.SetActive(false);
+        homepanel.SetActive(false);
+        loginpanel.SetActive(false);
+        signuppanel.SetActive(false);
+        forgetpasspanel.SetActive(false);
+    }
+    public void Opendoimatkhau()
+    {
+        xacnhandkmk.SetActive(false);
+        doimatkhau.SetActive(true);
+        profilepanel.SetActive(false);
+        settingLogout.SetActive(false);
+        ConfirmAcc.SetActive(false);
+        homepanel.SetActive(false);
+        loginpanel.SetActive(false);
+        signuppanel.SetActive(false);
+        forgetpasspanel.SetActive(false);
+    }
+    public void CloseXacnhandmk()
+    {
+        xacnhandkmk.SetActive(false);
+        doimatkhau.SetActive(true);
+    }
+    //public InputField dmkPasswordField;
+    public void ChangePassword()
+    {
+        dmkPasswordsubmit(profileEmail.text);
+       
+    }
+    void dmkPasswordsubmit(string usermailpassword)
+    {
+        auth.SendPasswordResetEmailAsync(usermailpassword).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCanceled)
+            {
+                Debug.LogError("SendPasswordResetEmailAsync đã bị hủy.");
+                return;
+            }
+            if (task.IsFaulted)
+            {
+                Debug.LogError("SendPasswordResetEmailAsync encountered an error: " + task.Exception);
+                foreach (Exception exception in task.Exception.Flatten().InnerExceptions)
+                {
+                    Firebase.FirebaseException firebaseEx = exception as Firebase.FirebaseException;
+                    if (firebaseEx != null)
+                    {
+                        var errorCode = (AuthError)firebaseEx.ErrorCode;
+                        Tbao("Lỗi!", GetErrorMessage(errorCode));
+                    }
+                }
+                return;
+            }
+            Tbao("Thành công!", "Email đổi mật khẩu đã được gửi thành công.");
+            Debug.Log("Email đổi mật khẩu đã được gửi thành công.");
+        });
+    }
+    string GetCurrentPasswordFromUser()
+    {
+        return passwordlogin.text;
+    }
+    
     void Awake()
     {
         configuration = new GoogleSignInConfiguration
@@ -695,6 +772,8 @@ public class FireBase : MonoBehaviour
         }
         yield return null;
     }
+    
+
     public IEnumerator LoadProfileImageIE(string url)
     {
         UnityWebRequest www = UnityWebRequestTexture.GetTexture(url);
@@ -773,6 +852,7 @@ public class FireBase : MonoBehaviour
         profilepanel.SetActive(false);
         settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
+        xacnhandkmk.SetActive(false);
         homepanel.SetActive(false);
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
@@ -877,6 +957,7 @@ public class FireBase : MonoBehaviour
         profilepanel.SetActive(false);
         settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
+        xacnhandkmk.SetActive(false);
         homepanel.SetActive(true);
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
@@ -888,12 +969,14 @@ public class FireBase : MonoBehaviour
         timkiempanel.SetActive(false);
         profilepanel.SetActive(false);
         settingLogout.SetActive(false);
+        xacnhandkmk.SetActive(false);
         ConfirmAcc.SetActive(false);
         homepanel.SetActive(true);
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
         forgetpasspanel.SetActive(false);
     }
+  
 }
 public class User
 {
