@@ -799,31 +799,37 @@ public class FireBase : MonoBehaviour
 
     public void SaveUserData(string username, string email, string password)
     {
-
-
-        User user = new User(username, email, password);
-        string json = JsonUtility.ToJson(user);
-        reference.Child("Users").Child(username).SetRawJsonValueAsync(json)
-          .ContinueWith(task =>
-           {
-               if (task.IsCompleted)
-               {
-
-                   Debug.Log("Data Saved");
-               }
-               else
-               {
-                   Debug.Log("Data Not Saved");
-               }
-           });
-
+        Firebase.Auth.FirebaseUser user = auth.CurrentUser;
+        if (user != null)
+        {
+            string userId = user.UserId; // Lấy UserID của người dùng
+            User userData = new User(username, email, password);
+            string json = JsonUtility.ToJson(userData);
+            reference.Child("Users").Child(userId).SetRawJsonValueAsync(json)
+                .ContinueWith(task =>
+                {
+                    if (task.IsCompleted)
+                    {
+                        Debug.Log("Data Saved");
+                    }
+                    else
+                    {
+                        Debug.Log("Data Not Saved");
+                    }
+                });
+        }
+        else
+        {
+            Debug.LogError("User is not logged in.");
+        }
     }
+
     void GetUsernameFromDatabase(string email)
     {
-        reference.Child("Users").OrderByChild("email").EqualTo(email)
-            .GetValueAsync().ContinueWith(task =>
-            {
-                if (task.IsCompleted)
+        string userID = auth.CurrentUser.UserId;
+        reference.Child("Users").Child(userID).GetValueAsync().ContinueWith(task =>
+        {
+            if (task.IsCompleted)
                 {
                     DataSnapshot snapshot = task.Result;
                     if (snapshot != null && snapshot.ChildrenCount > 0)
@@ -874,14 +880,14 @@ public class FireBase : MonoBehaviour
     }
     public void Bosungthongtinne()
     {
-        Firebase.Auth.FirebaseUser user = auth.CurrentUser;
+        string userID = auth.CurrentUser.UserId;
         // Lấy thông tin người dùng từ giao diện
         string quequanValue = Quequan.text;
         string ngaysinhValue = Ngaysinh.text;
         string gioitinhValue = GtinhNam.isOn ? "Nam" : "Nữ";
 
         // Kiểm tra xem người dùng hiện tại đã đăng nhập chưa
-        if (user != null && user.DisplayName == profileName.text)
+        if (user != null)
         {
             // Tạo một đối tượng mới chứa thông tin cần bổ sung
             ThongTinBoSung thongTin = new ThongTinBoSung(quequanValue, ngaysinhValue, gioitinhValue);
@@ -890,19 +896,22 @@ public class FireBase : MonoBehaviour
             string json = JsonUtility.ToJson(thongTin);
 
             // Thực hiện cập nhật lên Realtime Database
-            reference.Child("Users").Child(user.DisplayName).Child("ThongTinBoSung").SetRawJsonValueAsync(json)
-                .ContinueWith(task =>
+            reference.Child("Users").Child(userID).Child("ThongTinBoSung").SetRawJsonValueAsync(json)
+        .ContinueWith(task =>
+        {
+            if (task.IsCompleted)
+            {
+                if (task.IsFaulted)
                 {
-                    if (task.IsCompleted)
-                    {
-                        Debug.Log("Thông tin người dùng đã được cập nhật thành công");
-                        Tbao("Thành công!", "Thông tin người dùng đã được cập nhật thành công");
-                    }
-                    else
-                    {
-                        Debug.Log("Cập nhật thông tin người dùng thất bại");
-                    }
-                });
+                    Debug.Log("Cập nhật thông tin thất bại: " + task.Exception.Message);
+                }
+                else
+                {
+                    Debug.Log("Cập nhật thông tin thành công");
+                    Tbao("Thành công!", "Cập nhật thông tin thành công");
+                }
+            }
+        });
         }
         else
         {
@@ -912,40 +921,54 @@ public class FireBase : MonoBehaviour
     }
 
 
+    // DisplayUserProfileInfo function
     public void DisplayUserProfileInfo()
     {
-        Firebase.Auth.FirebaseUser user = auth.CurrentUser;
-        // Kiểm tra xem người dùng đã đăng nhập chưa
-        if (user != null)
-        {
-            // Lấy thông tin người dùng từ Realtime Database
-            reference.Child("Users").Child(user.DisplayName).GetValueAsync().ContinueWith(task =>
-            {
-                if (task.IsCompleted)
-                {
-                    DataSnapshot snapshot = task.Result;
-                    if (snapshot != null && snapshot.ChildrenCount > 0)
-                    {
-                        // Lấy thông tin từ snapshot
-                        string username = snapshot.Child("username").Value.ToString();
-                        string email = snapshot.Child("email").Value.ToString(); // Đã thêm dòng này
-                        string gioitinh = snapshot.Child("gioitinh").Value.ToString();
-                        string ngaysinh = snapshot.Child("ngaysinh").Value.ToString();
-                        string quequan = snapshot.Child("quequan").Value.ToString();
+        // Get UserID
+        string userID = auth.CurrentUser.UserId;
 
-                        // Hiển thị thông tin người dùng
-                        profileName.text = username;
-                        profileEmail.text = email; // Đã thêm dòng này
-                        ProfileName2.text = profileName.text;
-                        ProfileEmail2.text = profileEmail.text;
-                        ProfileQuequan.text = quequan;
-                        ProfileNgsinh.text = ngaysinh;
+        // Get data from Users node with UserID as key
+        reference.Child("Users").Child(userID).GetValueAsync().ContinueWith(task =>
+        {
+            if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+                if (snapshot != null && snapshot.ChildrenCount > 0)
+                {
+                    // Extract information from retrieved data
+                    string username = snapshot.Child("username").Value.ToString();
+                    string email = snapshot.Child("email").Value.ToString();
+                    string gioitinh = snapshot.Child("gioitinh").Value.ToString();
+                    string ngaysinh = snapshot.Child("ngaysinh").Value.ToString();
+                    string quequan = snapshot.Child("quequan").Value.ToString();
+
+                    // Display information on UI
+                    profileName.text = username;
+                    profileEmail.text = email;
+                    ProfileName2.text = profileName.text;
+                    ProfileEmail2.text = profileEmail.text;
+
+                    // Display additional user profile information (if available)
+                    if (snapshot.HasChild("gioitinh"))
+                    {
                         ProfileGtinh.text = gioitinh;
                     }
+
+                    if (snapshot.HasChild("ngaysinh"))
+                    {
+                        ProfileNgsinh.text = ngaysinh;
+                    }
+
+                    if (snapshot.HasChild("quequan"))
+                    {
+                        ProfileQuequan.text = quequan;
+                    }
                 }
-            });
-        }
+            }
+        });
     }
+
+
 
 
 

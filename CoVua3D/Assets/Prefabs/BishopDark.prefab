@@ -98,4 +98,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isWhite: 0
   value: 0
-  isMoved: 0
+  isMoved: 1
