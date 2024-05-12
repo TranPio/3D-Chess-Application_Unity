@@ -275,6 +275,7 @@ public class FireBase : MonoBehaviour
     {
         tbaoemaillogin.text = "";
         tbaomklogin.text = "";
+
         if (emaillogin.text == "" || passwordlogin.text == "")
         {
             Debug.Log("Vui lòng điền đầy đủ thông tin");
@@ -292,9 +293,10 @@ public class FireBase : MonoBehaviour
             return;
         }
         SigninUser(emaillogin.text, passwordlogin.text);
-
-        //OpenHome();
     }
+
+
+
     public void Signup()
     {
         tbaomksignup.text = "";
@@ -316,7 +318,7 @@ public class FireBase : MonoBehaviour
             return;
         }
         CreateUser(emailsignup.text, passwordsignup.text, usernamesignup.text);
-        SaveUserData(usernamesignup.text, emailsignup.text, passwordsignup.text);
+        //SaveUserData(usernamesignup.text, emailsignup.text, passwordsignup.text);
         usernamesignup.text = "";
         emailsignup.text = "";
         passwordsignup.text = "";
@@ -365,31 +367,32 @@ public class FireBase : MonoBehaviour
                 return;
             }
             if (task.IsFaulted)
-            {
+           {
                 Debug.LogError("CreateUserWithEmailAndPasswordAsync encountered an error: " + task.Exception);
                 foreach (Exception exception in task.Exception.Flatten().InnerExceptions)
-                {
-                    Firebase.FirebaseException firebaseEx = exception as Firebase.FirebaseException;
-                    if (firebaseEx != null)
+               {
+                   Firebase.FirebaseException firebaseEx = exception as Firebase.FirebaseException;
+                   if (firebaseEx != null)
                     {
                         var errorCode = (AuthError)firebaseEx.ErrorCode;
                         if (errorCode == AuthError.EmailAlreadyInUse)
                         {
                             Tbao("Lỗi!", "Email đã tồn tại. Vui lòng đăng ký bằng email khác!");
-                            break;
+                          break;
                         }
                         else
                         {
                             // Debug.Log("Đăng ký thành công");
                             Tbao("", "Đăng ký thành công");
                         }
-                    }
+                   }
                 }
                 return;
             }
             Firebase.Auth.AuthResult result = task.Result;
             Debug.LogFormat("Firebase user created successfully: {0} ({1})",
                 result.User.DisplayName, result.User.UserId);
+            UpdateProfile(username);
             //  SaveUserData
             // Kiểm tra và đảm bảo rằng đối tượng user không null trước khi truy cập Password
             if (user != null)
@@ -398,21 +401,21 @@ public class FireBase : MonoBehaviour
                 // Nếu user không null, thực hiện các hành động khác
                 if (user.IsEmailVerified)
                 {
-                    UpdateProfile(username);
+
+                   
                     OpenLogin();
 
                 }
                 else
                 {
                     SendMailConfirm();
+                   
                 }
             }
         });
         UpdateProfile(username);
 
-    }
-
-
+   }
     public void SigninUser(string email, string password)
     {
         auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(task =>
@@ -441,34 +444,62 @@ public class FireBase : MonoBehaviour
             Firebase.Auth.AuthResult result = task.Result;
             Debug.LogFormat("User signed in successfully: {0} ({1})",
                 result.User.DisplayName, result.User.UserId);
-          //  profileName.text = "" + result.User.DisplayName;
-            //profileEmail.text = "" + result.User.Email;
-            if (user.IsEmailVerified)
+
+            // Kiểm tra nếu email đã được xác minh
+            if (result.User.IsEmailVerified)
             {
+                kiemtraXACNHAN = true;
                 Debug.Log("Đăng nhập thành công");
                 Tbao("", "Đăng nhập thành công");
                 OpenHome();
                 UpdateProfile(user.DisplayName);
-                if (rememberMe.isOn)
+                // Kiểm tra xem UserID đã tồn tại trong root Users hay chưa
+                DatabaseReference reference = FirebaseDatabase.DefaultInstance.GetReference("Users");
+                reference.Child(result.User.UserId).GetValueAsync().ContinueWith(userDataTask =>
                 {
-                    PlayerPrefs.SetString("email", email);
-                    PlayerPrefs.SetString("password", password);
-                    PlayerPrefs.Save();
-                }
-                if (result.User.PhotoUrl != null)
-                {
-                    LoadProfileImage(result.User.PhotoUrl.ToString());
-                }
+                    if (userDataTask.IsCompleted)
+                    {
+                        DataSnapshot snapshot = userDataTask.Result;
+                        if (snapshot != null && snapshot.Exists)
+                        {
+                            // UserID đã tồn tại, không cần gọi hàm SaveUserData
+                            Debug.Log("UserID đã tồn tại");
+                        }
+                        else
+                        {
+                            // UserID không tồn tại, gọi hàm SaveUserData
+                            Debug.Log("UserID chưa tồn tại");
+                            SaveUserData(result.User.DisplayName, email, password);
+                        }
+
+                        // Sau khi kiểm tra UserID, mở màn hình chính
+                      
+                        if (rememberMe.isOn)
+                        {
+                            PlayerPrefs.SetString("email", email);
+                            PlayerPrefs.SetString("password", password);
+                            PlayerPrefs.Save();
+                        }
+
+                        if (result.User.PhotoUrl != null)
+                        {
+                            LoadProfileImage(result.User.PhotoUrl.ToString());
+                        }
+                    }
+                });
             }
             else
             {
+                kiemtraXACNHAN = false;
+                // Nếu email chưa được xác minh, yêu cầu xác minh email
                 SendMailConfirm();
             }
         });
         emaillogin.text = "";
         passwordlogin.text = "";
-
     }
+    public bool kiemtraXACNHAN= false;
+   
     void InitializeFirebase()
     {
         auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
