@@ -1,13 +1,15 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour
 {
     public static bool GameIsPaused = false;
 
     public GameObject pauseMenuUI;
-
+    public bool IsLoggIn;
+   
     // Update is called once per frame
     void Update()
     {
@@ -33,7 +35,7 @@ public class PauseMenu : MonoBehaviour
     }
 
     // Pause
-    void Pause()
+    public void Pause()
     {
         pauseMenuUI.SetActive(true);
         Time.timeScale = 0f;
@@ -48,7 +50,6 @@ public class PauseMenu : MonoBehaviour
 
     public void Quit()
     {
-        Debug.Log("Quit Game!!");
-        Application.Quit();
+        SceneManager.LoadScene("CoVua3D");
     }
 }

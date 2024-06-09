@@ -28,9 +28,12 @@ using UI.Dates;
 
 public class FireBase : MonoBehaviour
 {
+    //public static GameManager Instance;
+    public static FireBase Instance;
     public GameObject loginpanel, signuppanel, homepanel, profilepanel, forgetpasspanel, TbaoPanel, CloseTbaone, settingLogout, ConfirmAcc;
     public InputField emaillogin, passwordlogin, usernamesignup, emailsignup, passwordsignup, forgetpass;
-    public Text tbao_Text, tbao_Mess, profileName, profileEmail, tbaomksignup, tbaomklogin, tbaoemailsignup, tbaoemaillogin, emailconfirm, emailcf2;
+    public Text tbao_Text, tbao_Mess, profileName, profileEmail, profileGioitinh, profileQuequan, profileNgaysinh, tbaomksignup, tbaomklogin, tbaoemailsignup, tbaoemaillogin, emailconfirm, emailcf2;
+    public Text testNgsinh, testGtinh, testQuequan;
     public Toggle rememberMe, hienmklogin, hienmksignup;
     public string GoogleWebAPI = "214552480712-4puo48o8qgurbipl5dton1iq2sq5q4fs.apps.googleusercontent.com";
     private GoogleSignInConfiguration configuration;
@@ -41,7 +44,7 @@ public class FireBase : MonoBehaviour
     public static bool isLoginSignupPage = false;
     // private string defaultUserImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrIMwQF5tiqO-E-rYuz7TT_tZ4ITeDzK3a-g&usqp=CAU";
     private string defaultUserImage = "https://img.freepik.com/premium-vector/cute-boy-thinking-cartoon-avatar_138676-2439.jpg";
-
+    public static string userIdNow="", usernameNow = "", emailNow = "", GioiTinhNow="", QueQuanNow="", NgaySinhNow="";
 
     //REALTIME DATABASE
     public string DTBURL = "https://team14-database-default-rtdb.firebaseio.com/";
@@ -79,9 +82,17 @@ public class FireBase : MonoBehaviour
         if (isSignIn)
         {
             LoadProfileImage(defaultUserImage);
+            //GameManager.Instance.SetLoggedIn(true);
+        }
+        if (PlayerPrefs.GetInt("IsLoggedIn", 0) == 1)
+        {
+            OpenHome();
+        }
+        else
+        {
+            OpenLogin();
         }
 
-        
     }
 
     public void OpenLogin()
@@ -144,6 +155,7 @@ public class FireBase : MonoBehaviour
     public void OpenProfile()
     {
         loginpanel.SetActive(false);
+        signuppanel.SetActive(false);
         signuppanel.SetActive(false);
         homepanel.SetActive(false);
         xacnhandkmk.SetActive(false);
@@ -293,6 +305,7 @@ public class FireBase : MonoBehaviour
             return;
         }
         SigninUser(emaillogin.text, passwordlogin.text);
+        DisplayUserProfileInfo();
     }
 
 
@@ -355,6 +368,7 @@ public class FireBase : MonoBehaviour
         profileEmail.text = "";
         profileName.text = "";
         OpenLogin();
+        //GameManager.Instance.SetLoggedIn(false);
     }
 
     void CreateUser(string email, string password, string username)
@@ -442,8 +456,16 @@ public class FireBase : MonoBehaviour
             }
 
             Firebase.Auth.AuthResult result = task.Result;
-            Debug.LogFormat("User signed in successfully: {0} ({1})",
-                result.User.DisplayName, result.User.UserId);
+            Debug.LogFormat("User signed in successfully: {0} ({1})", result.User.DisplayName, result.User.UserId);
+            userIdNow = result.User.UserId;
+            emailNow = result.User.Email;
+            usernameNow = result.User.DisplayName;
+            Debug.Log("TEST -----------------------:" + userIdNow + " " + emailNow + " " + usernameNow + " ");
+
+            profileName.text = usernameNow;
+            profileEmail.text = emailNow;
+
+            Debug.Log("KIEMTRA HIEN THI -------------------" + profileName.text + " " + profileEmail.text);
 
             // Kiểm tra nếu email đã được xác minh
             if (result.User.IsEmailVerified)
@@ -451,11 +473,19 @@ public class FireBase : MonoBehaviour
                 kiemtraXACNHAN = true;
                 Debug.Log("Đăng nhập thành công");
                 Tbao("", "Đăng nhập thành công");
+
+                // Lưu trạng thái đăng nhập
+                PlayerPrefs.SetInt("IsLoggedIn", 1);
+                PlayerPrefs.SetString("UserEmail", email);
+                PlayerPrefs.SetString("UserPassword", password);
+                PlayerPrefs.Save();
+
                 OpenHome();
                 UpdateProfile(user.DisplayName);
+
                 // Kiểm tra xem UserID đã tồn tại trong root Users hay chưa
                 DatabaseReference reference = FirebaseDatabase.DefaultInstance.GetReference("Users");
-                reference.Child(result.User.UserId).GetValueAsync().ContinueWith(userDataTask =>
+                reference.Child(result.User.UserId).GetValueAsync().ContinueWithOnMainThread(userDataTask =>
                 {
                     if (userDataTask.IsCompleted)
                     {
@@ -464,6 +494,7 @@ public class FireBase : MonoBehaviour
                         {
                             // UserID đã tồn tại, không cần gọi hàm SaveUserData
                             Debug.Log("UserID đã tồn tại");
+                            DisplayUserProfileInfo();
                         }
                         else
                         {
@@ -473,7 +504,6 @@ public class FireBase : MonoBehaviour
                         }
 
                         // Sau khi kiểm tra UserID, mở màn hình chính
-                      
                         if (rememberMe.isOn)
                         {
                             PlayerPrefs.SetString("email", email);
@@ -495,9 +525,21 @@ public class FireBase : MonoBehaviour
                 SendMailConfirm();
             }
         });
+        PlayerPrefs.SetString("UserId", userIdNow);
+        PlayerPrefs.SetString("Username", usernameNow);
+        PlayerPrefs.SetString("Email", emailNow);
+        PlayerPrefs.Save();
         emaillogin.text = "";
         passwordlogin.text = "";
     }
+    //Tải thông tin người dùng từ PlayerPrefs 
+    public void LoadUserData()
+    {
+        userIdNow = PlayerPrefs.GetString("UserId", "");
+        usernameNow = PlayerPrefs.GetString("Username", "");
+        emailNow = PlayerPrefs.GetString("Email", "");
+    }
+
     public bool kiemtraXACNHAN= false;
    
     void InitializeFirebase()
@@ -527,7 +569,7 @@ public class FireBase : MonoBehaviour
             {
                 Debug.Log("Signed in " + user.UserId);
                 isSignIn = true;
-                GetUsernameFromDatabase(user.Email);
+                //GetUsernameFromDatabase(user.Email);
             }
         }
     }
@@ -572,8 +614,11 @@ public class FireBase : MonoBehaviour
             if (!isSigned)
             {
                 isSigned = true;
-                profileName.text = "" + user.DisplayName;
-                profileEmail.text = "" + user.Email;
+                ProfileGtinh.text = GioiTinhNow;
+                ProfileNgsinh.text = NgaySinhNow;
+                ProfileQuequan.text = QueQuanNow;
+                //profileName.text =  usernameNow;
+                //profileEmail.text = user.Email;
                 LoadProfileImage(defaultUserImage);
             }
         }
@@ -833,11 +878,11 @@ public class FireBase : MonoBehaviour
         Firebase.Auth.FirebaseUser user = auth.CurrentUser;
         if (user != null)
         {
-            string userId = user.UserId; // Lấy UserID của người dùng
+            string userId = userIdNow; 
             User userData = new User(username, email, password);
             string json = JsonUtility.ToJson(userData);
             reference.Child("Users").Child(userId).SetRawJsonValueAsync(json)
-                .ContinueWith(task =>
+                .ContinueWithOnMainThread(task =>
                 {
                     if (task.IsCompleted)
                     {
@@ -855,28 +900,7 @@ public class FireBase : MonoBehaviour
         }
     }
 
-    void GetUsernameFromDatabase(string email)
-    {
-        string userID = auth.CurrentUser.UserId;
-        reference.Child("Users").Child(userID).GetValueAsync().ContinueWith(task =>
-        {
-            if (task.IsCompleted)
-                {
-                    DataSnapshot snapshot = task.Result;
-                    if (snapshot != null && snapshot.ChildrenCount > 0)
-                    {
-                        foreach (var childSnapshot in snapshot.Children)
-                        {
-                            // Lấy tên người dùng từ cơ sở dữ liệu
-                            string username = childSnapshot.Child("username").Value.ToString();
-                            // Hiển thị tên người dùng trên giao diện
-                            profileName.text = username;
-                        }
-                    }
-                }
-            });
-
-    }
+    //}
     //Bổ sung thông tin người dùng
     public InputField Quequan;
     public TMP_InputField Ngaysinh;
@@ -894,28 +918,35 @@ public class FireBase : MonoBehaviour
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
         forgetpasspanel.SetActive(false);
-        if(Bosungthongtin==true)
-        {
-            ProfileName2.text = profileName.text;
-            ProfileEmail2.text = profileEmail.text;
-            Quequan.text = ProfileQuequan.text;
-            Ngaysinh.text = ProfileNgsinh.text;
-            GtinhNam.isOn = ProfileGtinh.text == "Nam";
-            GtinhNu.isOn = ProfileGtinh.text == "Nữ";
-        }
+        //if(Bosungthongtin==true)
+        //{
+        //    ProfileName2.text = profileName.text;
+        //    ProfileEmail2.text = profileEmail.text;
+        //    Quequan.text = ProfileQuequan.text;
+        //    Ngaysinh.text = ProfileNgsinh.text;
+        //    GtinhNam.isOn = ProfileGtinh.text == "Nam";
+        //    GtinhNu.isOn = ProfileGtinh.text == "Nữ";
+        //}
     }
     public void CloseBosungthongtin()
     {
         Bosungthongtin.SetActive(false);
         profilepanel.SetActive(true);
     }
+    private bool kiemtrabosung = false;
     public void Bosungthongtinne()
     {
-        string userID = auth.CurrentUser.UserId;
+        string userID = userIdNow;
         // Lấy thông tin người dùng từ giao diện
         string quequanValue = Quequan.text;
         string ngaysinhValue = Ngaysinh.text;
         string gioitinhValue = GtinhNam.isOn ? "Nam" : "Nữ";
+
+        // Lưu thông tin bổ sung vào PlayerPrefs nhưng đây chỉ là lưu trong phiên của người chơi này 
+        PlayerPrefs.SetString("GioiTinh", gioitinhValue);
+        PlayerPrefs.SetString("QueQuan", quequanValue);
+        PlayerPrefs.SetString("NgaySinh", ngaysinhValue);
+        PlayerPrefs.Save();
 
         // Kiểm tra xem người dùng hiện tại đã đăng nhập chưa
         if (user != null)
@@ -928,7 +959,7 @@ public class FireBase : MonoBehaviour
 
             // Thực hiện cập nhật lên Realtime Database
             reference.Child("Users").Child(userID).Child("ThongTinBoSung").SetRawJsonValueAsync(json)
-        .ContinueWith(task =>
+        .ContinueWithOnMainThread(task =>
         {
             if (task.IsCompleted)
             {
@@ -939,7 +970,8 @@ public class FireBase : MonoBehaviour
                 else
                 {
                     Debug.Log("Cập nhật thông tin thành công");
-                    Tbao("Thành công!", "Cập nhật thông tin thành công");
+                    kiemtrabosung = true;
+                    
                 }
             }
         });
@@ -949,58 +981,54 @@ public class FireBase : MonoBehaviour
             Debug.Log("Người dùng hiện tại không được phép cập nhật thông tin");
             // Hiển thị thông báo hoặc xử lý khác khi người dùng không được phép cập nhật thông tin
         }
+        if (kiemtrabosung == true)
+        {
+            Tbao("Thành công!", "Cập nhật thông tin thành công");
+        }
     }
 
 
     // DisplayUserProfileInfo function
-    public void DisplayUserProfileInfo()
+    void DisplayUserProfileInfo()
     {
-        // Get UserID
-        string userID = auth.CurrentUser.UserId;
-
-        // Get data from Users node with UserID as key
-        reference.Child("Users").Child(userID).GetValueAsync().ContinueWith(task =>
+        LoadUserData();
+        string userID = userIdNow;
+        reference.Child("Users").Child(userID).Child("ThongTinBoSung").GetValueAsync().ContinueWithOnMainThread(task =>
         {
             if (task.IsCompleted)
             {
                 DataSnapshot snapshot = task.Result;
-                if (snapshot != null && snapshot.ChildrenCount > 0)
+                if (snapshot != null && snapshot.Exists)
                 {
-                    // Extract information from retrieved data
-                    string username = snapshot.Child("username").Value.ToString();
-                    string email = snapshot.Child("email").Value.ToString();
-                    string gioitinh = snapshot.Child("gioitinh").Value.ToString();
-                    string ngaysinh = snapshot.Child("ngaysinh").Value.ToString();
-                    string quequan = snapshot.Child("quequan").Value.ToString();
-
-                    // Display information on UI
-                    profileName.text = username;
-                    profileEmail.text = email;
-                    ProfileName2.text = profileName.text;
-                    ProfileEmail2.text = profileEmail.text;
-
-                    // Display additional user profile information (if available)
-                    if (snapshot.HasChild("gioitinh"))
-                    {
+                    string gioitinh = snapshot.Child("gioitinh").Value.ToString().Trim();
+                    string ngaysinh = snapshot.Child("ngaysinh").Value.ToString().Trim();
+                    string quequan = snapshot.Child("quequan").Value.ToString().Trim();
+                    testNgsinh.text = snapshot.Child("ngaysinh").Value.ToString().Trim();
+                    testGtinh.text = snapshot.Child("gioitinh").Value.ToString().Trim();
+                    testQuequan.text = snapshot.Child("quequan").Value.ToString().Trim();
+                    Debug.Log("KIEMTRA HIEN THI -------------------" + testNgsinh + " " + testGtinh + " " + testQuequan);
+                    Debug.Log("KIEMTRA HIEN THI -------------------" + gioitinh + " " + ngaysinh + " " + quequan);
+                    // Update UI elements
+                    
+                        GioiTinhNow = gioitinh;
+                        NgaySinhNow = ngaysinh;
+                        QueQuanNow = quequan;
+                        ProfileName2.text = profileName.text;
+                        ProfileEmail2.text = profileEmail.text;
                         ProfileGtinh.text = gioitinh;
-                    }
-
-                    if (snapshot.HasChild("ngaysinh"))
-                    {
                         ProfileNgsinh.text = ngaysinh;
-                    }
-
-                    if (snapshot.HasChild("quequan"))
-                    {
                         ProfileQuequan.text = quequan;
-                    }
+
+                        Debug.Log("KIEMTRA HIEN THI GA MAN HINH -------------------" + ProfileGtinh.text.Trim() + " " + ProfileNgsinh.text.Trim() + " " + ProfileQuequan.text.Trim());
+                    
                 }
+            }
+            else
+            {
+                Debug.LogError("Failed to fetch user profile info: " + task.Exception);
             }
         });
     }
-
-
-
 
 
     // Tìm kiếm người dùng theo tên trên REALTIME DATABASE
@@ -1058,3 +1086,28 @@ public class ThongTinBoSung
         gioitinh = _gioitinh;
     }
 }
+
+public class UnityMainThreadDispatcher : MonoBehaviour
+{
+    private static readonly Queue<Action> _executionQueue = new Queue<Action>();
+
+    private void Update()
+    {
+        lock (_executionQueue)
+        {
+            while (_executionQueue.Count > 0)
+            {
+                _executionQueue.Dequeue().Invoke();
+            }
+        }
+    }
+
+    public static void Enqueue(Action action)
+    {
+        lock (_executionQueue)
+        {
+            _executionQueue.Enqueue(action);
+        }
+    }
+}
+
