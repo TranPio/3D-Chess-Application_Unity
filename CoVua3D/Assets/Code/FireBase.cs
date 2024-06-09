@@ -32,8 +32,7 @@ public class FireBase : MonoBehaviour
     public static FireBase Instance;
     public GameObject loginpanel, signuppanel, homepanel, profilepanel, forgetpasspanel, TbaoPanel, CloseTbaone, settingLogout, ConfirmAcc;
     public InputField emaillogin, passwordlogin, usernamesignup, emailsignup, passwordsignup, forgetpass;
-    public Text tbao_Text, tbao_Mess, profileName, profileEmail, profileGioitinh, profileQuequan, profileNgaysinh, tbaomksignup, tbaomklogin, tbaoemailsignup, tbaoemaillogin, emailconfirm, emailcf2;
-    public Text testNgsinh, testGtinh, testQuequan;
+    public Text tbao_Text, tbao_Mess, profileName, profileEmail, tbaomksignup, tbaomklogin, tbaoemailsignup, tbaoemaillogin, emailconfirm, emailcf2;
     public Toggle rememberMe, hienmklogin, hienmksignup;
     public string GoogleWebAPI = "214552480712-4puo48o8qgurbipl5dton1iq2sq5q4fs.apps.googleusercontent.com";
     private GoogleSignInConfiguration configuration;
@@ -45,6 +44,8 @@ public class FireBase : MonoBehaviour
     // private string defaultUserImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrIMwQF5tiqO-E-rYuz7TT_tZ4ITeDzK3a-g&usqp=CAU";
     private string defaultUserImage = "https://img.freepik.com/premium-vector/cute-boy-thinking-cartoon-avatar_138676-2439.jpg";
     public static string userIdNow="", usernameNow = "", emailNow = "", GioiTinhNow="", QueQuanNow="", NgaySinhNow="";
+
+    private DisplayProfile displayProfile;
 
     //REALTIME DATABASE
     public string DTBURL = "https://team14-database-default-rtdb.firebaseio.com/";
@@ -61,6 +62,7 @@ public class FireBase : MonoBehaviour
 
     void Start()
     {
+        //displayProfile = FindObjectOfType<DisplayProfile>();
         hienmksignup.onValueChanged.AddListener(delegate { TogglePasswordVisibility(passwordsignup, hienmksignup); });
         hienmklogin.onValueChanged.AddListener(delegate { TogglePasswordVisibility(passwordlogin, hienmklogin); });
         Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
@@ -84,6 +86,13 @@ public class FireBase : MonoBehaviour
             LoadProfileImage(defaultUserImage);
             //GameManager.Instance.SetLoggedIn(true);
         }
+        // Thiết lập giá trị mặc định cho IsLoggedIn nếu chưa tồn tại
+        if (!PlayerPrefs.HasKey("IsLoggedIn"))
+        {
+            PlayerPrefs.SetInt("IsLoggedIn", 0);
+            PlayerPrefs.Save();
+        }
+
         if (PlayerPrefs.GetInt("IsLoggedIn", 0) == 1)
         {
             OpenHome();
@@ -92,7 +101,6 @@ public class FireBase : MonoBehaviour
         {
             OpenLogin();
         }
-
     }
 
     public void OpenLogin()
@@ -164,6 +172,12 @@ public class FireBase : MonoBehaviour
         settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
         isLoginSignupPage = false;
+        //LoadUserData();
+        //profileName.text = usernameNow;
+        //profileEmail.text = emailNow;
+        //profileGioitinh.text = GioiTinhNow;
+        //profileQuequan.text = QueQuanNow;
+        //profileNgaysinh.text = NgaySinhNow;
     }
     public void Openforgetpass()
     {
@@ -305,7 +319,6 @@ public class FireBase : MonoBehaviour
             return;
         }
         SigninUser(emaillogin.text, passwordlogin.text);
-        DisplayUserProfileInfo();
     }
 
 
@@ -367,8 +380,13 @@ public class FireBase : MonoBehaviour
         auth.SignOut();
         profileEmail.text = "";
         profileName.text = "";
+
+        // Cập nhật trạng thái đăng nhập trong PlayerPrefs
+        PlayerPrefs.SetInt("IsLoggedIn", 0);
+        PlayerPrefs.Save();
+
+        // Chuyển người dùng về trang đăng nhập
         OpenLogin();
-        //GameManager.Instance.SetLoggedIn(false);
     }
 
     void CreateUser(string email, string password, string username)
@@ -494,7 +512,7 @@ public class FireBase : MonoBehaviour
                         {
                             // UserID đã tồn tại, không cần gọi hàm SaveUserData
                             Debug.Log("UserID đã tồn tại");
-                            DisplayUserProfileInfo();
+                            //displayProfile.LoadProfileData(result.User.UserId);
                         }
                         else
                         {
@@ -532,6 +550,7 @@ public class FireBase : MonoBehaviour
         emaillogin.text = "";
         passwordlogin.text = "";
     }
+
     //Tải thông tin người dùng từ PlayerPrefs 
     public void LoadUserData()
     {
@@ -614,9 +633,9 @@ public class FireBase : MonoBehaviour
             if (!isSigned)
             {
                 isSigned = true;
-                ProfileGtinh.text = GioiTinhNow;
-                ProfileNgsinh.text = NgaySinhNow;
-                ProfileQuequan.text = QueQuanNow;
+                //ProfileGtinh.text = GioiTinhNow;
+                //ProfileNgsinh.text = NgaySinhNow;
+                //ProfileQuequan.text = QueQuanNow;
                 //profileName.text =  usernameNow;
                 //profileEmail.text = user.Email;
                 LoadProfileImage(defaultUserImage);
@@ -906,7 +925,7 @@ public class FireBase : MonoBehaviour
     public TMP_InputField Ngaysinh;
     public Toggle GtinhNam, GtinhNu;
     public GameObject Bosungthongtin;
-    public Text ProfileNgsinh, ProfileQuequan, ProfileGtinh, ProfileName2, ProfileEmail2;
+   // public Text ProfileNgsinh, ProfileQuequan, ProfileGtinh, ProfileName2, ProfileEmail2;
     public void OpenBosungthongtin()
     {
         Bosungthongtin.SetActive(true);
@@ -987,55 +1006,9 @@ public class FireBase : MonoBehaviour
         }
     }
 
-
-    // DisplayUserProfileInfo function
-    void DisplayUserProfileInfo()
-    {
-        LoadUserData();
-        string userID = userIdNow;
-        reference.Child("Users").Child(userID).Child("ThongTinBoSung").GetValueAsync().ContinueWithOnMainThread(task =>
-        {
-            if (task.IsCompleted)
-            {
-                DataSnapshot snapshot = task.Result;
-                if (snapshot != null && snapshot.Exists)
-                {
-                    string gioitinh = snapshot.Child("gioitinh").Value.ToString().Trim();
-                    string ngaysinh = snapshot.Child("ngaysinh").Value.ToString().Trim();
-                    string quequan = snapshot.Child("quequan").Value.ToString().Trim();
-                    testNgsinh.text = snapshot.Child("ngaysinh").Value.ToString().Trim();
-                    testGtinh.text = snapshot.Child("gioitinh").Value.ToString().Trim();
-                    testQuequan.text = snapshot.Child("quequan").Value.ToString().Trim();
-                    Debug.Log("KIEMTRA HIEN THI -------------------" + testNgsinh + " " + testGtinh + " " + testQuequan);
-                    Debug.Log("KIEMTRA HIEN THI -------------------" + gioitinh + " " + ngaysinh + " " + quequan);
-                    // Update UI elements
-                    
-                        GioiTinhNow = gioitinh;
-                        NgaySinhNow = ngaysinh;
-                        QueQuanNow = quequan;
-                        ProfileName2.text = profileName.text;
-                        ProfileEmail2.text = profileEmail.text;
-                        ProfileGtinh.text = gioitinh;
-                        ProfileNgsinh.text = ngaysinh;
-                        ProfileQuequan.text = quequan;
-
-                        Debug.Log("KIEMTRA HIEN THI GA MAN HINH -------------------" + ProfileGtinh.text.Trim() + " " + ProfileNgsinh.text.Trim() + " " + ProfileQuequan.text.Trim());
-                    
-                }
-            }
-            else
-            {
-                Debug.LogError("Failed to fetch user profile info: " + task.Exception);
-            }
-        });
-    }
-
-
-    // Tìm kiếm người dùng theo tên trên REALTIME DATABASE
-    public GameObject timkiempanel;
     public void Opentimkiem()
     {
-        timkiempanel.SetActive(true);
+       // timkiempanel.SetActive(true);
         profilepanel.SetActive(false);
         settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
@@ -1048,7 +1021,7 @@ public class FireBase : MonoBehaviour
     }
     public void Closetimkiem()
     {
-        timkiempanel.SetActive(false);
+       // timkiempanel.SetActive(false);
         profilepanel.SetActive(false);
         settingLogout.SetActive(false);
         xacnhandkmk.SetActive(false);
