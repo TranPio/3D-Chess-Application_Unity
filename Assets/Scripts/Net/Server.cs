@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Unity.Collections;
 using Unity.Networking.Transport;
 using UnityEngine;
@@ -29,7 +29,7 @@ public class Server : MonoBehaviour
         NetworkEndpoint endpoint = NetworkEndpoint.AnyIpv4;
         endpoint.Port = port;
 
-        if(driver.Bind(endpoint) != 0)
+        if (driver.Bind(endpoint) != 0)
         {
             Debug.Log("Unable to bind on port " + endpoint.Port);
             return;
@@ -41,15 +41,15 @@ public class Server : MonoBehaviour
             Debug.Log("Currently listening on port " + endpoint.Port);
         }
 
-        connections = new NativeList<NetworkConnection>(2,Allocator.Persistent);
+        connections = new NativeList<NetworkConnection>(2, Allocator.Persistent);
         isActive = true;
     }
     public void Shutdown()
     {
-        if(isActive)
+        if (isActive)
         {
             driver.Dispose();
-           
+
             connections.Dispose();
             isActive = false;
         }
@@ -78,12 +78,12 @@ public class Server : MonoBehaviour
     }
     private void KeepAlive()
     {
-        if ((Time.time-lastKeepAlive>keepAliveTickRate))
+        if ((Time.time - lastKeepAlive > keepAliveTickRate))
         {
-            
-                lastKeepAlive=Time.time;
-                Broadcast(new NetKeepAlive());
-            
+
+            lastKeepAlive = Time.time;
+            Broadcast(new NetKeepAlive());
+
         }
     }
     private void CleanupConnections()
@@ -102,7 +102,7 @@ public class Server : MonoBehaviour
     {
         //accept new connections
         NetworkConnection c;
-        while ((c=driver.Accept())!= default(NetworkConnection))
+        while ((c = driver.Accept()) != default(NetworkConnection))
         {
             connections.Add(c);
         }
@@ -114,17 +114,17 @@ public class Server : MonoBehaviour
         for (int i = 0; i < connections.Length; i++)
         {
             NetworkEvent.Type cmd;
-            while ((cmd = driver.PopEventForConnection(connections[i],out stream))!=NetworkEvent.Type.Empty)
+            while ((cmd = driver.PopEventForConnection(connections[i], out stream)) != NetworkEvent.Type.Empty)
             {
-                if(cmd==NetworkEvent.Type.Data)
+                if (cmd == NetworkEvent.Type.Data)
                 {
                     NetUtility.OnData(stream, connections[i], this);
 
                 }
-                else if(cmd==NetworkEvent.Type.Disconnect)
+                else if (cmd == NetworkEvent.Type.Disconnect)
                 {
                     Debug.Log("Client disconnect from server");
-                    connections[i]=default(NetworkConnection);
+                    connections[i] = default(NetworkConnection);
                     connectionDropped?.Invoke();
                     Shutdown(); //this does not happen usually, its just because we're in a two person game
 
@@ -153,6 +153,8 @@ public class Server : MonoBehaviour
             }
         }
     }
- 
+
+
 
 }
+

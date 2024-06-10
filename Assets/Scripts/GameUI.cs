@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.Design;
 using TMPro;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public enum CameraAngle
 {
     menu=0,
@@ -42,6 +42,7 @@ public class GameUI : MonoBehaviour
     //Buttons
     public void OnLocalGameButton()
     {
+        //SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
         menuAnimator.SetTrigger("InGameMenu");
         SetLocalGame?.Invoke(true);
         server.Init(8007);

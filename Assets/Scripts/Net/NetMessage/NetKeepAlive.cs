@@ -1,4 +1,7 @@
-using Unity.Collections; 
+﻿using System.IO;
+using Unity.Collections;
+using System.Net.Sockets;
+
 using Unity.Networking.Transport;
 
 public class NetKeepAlive : NetMessage
@@ -14,11 +17,23 @@ public class NetKeepAlive : NetMessage
         Deserialize(reader);
     }
 
-    public override void Serialize (ref DataStreamWriter writer)
+    public override void Serialize(ref DataStreamWriter writer)
     {
         writer.WriteByte((byte)Code);
 
     }
+    //public override byte[] Serialize()
+    //{
+    //    using (MemoryStream stream = new MemoryStream())
+    //    {
+    //        using (BinaryWriter writer = new BinaryWriter(stream))
+    //        {
+    //            writer.Write((byte)Code);
+    //            // Thêm các dữ liệu khác nếu cần thiết
+    //        }
+    //        return stream.ToArray();
+    //    }
+    //}
 
     public override void Deserialize(DataStreamReader reader)
     {
@@ -34,6 +49,10 @@ public class NetKeepAlive : NetMessage
     {
         NetUtility.S_KEEP_ALIVE?.Invoke(this, cnn);
     }
+    //public override void ReceivedOnServer(Netconnection cnn)
+    //{
+    //    NetUtility.S_KEEP_ALIVE?.Invoke(this, cnn);
+    //}
 
 
 }
