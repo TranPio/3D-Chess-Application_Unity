@@ -16,8 +16,10 @@ public class PlayFabController : MonoBehaviour
     public GameObject loginPanel;
     public GameObject addLoginPanel;
     public GameObject recoverButton;
+    public GameObject rankPanel;
+    public GameObject menuPanel;
+    public GameObject friendPanel;
 
-    // Chỉ khai báo một lần cho leaderboardPanel và listingContainer
     public GameObject leaderboardPanel;
     public Transform listingContainer;
     public GameObject listingPrefab;
@@ -42,7 +44,7 @@ public class PlayFabController : MonoBehaviour
     {
         if (string.IsNullOrEmpty(PlayFabSettings.TitleId))
         {
-            PlayFabSettings.TitleId = "4644F"; // Vui lòng thay đổi giá trị này thành titleId của bạn từ PlayFab Game Manager
+            PlayFabSettings.TitleId = "4644F"; // Replace with your actual TitleId
         }
 
         if (PlayerPrefs.HasKey("EMAIL"))
@@ -71,7 +73,7 @@ public class PlayFabController : MonoBehaviour
     {
         Debug.Log("Congratulations, you made your first successful API call!");
         GetStats();
-        loginPanel.SetActive(false);
+        loginPanel.SetActive(true);
     }
 
     private void OnLoginSuccess(LoginResult result)
@@ -79,8 +81,8 @@ public class PlayFabController : MonoBehaviour
         Debug.Log("Congratulations, you made your first successful API call!");
         PlayerPrefs.SetString("EMAIL", userEmail);
         PlayerPrefs.SetString("PASSWORD", userPassword);
-        loginPanel.SetActive(false);
-        recoverButton.SetActive(false);
+        loginPanel.SetActive(true);
+        recoverButton.SetActive(true);
         GetStats();
     }
 
@@ -166,6 +168,22 @@ public class PlayFabController : MonoBehaviour
             Username = username
         };
         PlayFabClientAPI.AddUsernamePassword(addLoginRequest, OnAddLoginSuccess, OnRegisterFailure);
+    }
+
+    public void OpenMenu()
+    {
+        menuPanel.SetActive(true);
+    }
+
+    public void OpenFriendList()
+    {
+        friendPanel.SetActive(true);
+    }
+
+    public void OpenRANK()
+    {
+        rankPanel.SetActive(true);
+        menuPanel.SetActive(false);
     }
 
     private void OnAddLoginSuccess(AddUsernamePasswordResult result)
@@ -282,4 +300,6 @@ public class PlayFabController : MonoBehaviour
     }
 
     #endregion Leaderboard
+
+
 }
