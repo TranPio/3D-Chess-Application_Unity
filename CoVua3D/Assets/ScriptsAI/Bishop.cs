@@ -1,77 +1,80 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
 
 public class Bishop : Chessman
 {
+    // Constructor của lớp Bishop
     public Bishop()
     {
-        value = 30;
+        value = 30; // Thiết lập giá trị của quân Tượng là 30
     }
 
+    // Phương thức tính các nước đi có thể của quân Tượng
     public override bool[,] PossibleMoves()
     {
-        bool[,] moves = new bool[8, 8];
-        int x = currentX;
-        int y = currentY;
+        bool[,] moves = new bool[8, 8]; // Mảng boolean 2 chiều đại diện cho bàn cờ
+        int x = currentX; // Vị trí hiện tại của quân Tượng theo trục x
+        int y = currentY; // Vị trí hiện tại của quân Tượng theo trục y
 
-        // Left to right Down Diagonal
+        // Đường chéo từ trái sang phải xuống dưới
         while (x++ < 7 && y-- > 0)
         {
-            if (!BishupMove(x, y, ref moves))
-                break;
+            if (!BishopMove(x, y, ref moves)) // Kiểm tra và đánh dấu nước đi
+                break; // Dừng vòng lặp nếu gặp quân cờ hoặc ra ngoài bàn cờ
         }
 
-        x = currentX;
-        y = currentY;
-        // Left to right Up Diagonal
+        x = currentX; // Đặt lại vị trí ban đầu theo trục x
+        y = currentY; // Đặt lại vị trí ban đầu theo trục y
+        // Đường chéo từ trái sang phải lên trên
         while (x++ < 7 && y++ < 7)
         {
-            if (!BishupMove(x, y, ref moves))
-                break;
+            if (!BishopMove(x, y, ref moves)) // Kiểm tra và đánh dấu nước đi
+                break; // Dừng vòng lặp nếu gặp quân cờ hoặc ra ngoài bàn cờ
         }
 
-        x = currentX;
-        y = currentY;
-        // Right to left Down Diagonal
+        x = currentX; // Đặt lại vị trí ban đầu theo trục x
+        y = currentY; // Đặt lại vị trí ban đầu theo trục y
+        // Đường chéo từ phải sang trái xuống dưới
         while (x-- > 0 && y-- > 0)
         {
-            if (!BishupMove(x, y, ref moves))
-                break;
+            if (!BishopMove(x, y, ref moves)) // Kiểm tra và đánh dấu nước đi
+                break; // Dừng vòng lặp nếu gặp quân cờ hoặc ra ngoài bàn cờ
         }
 
-        x = currentX;
-        y = currentY;
-        // Right to left Up Diagonal
+        x = currentX; // Đặt lại vị trí ban đầu theo trục x
+        y = currentY; // Đặt lại vị trí ban đầu theo trục y
+        // Đường chéo từ phải sang trái lên trên
         while (x-- > 0 && y++ < 7)
         {
-            if (!BishupMove(x, y, ref moves))
-                break;
+            if (!BishopMove(x, y, ref moves)) // Kiểm tra và đánh dấu nước đi
+                break; // Dừng vòng lặp nếu gặp quân cờ hoặc ra ngoài bàn cờ
         }
 
-        return moves;
+        return moves; // Trả về mảng các nước đi hợp lệ
     }
 
-    private bool BishupMove(int x, int y, ref bool[,] moves)
+    // Phương thức hỗ trợ kiểm tra và đánh dấu nước đi
+    private bool BishopMove(int x, int y, ref bool[,] moves)
     {
-        Chessman piece = BoardManager.Instance.Chessmans[x, y];
-        // If the cell is empty
+        Chessman piece = BoardManager.Instance.Chessmans[x, y]; // Lấy quân cờ tại vị trí (x, y)
+        // Nếu ô cờ trống
         if (piece == null)
         {
-            if (!this.KingInDanger(x, y))
-                moves[x, y] = true;
-            return true;    // Keep on looping
+            if (!this.KingInDanger(x, y)) // Kiểm tra xem vua có bị nguy hiểm không
+                moves[x, y] = true; // Đánh dấu nước đi hợp lệ
+            return true; // Tiếp tục vòng lặp
         }
-        // If the piece is from opponent team
+        // Nếu ô cờ có quân của đối thủ
         else if (piece.isWhite != isWhite)
         {
-            if (!this.KingInDanger(x, y))
-                moves[x, y] = true;
+            if (!this.KingInDanger(x, y)) // Kiểm tra xem vua có bị nguy hiểm không
+                moves[x, y] = true; // Đánh dấu nước đi hợp lệ
         }
 
-        // Else if the piece is from same team, do nothing
+        // Nếu ô cờ có quân của mình, không làm gì
 
-        return false;   // Stop the looping
+        return false; // Dừng vòng lặp
     }
 }
