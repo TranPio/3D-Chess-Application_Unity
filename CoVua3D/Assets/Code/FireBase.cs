@@ -22,10 +22,15 @@ using System.Security.Policy;
 using Firebase.Database;
 using Firebase.Unity;
 using UI.Dates;
+using System.IO;
 
 
 
-
+[System.Serializable]
+public class IsLoggedIn
+{
+    public int isLoggedIn;
+}
 public class FireBase : MonoBehaviour
 {
     //public static GameManager Instance;
@@ -44,6 +49,7 @@ public class FireBase : MonoBehaviour
     // private string defaultUserImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrIMwQF5tiqO-E-rYuz7TT_tZ4ITeDzK3a-g&usqp=CAU";
     private string defaultUserImage = "https://img.freepik.com/premium-vector/cute-boy-thinking-cartoon-avatar_138676-2439.jpg";
     public static string userIdNow = "", usernameNow = "", emailNow = "", GioiTinhNow = "", QueQuanNow = "", NgaySinhNow = "";
+    public static IsLoggedIn IsLoggedInStatus;
 
     //REALTIME DATABASE
     public string DTBURL = "https://team14-database-default-rtdb.firebaseio.com/";
@@ -69,24 +75,8 @@ public class FireBase : MonoBehaviour
 
     void Start()
     {
-        if (hienmksignup != null && passwordsignup != null)
-        {
-            hienmksignup.onValueChanged.AddListener(delegate { TogglePasswordVisibility(passwordsignup, hienmksignup); });
-        }
-        else
-        {
-            Debug.LogError("hienmksignup hoặc passwordsignup bị null");
-        }
-
-        if (hienmklogin != null && passwordlogin != null)
-        {
-            hienmklogin.onValueChanged.AddListener(delegate { TogglePasswordVisibility(passwordlogin, hienmklogin); });
-        }
-        else
-        {
-            Debug.LogError("hienmklogin hoặc passwordlogin bị null");
-        }
-
+        hienmksignup.onValueChanged.AddListener(delegate { TogglePasswordVisibility(passwordsignup, hienmksignup); });
+        hienmklogin.onValueChanged.AddListener(delegate { TogglePasswordVisibility(passwordlogin, hienmklogin); });
         Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
         {
             FirebaseApp.DefaultInstance.Options.DatabaseUrl = new Uri(DTBURL);
@@ -101,12 +91,45 @@ public class FireBase : MonoBehaviour
                 Debug.LogError(System.String.Format("Could not resolve all Firebase dependencies: {0}", dependencyStatus));
             }
         });
-
+        LoadData();
+        if (IsLoggedInStatus.isLoggedIn == 1)
+        {
+            OpenHome();
+        }
+        else
+        {
+            OpenLogin();
+        }
         if (isSignIn)
         {
             LoadProfileImage(defaultUserImage);
+           
         }
+       
     }
+
+    // Lưu trữ dữ liệu người dùng vào file
+    public void LoadData()
+    {
+        string file = "Dulieu.json";
+        string filePath = Path.Combine(Application.persistentDataPath, file);
+        if (!File.Exists(filePath))
+        {
+            IsLoggedIn data = new IsLoggedIn();
+            data.isLoggedIn = 0;
+            string json = JsonUtility.ToJson(data);
+            File.WriteAllText(filePath, json);
+        }
+        IsLoggedInStatus = JsonUtility.FromJson<IsLoggedIn>(File.ReadAllText(filePath));
+    }
+    public void SaveData()
+    {
+        string file = "Dulieu.json";
+        string filePath = Path.Combine(Application.persistentDataPath, file);
+        string json = JsonUtility.ToJson(IsLoggedInStatus);
+        File.WriteAllText(filePath, json);
+    }
+
 
 
     public void OpenLogin()
@@ -387,14 +410,16 @@ public class FireBase : MonoBehaviour
     public void Logout()
     {
         auth.SignOut();
-      
-
-        // Cập nhật trạng thái đăng nhập trong PlayerPrefs
-        //PlayerPrefs.SetInt("IsLoggedIn", 0);
-        //PlayerPrefs.Save();
-
-        // Chuyển người dùng về trang đăng nhập
+       // user = null;
+        userIdNow = "";
+        emailNow = "";
+        usernameNow = "";
+        GioiTinhNow = "";
+        QueQuanNow = "";
+        NgaySinhNow = "";
         OpenLogin();
+        IsLoggedInStatus.isLoggedIn = 0;
+        SaveData();
     }
 
     void CreateUser(string email, string password, string username)
@@ -502,6 +527,8 @@ public class FireBase : MonoBehaviour
                     Tbao("", "Đăng nhập thành công");
 
                     OpenHome();
+                    IsLoggedInStatus.isLoggedIn = 1;
+                    SaveData();
                     UpdateProfile(result.User.DisplayName);
 
                     DatabaseReference reference = FirebaseDatabase.DefaultInstance.GetReference("Users");
@@ -629,11 +656,7 @@ public class FireBase : MonoBehaviour
             if (!isSigned)
             {
                 isSigned = true;
-                //ProfileGtinh.text = GioiTinhNow;
-                //ProfileNgsinh.text = NgaySinhNow;
-                //ProfileQuequan.text = QueQuanNow;
-                //profileName.text =  usernameNow;
-                //profileEmail.text = user.Email;
+               
                 LoadProfileImage(defaultUserImage);
             }
         }
@@ -643,24 +666,18 @@ public class FireBase : MonoBehaviour
         var message = "";
         switch (errorCode)
         {
-            case AuthError.AccountExistsWithDifferentCredentials:
-                message = "Tài khoản không tồn tại";
-                break;
-            case AuthError.MissingPassword:
-                message = "Thiếu mật khẩu";
-                break;
-            case AuthError.WrongPassword:
-                message = "Sai mật khẩu";
-                break;
-            case AuthError.EmailAlreadyInUse:
-                message = "Email của bạn đã tồn tại";
-                break;
-            case AuthError.MissingEmail:
-                message = "Thiếu email";
-                break;
+            case Firebase.Auth.AuthError.AccountExistsWithDifferentCredentials:
+                return "Tài khoản đã tồn tại với thông tin xác thực khác.";
+            case Firebase.Auth.AuthError.MissingPassword:
+                return "Thiếu mật khẩu.";
+            case Firebase.Auth.AuthError.WeakPassword:
+                return "Mật khẩu quá yếu.";
+            case Firebase.Auth.AuthError.WrongPassword:
+                return "Sai mật khẩu.";
+            case Firebase.Auth.AuthError.InvalidEmail:
+                return "Email không hợp lệ.";
             default:
-                message = "Lỗi không hợp lệ";
-                break;
+                return "Đã xảy ra lỗi. Vui lòng thử lại.";
         }
         return message;
     }
