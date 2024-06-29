@@ -30,9 +30,9 @@ public class FireBase : MonoBehaviour
 {
     //public static GameManager Instance;
     public static FireBase Instance;
-    public GameObject loginpanel, signuppanel, homepanel, profilepanel, forgetpasspanel, TbaoPanel, CloseTbaone, settingLogout, ConfirmAcc;
+    public GameObject loginpanel, signuppanel, homepanel, profilepanel, forgetpasspanel, TbaoPanel, settingLogout, ConfirmAcc;
     public InputField emaillogin, passwordlogin, usernamesignup, emailsignup, passwordsignup, forgetpass;
-    public Text tbao_Text, tbao_Mess, profileName, profileEmail, tbaomksignup, tbaomklogin, tbaoemailsignup, tbaoemaillogin, emailconfirm, emailcf2;
+    public Text tbao_Text, tbao_Mess, tbaomksignup, tbaomklogin, tbaoemailsignup, tbaoemaillogin, emailconfirm, emailcf2;
     public Toggle rememberMe, hienmklogin, hienmksignup;
     public string GoogleWebAPI = "214552480712-4puo48o8qgurbipl5dton1iq2sq5q4fs.apps.googleusercontent.com";
     private GoogleSignInConfiguration configuration;
@@ -43,9 +43,7 @@ public class FireBase : MonoBehaviour
     public static bool isLoginSignupPage = false;
     // private string defaultUserImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrIMwQF5tiqO-E-rYuz7TT_tZ4ITeDzK3a-g&usqp=CAU";
     private string defaultUserImage = "https://img.freepik.com/premium-vector/cute-boy-thinking-cartoon-avatar_138676-2439.jpg";
-    public static string userIdNow="", usernameNow = "", emailNow = "", GioiTinhNow="", QueQuanNow="", NgaySinhNow="";
-
-    private DisplayProfile displayProfile;
+    public static string userIdNow = "", usernameNow = "", emailNow = "", GioiTinhNow = "", QueQuanNow = "", NgaySinhNow = "";
 
     //REALTIME DATABASE
     public string DTBURL = "https://team14-database-default-rtdb.firebaseio.com/";
@@ -59,12 +57,36 @@ public class FireBase : MonoBehaviour
         x.contentType = y.isOn ? InputField.ContentType.Standard : InputField.ContentType.Password;
         x.ForceLabelUpdate();
     }
+    void Awake()
+    {
+        InitializeFirebase();
+        configuration = new GoogleSignInConfiguration
+        {
+            WebClientId = GoogleWebAPI,
+            RequestIdToken = true
+        };
+    }
 
     void Start()
     {
-        //displayProfile = FindObjectOfType<DisplayProfile>();
-        hienmksignup.onValueChanged.AddListener(delegate { TogglePasswordVisibility(passwordsignup, hienmksignup); });
-        hienmklogin.onValueChanged.AddListener(delegate { TogglePasswordVisibility(passwordlogin, hienmklogin); });
+        if (hienmksignup != null && passwordsignup != null)
+        {
+            hienmksignup.onValueChanged.AddListener(delegate { TogglePasswordVisibility(passwordsignup, hienmksignup); });
+        }
+        else
+        {
+            Debug.LogError("hienmksignup hoặc passwordsignup bị null");
+        }
+
+        if (hienmklogin != null && passwordlogin != null)
+        {
+            hienmklogin.onValueChanged.AddListener(delegate { TogglePasswordVisibility(passwordlogin, hienmklogin); });
+        }
+        else
+        {
+            Debug.LogError("hienmklogin hoặc passwordlogin bị null");
+        }
+
         Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
         {
             FirebaseApp.DefaultInstance.Options.DatabaseUrl = new Uri(DTBURL);
@@ -76,32 +98,16 @@ public class FireBase : MonoBehaviour
             }
             else
             {
-                Debug.LogError(System.String.Format(
-                                     "Could not resolve all Firebase dependencies: {0}", dependencyStatus));
+                Debug.LogError(System.String.Format("Could not resolve all Firebase dependencies: {0}", dependencyStatus));
             }
         });
-        
+
         if (isSignIn)
         {
             LoadProfileImage(defaultUserImage);
-            //GameManager.Instance.SetLoggedIn(true);
-        }
-        // Thiết lập giá trị mặc định cho IsLoggedIn nếu chưa tồn tại
-        if (!PlayerPrefs.HasKey("IsLoggedIn"))
-        {
-            PlayerPrefs.SetInt("IsLoggedIn", 0);
-            PlayerPrefs.Save();
-        }
-
-        if (PlayerPrefs.GetInt("IsLoggedIn", 0) == 1)
-        {
-            OpenHome();
-        }
-        else
-        {
-            OpenLogin();
         }
     }
+
 
     public void OpenLogin()
     {
@@ -228,10 +234,7 @@ public class FireBase : MonoBehaviour
     {
         ProfileUpdateAva.SetActive(false);
     }
-    public void CloseTbaoNe()
-    {
-        CloseTbaone.SetActive(false);
-    }
+    
     public void Exit()
     {
         Application.Quit();
@@ -299,10 +302,12 @@ public class FireBase : MonoBehaviour
     }
     public void Login()
     {
-        tbaoemaillogin.text = "";
-        tbaomklogin.text = "";
+        if (tbaoemaillogin != null)
+            tbaoemaillogin.text = "";
+        if (tbaomklogin != null)
+            tbaomklogin.text = "";
 
-        if (emaillogin.text == "" || passwordlogin.text == "")
+        if (string.IsNullOrEmpty(emaillogin.text) || string.IsNullOrEmpty(passwordlogin.text))
         {
             Debug.Log("Vui lòng điền đầy đủ thông tin");
             Tbao("Lỗi!", "Vui lòng điền đầy đủ thông tin");
@@ -310,16 +315,20 @@ public class FireBase : MonoBehaviour
         }
         else if (!IsValidEmail(emaillogin.text))
         {
-            tbaoemaillogin.text = "Vui lòng điền đúng định dạng Email";
+            if (tbaoemaillogin != null)
+                tbaoemaillogin.text = "Vui lòng điền đúng định dạng Email";
             return;
         }
         else if (!IsValidPassword(passwordlogin.text))
         {
-            tbaomklogin.text = "Mật khẩu phải chứa ít nhất 8 ký tự, 1 chữ hoa, 1 chữ thường và 1 số";
+            if (tbaomklogin != null)
+                tbaomklogin.text = "Mật khẩu phải chứa ít nhất 8 ký tự, 1 chữ hoa, 1 chữ thường và 1 số";
             return;
         }
+
         SigninUser(emaillogin.text, passwordlogin.text);
     }
+
 
 
 
@@ -378,12 +387,11 @@ public class FireBase : MonoBehaviour
     public void Logout()
     {
         auth.SignOut();
-        profileEmail.text = "";
-        profileName.text = "";
+      
 
         // Cập nhật trạng thái đăng nhập trong PlayerPrefs
-        PlayerPrefs.SetInt("IsLoggedIn", 0);
-        PlayerPrefs.Save();
+        //PlayerPrefs.SetInt("IsLoggedIn", 0);
+        //PlayerPrefs.Save();
 
         // Chuyển người dùng về trang đăng nhập
         OpenLogin();
@@ -399,25 +407,25 @@ public class FireBase : MonoBehaviour
                 return;
             }
             if (task.IsFaulted)
-           {
+            {
                 Debug.LogError("CreateUserWithEmailAndPasswordAsync encountered an error: " + task.Exception);
                 foreach (Exception exception in task.Exception.Flatten().InnerExceptions)
-               {
-                   Firebase.FirebaseException firebaseEx = exception as Firebase.FirebaseException;
-                   if (firebaseEx != null)
+                {
+                    Firebase.FirebaseException firebaseEx = exception as Firebase.FirebaseException;
+                    if (firebaseEx != null)
                     {
                         var errorCode = (AuthError)firebaseEx.ErrorCode;
                         if (errorCode == AuthError.EmailAlreadyInUse)
                         {
                             Tbao("Lỗi!", "Email đã tồn tại. Vui lòng đăng ký bằng email khác!");
-                          break;
+                            break;
                         }
                         else
                         {
                             // Debug.Log("Đăng ký thành công");
                             Tbao("", "Đăng ký thành công");
                         }
-                   }
+                    }
                 }
                 return;
             }
@@ -434,22 +442,28 @@ public class FireBase : MonoBehaviour
                 if (user.IsEmailVerified)
                 {
 
-                   
+
                     OpenLogin();
 
                 }
                 else
                 {
                     SendMailConfirm();
-                   
+
                 }
             }
         });
         UpdateProfile(username);
 
-   }
+    }
     public void SigninUser(string email, string password)
     {
+        if (auth == null)
+        {
+            Debug.LogError("Firebase Auth is not initialized");
+            return;
+        }
+
         auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(task =>
         {
             if (task.IsCanceled)
@@ -474,93 +488,75 @@ public class FireBase : MonoBehaviour
             }
 
             Firebase.Auth.AuthResult result = task.Result;
-            Debug.LogFormat("User signed in successfully: {0} ({1})", result.User.DisplayName, result.User.UserId);
-            userIdNow = result.User.UserId;
-            emailNow = result.User.Email;
-            usernameNow = result.User.DisplayName;
-            Debug.Log("TEST -----------------------:" + userIdNow + " " + emailNow + " " + usernameNow + " ");
-
-            profileName.text = usernameNow;
-            profileEmail.text = emailNow;
-
-            Debug.Log("KIEMTRA HIEN THI -------------------" + profileName.text + " " + profileEmail.text);
-
-            // Kiểm tra nếu email đã được xác minh
-            if (result.User.IsEmailVerified)
+            if (result != null && result.User != null)
             {
-                kiemtraXACNHAN = true;
-                Debug.Log("Đăng nhập thành công");
-                Tbao("", "Đăng nhập thành công");
+                Debug.LogFormat("User signed in successfully: {0} ({1})", result.User.DisplayName, result.User.UserId);
+                userIdNow = result.User.UserId;
+                emailNow = result.User.Email;
+                usernameNow = result.User.DisplayName;
 
-                // Lưu trạng thái đăng nhập
-                PlayerPrefs.SetInt("IsLoggedIn", 1);
-                PlayerPrefs.SetString("UserEmail", email);
-                PlayerPrefs.SetString("UserPassword", password);
-                PlayerPrefs.Save();
-
-                OpenHome();
-                UpdateProfile(user.DisplayName);
-
-                // Kiểm tra xem UserID đã tồn tại trong root Users hay chưa
-                DatabaseReference reference = FirebaseDatabase.DefaultInstance.GetReference("Users");
-                reference.Child(result.User.UserId).GetValueAsync().ContinueWithOnMainThread(userDataTask =>
+                if (result.User.IsEmailVerified)
                 {
-                    if (userDataTask.IsCompleted)
+                    kiemtraXACNHAN = true;
+                    Debug.Log("Đăng nhập thành công");
+                    Tbao("", "Đăng nhập thành công");
+
+                    OpenHome();
+                    UpdateProfile(result.User.DisplayName);
+
+                    DatabaseReference reference = FirebaseDatabase.DefaultInstance.GetReference("Users");
+                    reference.Child(result.User.UserId).GetValueAsync().ContinueWithOnMainThread(userDataTask =>
                     {
-                        DataSnapshot snapshot = userDataTask.Result;
-                        if (snapshot != null && snapshot.Exists)
+                        if (userDataTask.IsCompleted)
                         {
-                            // UserID đã tồn tại, không cần gọi hàm SaveUserData
-                            Debug.Log("UserID đã tồn tại");
-                            //displayProfile.LoadProfileData(result.User.UserId);
-                        }
-                        else
-                        {
-                            // UserID không tồn tại, gọi hàm SaveUserData
-                            Debug.Log("UserID chưa tồn tại");
-                            SaveUserData(result.User.DisplayName, email, password);
-                        }
+                            DataSnapshot snapshot = userDataTask.Result;
+                            if (snapshot != null && snapshot.Exists)
+                            {
+                                Debug.Log("UserID đã tồn tại");
+                            }
+                            else
+                            {
+                                Debug.Log("UserID chưa tồn tại");
+                                SaveUserData(result.User.DisplayName, email, password);
+                            }
 
-                        // Sau khi kiểm tra UserID, mở màn hình chính
-                        if (rememberMe.isOn)
-                        {
-                            PlayerPrefs.SetString("email", email);
-                            PlayerPrefs.SetString("password", password);
-                            PlayerPrefs.Save();
-                        }
+                            if (rememberMe != null && rememberMe.isOn)
+                            {
+                                PlayerPrefs.SetString("email", email);
+                                PlayerPrefs.SetString("password", password);
+                                PlayerPrefs.Save();
+                            }
 
-                        if (result.User.PhotoUrl != null)
-                        {
-                            LoadProfileImage(result.User.PhotoUrl.ToString());
+                            if (result.User.PhotoUrl != null)
+                            {
+                                LoadProfileImage(result.User.PhotoUrl.ToString());
+                            }
                         }
-                    }
-                });
+                    });
+                }
+                else
+                {
+                    kiemtraXACNHAN = false;
+                    SendMailConfirm();
+                }
             }
             else
             {
-                kiemtraXACNHAN = false;
-                // Nếu email chưa được xác minh, yêu cầu xác minh email
-                SendMailConfirm();
+                Debug.LogError("Firebase.Auth.AuthResult hoặc result.User bị null.");
             }
         });
-        PlayerPrefs.SetString("UserId", userIdNow);
-        PlayerPrefs.SetString("Username", usernameNow);
-        PlayerPrefs.SetString("Email", emailNow);
-        PlayerPrefs.Save();
-        emaillogin.text = "";
-        passwordlogin.text = "";
+
+        if (emaillogin != null)
+            emaillogin.text = "";
+        if (passwordlogin != null)
+            passwordlogin.text = "";
     }
 
     //Tải thông tin người dùng từ PlayerPrefs 
-    public void LoadUserData()
-    {
-        userIdNow = PlayerPrefs.GetString("UserId", "");
-        usernameNow = PlayerPrefs.GetString("Username", "");
-        emailNow = PlayerPrefs.GetString("Email", "");
-    }
 
-    public bool kiemtraXACNHAN= false;
-   
+
+    public bool kiemtraXACNHAN = false;
+
     void InitializeFirebase()
     {
         auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
@@ -729,8 +725,8 @@ public class FireBase : MonoBehaviour
     //public InputField dmkPasswordField;
     public void ChangePassword()
     {
-        dmkPasswordsubmit(profileEmail.text);
-       
+        dmkPasswordsubmit(DisplayProfile.Instance.profileEmail.text);
+
     }
     void dmkPasswordsubmit(string usermailpassword)
     {
@@ -763,15 +759,8 @@ public class FireBase : MonoBehaviour
     {
         return passwordlogin.text;
     }
-    
-    void Awake()
-    {
-        configuration = new GoogleSignInConfiguration
-        {
-            WebClientId = GoogleWebAPI,
-            RequestIdToken = true
-        };
-    }
+
+
     public void GoogleSigninClick()
     {
         GoogleSignIn.Configuration = configuration;
@@ -809,8 +798,8 @@ public class FireBase : MonoBehaviour
                 }
 
                 user = auth.CurrentUser;
-                profileName.text = "" + user.DisplayName;
-                profileEmail.text = "" + user.Email;
+                //profileName.text = "" + user.DisplayName;
+                //profileEmail.text = "" + user.Email;
                 Tbao("Thành công!", "Đăng nhập thành công");
                 OpenHome();
 
@@ -867,7 +856,7 @@ public class FireBase : MonoBehaviour
         }
         yield return null;
     }
-    
+
 
     public IEnumerator LoadProfileImageIE(string url)
     {
@@ -897,7 +886,7 @@ public class FireBase : MonoBehaviour
         Firebase.Auth.FirebaseUser user = auth.CurrentUser;
         if (user != null)
         {
-            string userId = userIdNow; 
+            string userId = userIdNow;
             User userData = new User(username, email, password);
             string json = JsonUtility.ToJson(userData);
             reference.Child("Users").Child(userId).SetRawJsonValueAsync(json)
@@ -961,11 +950,7 @@ public class FireBase : MonoBehaviour
         string ngaysinhValue = Ngaysinh.text;
         string gioitinhValue = GtinhNam.isOn ? "Nam" : "Nữ";
 
-        // Lưu thông tin bổ sung vào PlayerPrefs nhưng đây chỉ là lưu trong phiên của người chơi này 
-        PlayerPrefs.SetString("GioiTinh", gioitinhValue);
-        PlayerPrefs.SetString("QueQuan", quequanValue);
-        PlayerPrefs.SetString("NgaySinh", ngaysinhValue);
-        PlayerPrefs.Save();
+      
 
         // Kiểm tra xem người dùng hiện tại đã đăng nhập chưa
         if (user != null)
@@ -990,7 +975,7 @@ public class FireBase : MonoBehaviour
                 {
                     Debug.Log("Cập nhật thông tin thành công");
                     kiemtrabosung = true;
-                    
+
                 }
             }
         });
@@ -1006,9 +991,55 @@ public class FireBase : MonoBehaviour
         }
     }
 
+
+    // DisplayUserProfileInfo function
+    //void DisplayUserProfileInfo()
+    //{
+    //    //LoadUserData();
+    //    string userID = userIdNow;
+    //    reference.Child("Users").Child(userID).Child("ThongTinBoSung").GetValueAsync().ContinueWithOnMainThread(task =>
+    //    {
+    //        if (task.IsCompleted)
+    //        {
+    //            DataSnapshot snapshot = task.Result;
+    //            if (snapshot != null && snapshot.Exists)
+    //            {
+    //                string gioitinh = snapshot.Child("gioitinh").Value.ToString().Trim();
+    //                string ngaysinh = snapshot.Child("ngaysinh").Value.ToString().Trim();
+    //                string quequan = snapshot.Child("quequan").Value.ToString().Trim();
+    //                testNgsinh.text = snapshot.Child("ngaysinh").Value.ToString().Trim();
+    //                testGtinh.text = snapshot.Child("gioitinh").Value.ToString().Trim();
+    //                testQuequan.text = snapshot.Child("quequan").Value.ToString().Trim();
+    //                Debug.Log("KIEMTRA HIEN THI -------------------" + testNgsinh + " " + testGtinh + " " + testQuequan);
+    //                Debug.Log("KIEMTRA HIEN THI -------------------" + gioitinh + " " + ngaysinh + " " + quequan);
+    //                // Update UI elements
+
+    //                GioiTinhNow = gioitinh;
+    //                NgaySinhNow = ngaysinh;
+    //                QueQuanNow = quequan;
+    //                ProfileName2.text = profileName.text;
+    //                ProfileEmail2.text = profileEmail.text;
+    //                ProfileGtinh.text = gioitinh;
+    //                ProfileNgsinh.text = ngaysinh;
+    //                ProfileQuequan.text = quequan;
+
+    //                Debug.Log("KIEMTRA HIEN THI GA MAN HINH -------------------" + ProfileGtinh.text.Trim() + " " + ProfileNgsinh.text.Trim() + " " + ProfileQuequan.text.Trim());
+
+    //            }
+    //        }
+    //        else
+    //        {
+    //            Debug.LogError("Failed to fetch user profile info: " + task.Exception);
+    //        }
+    //    });
+    //}
+
+
+    // Tìm kiếm người dùng theo tên trên REALTIME DATABASE
+   // public GameObject timkiempanel;
     public void Opentimkiem()
     {
-       // timkiempanel.SetActive(true);
+        //timkiempanel.SetActive(true);
         profilepanel.SetActive(false);
         settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
@@ -1031,7 +1062,7 @@ public class FireBase : MonoBehaviour
         signuppanel.SetActive(false);
         forgetpasspanel.SetActive(false);
     }
-  
+
 }
 public class User
 {
