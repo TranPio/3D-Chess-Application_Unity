@@ -1,22 +1,30 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class State
 {
-    // Current state variables
-    // About chessman to be moved
+    // Các biến trạng thái hiện tại
+    // Lưu thông tin về quân cờ đã được di chuyển, bao gồm quân cờ đó, vị trí cũ và mới của quân cờ, và thông tin về việc quân cờ đã được di chuyển hay chưa
+
     public (Chessman chessman, (int x, int y) oldPosition, (int x, int y) newPosition, bool isMoved) movedChessman;
-    // Chessman to be captured
+    // Lưu thông tin về quân cờ đã bị bắt, bao gồm quân cờ đó và vị trí nơi quân cờ đó bị bắt
+
     public (Chessman chessman, (int x, int y) Position) capturedChessman;
-    // Current allowed EnPassant move Status
+    // Lưu trạng thái hiện tại của nước đi En Passant, bao gồm tọa độ của ô cờ mà nước đi này có thể áp dụng
+
     public (int x, int y) EnPassantStatus;
-    // About Promotion move : (was Promotion), Queen(promoted chessman)
+    // Lưu thông tin về nước đi Phong cấp, bao gồm thông tin về việc có phong cấp hay không và quân cờ được phong cấp là gì
+
     public (bool wasPromotion, Chessman promotedChessman) PromotionMove;
-    // About Castling move : (was Castling done, King Side or not)
+    // Lưu thông tin về nước đi Castling (Thủ hậu), bao gồm thông tin về việc có thực hiện Castling hay không và phía của Vua (Thủ hậu hay không)
+
     public (bool wasCastling, bool isKingSide) CastlingMove;
+    // Độ sâu của trạng thái trong cây tìm kiếm
     public int depth;
 
+    // Phương thức để thiết lập trạng thái
+    //Phương thức này được sử dụng để thiết lập giá trị cho các biến trạng thái của đối tượng State
     public void SetState((Chessman chessman, (int x, int y) oldPosition, (int x, int y) newPosition, bool isMoved) movedChessman,
                           (Chessman chessman, (int x, int y) Position) capturedChessman,
                           (int x, int y) EnPassantStatus,
@@ -31,4 +39,6 @@ public class State
         this.CastlingMove = CastlingMove;
         this.depth = depth;
     }
+    //các biến trạng thái (movedChessman, capturedChessman, EnPassantStatus, PromotionMove, CastlingMove, và depth) 
+    //của đối tượng State sẽ được cập nhật với các giá trị tương ứng từ các đối số truyền vào
 }
