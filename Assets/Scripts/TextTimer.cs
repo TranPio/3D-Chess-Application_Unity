@@ -7,6 +7,8 @@ using System;
 
 public class TextTimer : MonoBehaviour
 {
+    public static TextTimer Instance { set; get; }
+
     [Header("Text")]
     [SerializeField] private TextMeshProUGUI text;
     [SerializeField] private char characterSpliter = ':';

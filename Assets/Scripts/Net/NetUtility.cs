@@ -2,6 +2,7 @@ using System;
 using Unity.Collections;
 using Unity.Networking.Transport;
 using UnityEngine;
+using System.Net.Sockets;
 
 public enum OpCode
 {
@@ -14,7 +15,7 @@ public enum OpCode
 }
 public static class NetUtility 
 {
-    public static void OnData(DataStreamReader stream,NetworkConnection cnn, Server server =null)
+    public static void OnData(DataStreamReader stream, NetworkConnection cnn, Server server =null)
     {
         NetMessage msg=null;
         var opCode=(OpCode)stream.ReadByte();

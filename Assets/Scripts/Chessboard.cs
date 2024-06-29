@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net.Sockets;
+using System.Reflection;
+using System.Text;
 using Unity.Mathematics;
 using Unity.Networking.Transport;
 using Unity.VisualScripting;
@@ -16,6 +20,25 @@ public enum SpecialMove
     Castling,
     Promotion
 }
+
+//Mới thêm cho socket
+[UnityEngine.Scripting.Preserve]
+
+//public static class NetworkConnectionExtensions
+//{
+//    [ExtensionOfNativeClass]
+//    public static Socket ToSocket(this NetworkConnection connection)
+//    {
+//        var fieldInfo = typeof(NetworkConnection).GetField("m_SocketFD", BindingFlags.NonPublic | BindingFlags.Instance);
+//        if (fieldInfo != null)
+//        {
+//            var socketFD = (int)fieldInfo.GetValue(connection);
+//            return new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+//        }
+//        return null;
+//    }
+//}
+
 public class ChessBoard : MonoBehaviour
 {
     [Header("Art stuff")]
@@ -65,6 +88,10 @@ public class ChessBoard : MonoBehaviour
     private int currentTeam = -1;
     private bool localGame = true;
     private bool[] playerRematch = new bool[2];
+    ////Xu ly time
+    //private int defaultTime = 90;
+    //private int whiteTime, blackTime;
+    
 
 
     //Timer
@@ -913,6 +940,7 @@ public class ChessBoard : MonoBehaviour
 
 
     //Server
+    //Sưa lại socket
     private void OnWelcomeServer(NetMessage msg, NetworkConnection cnn)
     {
         //Client has connected, assign a team and return the message back to him
@@ -931,6 +959,12 @@ public class ChessBoard : MonoBehaviour
         }
 
     }
+    
+
+
+
+
+
 
     private void OnMakeMoveServer(NetMessage msg, NetworkConnection cnn)
     {
@@ -968,8 +1002,9 @@ public class ChessBoard : MonoBehaviour
         //Receive the connection message
         NetWelcome nw= msg as NetWelcome;
 
+        currentTeam = (currentTeam == 0) ? 1 : 0;
         //assign the team
-        currentTeam=nw.AssignedTeam;
+        currentTeam =nw.AssignedTeam;
 
         Debug.Log($"My assigned team is {nw.AssignedTeam}");
 
@@ -989,6 +1024,7 @@ public class ChessBoard : MonoBehaviour
     }
     private void OnMakeMoveClient(NetMessage msg)
     {
+        //TextTimer.Instance.StartTimer(90);
         NetMakeMove mm= msg as NetMakeMove;
        
         Debug.Log($"MM : {mm.teamId} : {mm.originalX} {mm.originalY} -> {mm.destinationX} {mm.destinationY}");
@@ -1040,6 +1076,19 @@ public class ChessBoard : MonoBehaviour
         }
     }
 
+    //xu ly time
+    //private void ResetClock()
+    //{
+    //    whiteTime = defaultTime;
+    //    blackTime=defaultTime;
+    //    UpdateTextTime();
+
+    //}
+
+    //private void UpdateTextTime()
+    //{
+        
+    //}
 
     //
     private void ShutdownRelay()

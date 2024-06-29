@@ -1,10 +1,12 @@
 using Unity.Collections;
 using Unity.Networking.Transport;
 using UnityEngine;
+using System.Net.Sockets;
+using System.IO;
 
 public class NetWelcome : NetMessage
 {
-    public int AssignedTeam { set; get; }
+    public int AssignedTeam; //{ set; get; }
     public NetWelcome()
     {
         Code = OpCode.WELCOME;
@@ -16,12 +18,14 @@ public class NetWelcome : NetMessage
         Deserialize(reader);
     }
 
-    public override void Serialize (ref DataStreamWriter writer)
+    public override void Serialize(ref DataStreamWriter writer)
     {
         writer.WriteByte((byte)Code);
         writer.WriteInt(AssignedTeam);
-        
+
     }
+
+
     public override void Deserialize(DataStreamReader reader)
     {
         //We already read the byte in the NetUtility::Ondata
