@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Net;
 using Unity.Collections;
 using Unity.Networking.Transport;
@@ -27,7 +27,7 @@ public class Client : MonoBehaviour
         driver = NetworkDriver.Create();
         NetworkEndpoint endpoint = NetworkEndpoint.Parse(ip, port);
 
-        connection = driver.Connect(endpoint);
+        connection = driver.Connect(endpoint); //LOCAL HOSTING localhost/127.0.0.1
         Debug.Log("Attemping to connect to Server on " + endpoint.Address);
 
         isActive = true;
@@ -72,6 +72,8 @@ public class Client : MonoBehaviour
             Shutdown();
         }
     }
+    // Xử lý thời gian cho client
+   
     private void UpdateMessagePump()
     {
         DataStreamReader stream;
@@ -111,6 +113,8 @@ public class Client : MonoBehaviour
     private void RegisterToEvent()
     {
         NetUtility.C_KEEP_ALIVE += OnKeepAlive;
+        NetUtility.C_TIME_MESSAGE += OnTimeMessageClient;
+
     }
 
     private void UnregisterToEvent()
@@ -122,5 +126,12 @@ public class Client : MonoBehaviour
     {
         //Send it back, to keep both side alive
         SendToServer(nm);   
+    }
+    private void OnTimeMessageClient(NetMessage msg)
+    {
+        NetTimeMessage timeMessage = msg as NetTimeMessage;
+        // Xử lý thông tin thời gian nhận được từ Server
+        float timeRemaining = timeMessage.TimeRemaining;
+        // Cập nhật giao diện người dùng hoặc logic trò chơi dựa trên thời gian nhận được
     }
 }

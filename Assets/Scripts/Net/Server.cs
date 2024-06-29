@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Unity.Collections;
 using Unity.Networking.Transport;
 using UnityEngine;
@@ -140,6 +140,40 @@ public class Server : MonoBehaviour
         driver.BeginSend(connection, out writer);
         msg.Serialize(ref writer);
         driver.EndSend(writer);
+    }
+    private ChessBoard chessBoard; // Tham chiếu đến ChessBoard
+
+    public void SetChessBoardReference(ChessBoard board)
+    {
+        chessBoard = board;
+    }
+
+    // Phương thức xử lý di chuyển từ client gửi tới server
+    private void OnMakeMoveServer(NetMessage msg, NetworkConnection cnn)
+    {
+        NetMakeMove mm = msg as NetMakeMove;
+
+        // Cập nhật thời gian còn lại từ client
+        if (mm.teamId == 0 && chessBoard != null)
+        {
+            chessBoard.whiteTimer.Reset(mm.timeRemaining);
+        }
+        else if (mm.teamId == 1 && chessBoard != null)
+        {
+            chessBoard.blackTimer.Reset(mm.timeRemaining);
+        }
+
+        // Gửi thông điệp thời gian cho client
+        SendTimeToClient(cnn, mm.timeRemaining);
+
+        // Thực hiện các kiểm tra và broadcast tin nhắn cho tất cả client
+        Broadcast(msg);
+    }
+    public void SendTimeToClient(NetworkConnection connection, float timeRemaining)
+    {
+        var timeMsg = new NetTimeMessage();
+        timeMsg.TimeRemaining = timeRemaining;
+        SendToClient(connection, timeMsg);
     }
 
     public void Broadcast(NetMessage msg)

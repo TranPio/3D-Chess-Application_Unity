@@ -1,4 +1,4 @@
-using Unity.Collections;
+﻿using Unity.Collections;
 using Unity.Networking.Transport;
 
 public class NetMakeMove : NetMessage
@@ -8,6 +8,7 @@ public class NetMakeMove : NetMessage
     public int destinationX;
     public int destinationY;
     public int teamId;
+    public float timeRemaining; //Thời gian còn lại của lượt đi
 
     public NetMakeMove() // <--making the box
     {
@@ -28,6 +29,7 @@ public class NetMakeMove : NetMessage
         writer.WriteInt(destinationX);
         writer.WriteInt(destinationY);
         writer.WriteInt(teamId);
+        writer.WriteFloat(timeRemaining); //Timer
          
     }
     public override void Deserialize(DataStreamReader reader)
@@ -37,6 +39,7 @@ public class NetMakeMove : NetMessage
         destinationX = reader.ReadInt();
         destinationY = reader.ReadInt();
         teamId = reader.ReadInt();
+        timeRemaining = reader.ReadFloat();
     }
 
     public override void ReceivedOnClient()

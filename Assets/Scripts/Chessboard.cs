@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using Unity.Networking.Transport;
@@ -6,6 +6,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
+using TMPro;
+using System.Runtime.CompilerServices;
 
 public enum SpecialMove
 {
@@ -31,7 +33,13 @@ public class ChessBoard : MonoBehaviour
     [Header("Prefabs & Materials")]
     [SerializeField] private GameObject[] prefabs;
     [SerializeField] private Material[] teamMaterials;
-
+    
+    // Cập nhật thời gian lên màn hình
+    [Header("UI Elements")]
+    [SerializeField] private TextMeshProUGUI whiteTimeText;
+    [SerializeField] private TextMeshProUGUI blackTimeText;
+    //[SerializeField] private float initialTime = 10.0f; //mỗi lượt 90 giây
+    private float initialTime = 10.0f;
 
 
 
@@ -58,6 +66,12 @@ public class ChessBoard : MonoBehaviour
     private bool localGame = true;
     private bool[] playerRematch = new bool[2];
 
+
+    //Timer
+    public Timer whiteTimer;
+    public Timer blackTimer;
+   
+
     private void Start()
     {
         isWhiteTurn = true;
@@ -68,6 +82,11 @@ public class ChessBoard : MonoBehaviour
         PositionAllPiece();
 
         RegisterEvents();
+        // Timer
+        whiteTimer = new Timer(initialTime);
+       // whiteTimer = new Timer();
+        blackTimer = new Timer(initialTime);
+        UpdateTimers();
     }
 
     private void Update()
@@ -114,7 +133,7 @@ public class ChessBoard : MonoBehaviour
                         availableMoves = currentlyDragging.GetAvailableMoves(ref chessPieces, TILE_COUNT_X, TILE_COUNT_Y);
                         // Get a list of special moves as well
                         specialMove = currentlyDragging.GetSpecialMoves(ref chessPieces, ref moveList, ref availableMoves);
-
+                        
                         PreventCheck(); // ngan chan bi chieu tuong
                         HightlightTiles();
                     }
@@ -125,6 +144,7 @@ public class ChessBoard : MonoBehaviour
             //if we are releasing the mouse button
             if(currentlyDragging!=null&& Input.GetMouseButtonUp(0))
             {
+                 
                 Vector2Int previousPosition = new Vector2Int(currentlyDragging.curentX, currentlyDragging.curentY);
 
                 if (ContainsValidMove(ref availableMoves, new Vector2Int(hitPosition.x,hitPosition.y)))
@@ -177,9 +197,83 @@ public class ChessBoard : MonoBehaviour
             if(horizontalPlan.Raycast(ray,out distance))
                 currentlyDragging.SetPosition(ray.GetPoint(distance)+Vector3.up*dragOffset);
         }
+
+        //Cập nhật thời gian cho mỗi lượt
+        UpdateTimers();
+       
+
+
+    }
+    // Hàm cập nhật Timer
+    private void UpdateTimers()
+    {
+        if (isWhiteTurn && currentTeam == 0)
+        {
+            whiteTimer.Start();
+            //blackTimer.Stop();
+            blackTimer.Reset(initialTime);
+            whiteTimer.Update();
+            //whiteTimeText.text = FormatTime(whiteTimer.GetTimeRemaining());
+            //blackTimeText.text = FormatTime(blackTimer.GetTimeRemaining());
+            whiteTimeText.text = FormatTime(whiteTimer.GetTimeRemaining());
+            blackTimeText.text = FormatTime(blackTimer.Timezero());
+
+            CheckTimeOut();
+        }
+        else if (!isWhiteTurn && currentTeam == 1)
+        {
+            blackTimer.Start();
+          //  whiteTimer.Stop();
+            whiteTimer.Reset(initialTime);
+
+            blackTimer.Update();
+            //blackTimeText.text = FormatTime(blackTimer.GetTimeRemaining());
+            //whiteTimeText.text = FormatTime(whiteTimer.GetTimeRemaining());
+            whiteTimeText.text = FormatTime(whiteTimer.Timezero());
+            blackTimeText.text = FormatTime(blackTimer.GetTimeRemaining());
+
+            CheckTimeOut();
+        }
+
+        // Kiểm tra xem có hết thời gian không
+       // CheckTimeOut();
+    }
+    private string FormatTime(float time)
+    {
+        int minutes = Mathf.FloorToInt(time / 60);
+        int seconds = Mathf.FloorToInt(time % 60);
+        return string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
+    private void CheckTimeOut()
+    {
+        if (whiteTimer.IsTimeUp())
+        {
+            // Xử lý hết thời gian cho đội trắng
+            CheckMate(1); // Đội trắng thua vì hết thời gian
+        }
+        else if (blackTimer.IsTimeUp())
+        {
+            // Xử lý hết thời gian cho đội đen
+            CheckMate(0); // Đội đen thua vì hết thời gian
+        }
+    }
+    // Cập nhật thời gian khi chuyển lượt chơi
+    private void SwitchTurn()
+    {
+        isWhiteTurn = !isWhiteTurn;
 
+        if (!isWhiteTurn)
+        {
+            whiteTimer.Stop();
+            blackTimer.Start();
+        }
+        else
+        {
+            blackTimer.Stop();
+            whiteTimer.Start();
+        }
+    }
     // Generate the board
     private void GenerateAllTiles(float tileSize, int tileCountX,int tileCountY)
     {
@@ -192,6 +286,7 @@ public class ChessBoard : MonoBehaviour
                 tiles[x, y] = GenerateSingleTile(tileSize, x, y);
     }
 
+    
     private GameObject GenerateSingleTile(float tileSize, int x, int y)
     {
         GameObject tileObject = new GameObject(string.Format("X:{0},Y:{1}", x, y));
@@ -316,6 +411,7 @@ public class ChessBoard : MonoBehaviour
     private void CheckMate(int team)
     {
         DisplayVictory(team);
+       // this.enabled = false;
     }
 
     private void DisplayVictory(int winningTeam)
@@ -393,6 +489,7 @@ public class ChessBoard : MonoBehaviour
         PositionAllPiece();
         isWhiteTurn = true;
     }
+    
     public void OnMenuButton()
     {
         NetRematch rm = new NetRematch();
@@ -701,6 +798,7 @@ public class ChessBoard : MonoBehaviour
                     CheckMate(1);
 
                 deadWhites.Add(ocp);
+                //Hiển thị quân cờ bị ăn
                 ocp.SetScale(Vector3.one * deathSize);
                 ocp.SetPosition(new Vector3(8 * tileSize, yOffset, -1 * tileSize)
                     - bounds
@@ -722,18 +820,22 @@ public class ChessBoard : MonoBehaviour
             }
 
         }
-
+        //Di chuyển quân cờ
         chessPieces[x, y] = cp;
         chessPieces[previousPosition.x, previousPosition.y] = null;
 
+        //Cập nhật vị trí cho quân cờ
         PositionSinglePiece(x, y);
 
-        isWhiteTurn =! isWhiteTurn;
+        // Đổi lượt đi
+       isWhiteTurn =! isWhiteTurn;
+       // SwitchTurn();
         // Local co the di chuyen quan co o ca 2 team
         if (localGame)
             currentTeam = (currentTeam == 0) ? 1 : 0;
         moveList.Add(new Vector2Int[] { previousPosition, new Vector2Int(x, y) });
 
+        //Tình huống di chuyển đặc biệt
         ProcessSpecialMove();
 
         if (currentlyDragging)
@@ -743,7 +845,18 @@ public class ChessBoard : MonoBehaviour
         if (CheckForCheckmate())
             CheckMate(cp.team);
 
+        //// Gửi thông tin nước đi lên server
+        //NetMakeMove mm = new NetMakeMove();
+        //mm.originalX = previousPosition.x;
+        //mm.originalY = previousPosition.y;
+        //mm.destinationX = x;
+        //mm.destinationY = y;
+        //mm.teamId = currentTeam;
+        //mm.timeRemaining = (currentTeam == 0) ? whiteTimer.GetTimeRemaining() : blackTimer.GetTimeRemaining(); // Thêm thời gian còn lại vào tin nhắn
+
+        //Client.Instance.SendToServer(mm);
         return;
+
     }
 
     private Vector2Int LookupTileIndex(GameObject hitInfo)
@@ -825,9 +938,21 @@ public class ChessBoard : MonoBehaviour
         NetMakeMove mm= msg as NetMakeMove;
 
         //This is where you could do some validation checks!
+        // Kiểm tra và cập nhật thời gian còn lại từ client
+        //if (mm.teamId == 0)
+        //{
+        //    whiteTimer.Reset(mm.timeRemaining);
+        //}
+        //else
+        //{
+        //    blackTimer.Reset(mm.timeRemaining);
+        //}
+        mm.timeRemaining = (currentTeam == 0) ? whiteTimer.GetTimeRemaining() : blackTimer.GetTimeRemaining();
 
+        // Thực hiện các kiểm tra khác và gửi lại tin nhắn cho tất cả client
         //Receive, and just broadcast it back
         Server.Instance.Broadcast(msg);
+        
 
     }
     private void OnRematchServer(NetMessage msg, NetworkConnection cnn)
@@ -857,22 +982,35 @@ public class ChessBoard : MonoBehaviour
     {
         // we iust need to change the camera
         GameUI.Instance.ChangeCamera((currentTeam == 0) ? CameraAngle.whiteTeam : CameraAngle.blackTeam);
-    //    GameUI.Instance.menuAnimator.Settrigger("InGameMenu");
+       
+        
+
+        //    GameUI.Instance.menuAnimator.Settrigger("InGameMenu");
     }
     private void OnMakeMoveClient(NetMessage msg)
     {
         NetMakeMove mm= msg as NetMakeMove;
-
+       
         Debug.Log($"MM : {mm.teamId} : {mm.originalX} {mm.originalY} -> {mm.destinationX} {mm.destinationY}");
-
-        if(mm.teamId != currentTeam)
+        
+        if (mm.teamId != currentTeam)
         {
             ChessPiece target = chessPieces[mm.originalX, mm.originalY];
 
             availableMoves = target.GetAvailableMoves(ref chessPieces, TILE_COUNT_X, TILE_COUNT_Y);
             specialMove = target.GetSpecialMoves(ref chessPieces, ref moveList, ref availableMoves);
 
+            // Cập nhật lại thời gian của đội đối thủ dựa trên thông tin từ server
+            //if (currentTeam == 0)
+            //    blackTimer.Reset(mm.timeRemaining);
+            //else
+            //    whiteTimer.Reset(mm.timeRemaining);
+            if (currentTeam == 0)
+                blackTimer.Reset(initialTime);
+            else
+                whiteTimer.Reset(initialTime);
             MoveTo(mm.originalX,mm.originalY,mm.destinationX,mm.destinationY);
+            
         }
     }
     private void OnRematchClient(NetMessage msg)
