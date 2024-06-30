@@ -23,6 +23,7 @@ using Firebase.Database;
 using Firebase.Unity;
 using UI.Dates;
 using System.IO;
+using UnityEngine.Video;
 
 
 
@@ -36,6 +37,7 @@ public class FireBase : MonoBehaviour
     //public static GameManager Instance;
     public static FireBase Instance;
     public GameObject loginpanel, signuppanel, homepanel, profilepanel, forgetpasspanel, TbaoPanel, settingLogout, ConfirmAcc;
+    public GameObject TaskBar, OpenTaskBar;
     public InputField emaillogin, passwordlogin, usernamesignup, emailsignup, passwordsignup, forgetpass;
     public Text tbao_Text, tbao_Mess, tbaomksignup, tbaomklogin, tbaoemailsignup, tbaoemaillogin, emailconfirm, emailcf2;
     public Toggle rememberMe, hienmklogin, hienmksignup;
@@ -50,6 +52,12 @@ public class FireBase : MonoBehaviour
     private string defaultUserImage = "https://img.freepik.com/premium-vector/cute-boy-thinking-cartoon-avatar_138676-2439.jpg";
     public static string userIdNow = "", usernameNow = "", emailNow = "", GioiTinhNow = "", QueQuanNow = "", NgaySinhNow = "";
     public static IsLoggedIn IsLoggedInStatus;
+
+    //Khai báo BackGround Động
+    //Trang HOME
+    public RawImage rawImageBackground; // RawImage dùng cho dynamic background
+    private VideoPlayer videoPlayer; // VideoPlayer để phát video trên RawImage
+
 
     //REALTIME DATABASE
     public string DTBURL = "https://team14-database-default-rtdb.firebaseio.com/";
@@ -105,7 +113,11 @@ public class FireBase : MonoBehaviour
             LoadProfileImage(defaultUserImage);
            
         }
-       
+        if (rawImageBackground != null)
+        {
+            videoPlayer = rawImageBackground.GetComponent<VideoPlayer>();
+        }
+
     }
 
     // Lưu trữ dữ liệu người dùng vào file
@@ -176,6 +188,8 @@ public class FireBase : MonoBehaviour
     }
     public void OpenHome()
     {
+        TaskBar.SetActive(true);
+        OpenTaskBar.SetActive(false);
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
         xacnhandkmk.SetActive(false);
@@ -187,7 +201,11 @@ public class FireBase : MonoBehaviour
         isLoginSignupPage = false;
         AudioManager audioManager = FindObjectOfType<AudioManager>();
         if (audioManager != null)
-            audioManager.PlayBackgroundMusic();
+           // audioManager.PlayBackgroundMusic();
+        if (videoPlayer != null)
+        {
+            videoPlayer.Play();
+        }
     }
     public void OpenProfile()
     {
@@ -257,7 +275,16 @@ public class FireBase : MonoBehaviour
     {
         ProfileUpdateAva.SetActive(false);
     }
-    
+    public void CloseTaskBar()
+    {
+        TaskBar.SetActive(false);
+        OpenTaskBar.SetActive(true);
+    }
+    public void OpenTaskBar1()
+    {
+        OpenTaskBar.SetActive(false);
+        TaskBar.SetActive(true);
+    }
     public void Exit()
     {
         Application.Quit();
