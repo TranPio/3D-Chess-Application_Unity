@@ -45,7 +45,7 @@ public class ChessBoard : MonoBehaviour
     [SerializeField] private TextMeshProUGUI whiteTimeText;
     [SerializeField] private TextMeshProUGUI blackTimeText;
     //[SerializeField] private float initialTime = 10.0f; //mỗi lượt 90 giây
-    private float initialTime = 10.0f;
+    private float initialTime = 90.0f;
 
 
 
@@ -77,8 +77,11 @@ public class ChessBoard : MonoBehaviour
     //Timer
     public Timer whiteTimer;
     public Timer blackTimer;
-   
 
+    //Move list
+    public GameObject moveTextPrefab; // Prefab của Text hoặc TextMeshPro
+    public Transform movesContainer; // Container để chứa các nước đi
+    private List<string> moveHistory = new List<string>(); //Danh sách lưu
     private void Start()
     {
         isWhiteTurn = true;
@@ -852,15 +855,13 @@ public class ChessBoard : MonoBehaviour
         if (CheckForCheckmate())
             CheckMate(cp.team);
 
-        //// Gửi thông tin nước đi lên server
-        //NetMakeMove mm = new NetMakeMove();
-        //mm.originalX = previousPosition.x;
-        //mm.originalY = previousPosition.y;
-        //mm.destinationX = x;
-        //mm.destinationY = y;
-        //mm.teamId = currentTeam;
-        //mm.timeRemaining = (currentTeam == 0) ? whiteTimer.GetTimeRemaining() : blackTimer.GetTimeRemaining(); // Thêm thời gian còn lại vào tin nhắn
-
+        //Move list
+        // Thêm nước đi vào lịch sử và hiển thị lên màn hình
+        string move = $"{originalX},{originalY} -> {x},{y}";
+        moveHistory.Add(move);
+        // Hiển thị lại toàn bộ lịch sử nước đi lên UI
+        UpdateMoveHistoryUI();
+       
         //Client.Instance.SendToServer(mm);
         return;
 
@@ -1083,4 +1084,55 @@ public class ChessBoard : MonoBehaviour
         localGame = obj;
     }
     #endregion
+    //Move list
+    private void AddMoveToUI(string move)
+    {
+        if (moveTextPrefab == null || movesContainer == null)
+        {
+            Debug.LogError("moveTextPrefab or movesContainer is not assigned.");
+            return;
+        }
+
+        GameObject newMoveText = Instantiate(moveTextPrefab, movesContainer);
+        Text textComponent = newMoveText.GetComponent<Text>();
+        if (textComponent != null)
+        {
+            textComponent.text = move; // Nếu sử dụng Text
+        }
+        else
+        {
+            TextMeshProUGUI tmpTextComponent = newMoveText.GetComponent<TextMeshProUGUI>();
+            if (tmpTextComponent != null)
+            {
+                tmpTextComponent.text = move; // Nếu sử dụng TextMeshPro
+            }
+        }
+
+        // Cuộn xuống cuối danh sách mỗi khi thêm nước đi mới
+        Canvas.ForceUpdateCanvases();
+        ScrollRect scrollRect = movesContainer.GetComponentInParent<ScrollRect>();
+        if (scrollRect != null)
+        {
+            scrollRect.verticalNormalizedPosition = 0f;
+        }
+        else
+        {
+            Debug.LogError("ScrollRect component not found in parent.");
+        }
+    }
+    //Cập nhật danh sách nước đi
+    private void UpdateMoveHistoryUI()
+    {
+        // Xóa tất cả các mục trong container hiện tại
+        foreach (Transform child in movesContainer)
+        {
+            Destroy(child.gameObject);
+        }
+
+        // Thêm lại tất cả các nước đi trong lịch sử vào UI
+        foreach (string move in moveHistory)
+        {
+            AddMoveToUI(move);
+        }
+    }
 }
