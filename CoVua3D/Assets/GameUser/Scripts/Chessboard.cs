@@ -857,7 +857,18 @@ public class ChessBoard : MonoBehaviour
 
         //Move list
         // Thêm nước đi vào lịch sử và hiển thị lên màn hình
-        string move = $"{originalX},{originalY} -> {x},{y}";
+        char originalFile = (char)('a' + originalX);
+        char destinationFile = (char)('a' + x);
+        string textTeam = "";
+        if (currentTeam==0)
+        {
+            textTeam = "White";
+        }
+        else if(currentTeam==1)
+        {
+            textTeam = "Black";
+        }
+        string move = $"{textTeam}: {originalFile},{originalY} -> {destinationFile},{y}";
         moveHistory.Add(move);
         // Hiển thị lại toàn bộ lịch sử nước đi lên UI
         UpdateMoveHistoryUI();
@@ -1134,5 +1145,19 @@ public class ChessBoard : MonoBehaviour
         {
             AddMoveToUI(move);
         }
+    }
+    private string ConvertMoveToChessNotation(string move)
+    {
+        int originalX = int.Parse(move[0].ToString());
+        int originalY = int.Parse(move[2].ToString());
+        int destinationX = int.Parse(move[5].ToString());
+        int destinationY = int.Parse(move[7].ToString());
+
+        char originalFile = (char)('a' + originalX);
+        char destinationFile = (char)('a' + destinationX);
+        int originalRank = originalY + 1;
+        int destinationRank = destinationY + 1;
+
+        return $"{originalFile}{originalRank} -> {destinationFile}{destinationRank}";
     }
 }
