@@ -12,6 +12,9 @@ using UnityEngine.Rendering;
 using UnityEngine.UI;
 using TMPro;
 using System.Runtime.CompilerServices;
+using Firebase.Auth;
+using Firebase.Database;
+using System.Transactions;
 
 public enum SpecialMove
 {
@@ -45,7 +48,7 @@ public class ChessBoard : MonoBehaviour
     [SerializeField] private TextMeshProUGUI whiteTimeText;
     [SerializeField] private TextMeshProUGUI blackTimeText;
     //[SerializeField] private float initialTime = 10.0f; //mỗi lượt 90 giây
-    private float initialTime = 90.0f;
+    private float initialTime = 20.0f;
 
 
 
@@ -82,6 +85,12 @@ public class ChessBoard : MonoBehaviour
     public GameObject moveTextPrefab; // Prefab của Text hoặc TextMeshPro
     public Transform movesContainer; // Container để chứa các nước đi
     private List<string> moveHistory = new List<string>(); //Danh sách lưu
+
+    //Score
+    public int myTeam;
+    public int isWinner=-1;
+    private bool isTimeOutHandled = false;
+  
     private void Start()
     {
         isWhiteTurn = true;
@@ -255,17 +264,72 @@ public class ChessBoard : MonoBehaviour
         return string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
+    //private void CheckTimeOut()
+    //{
+    //    if (whiteTimer.IsTimeUp())
+    //    {
+    //        // Xử lý hết thời gian cho đội trắng
+    //        CheckMate(1); // Đội trắng thua vì hết thời gian
+    //        if(myTeam==1)
+    //        {
+    //            isWinner= 1;
+    //        }
+    //        else if(myTeam==0)
+    //        {
+    //            isWinner = 0;
+    //        }
+    //        HandleGameResult(isWinner);
+
+    //    }
+    //    else if (blackTimer.IsTimeUp())
+    //    {
+    //        // Xử lý hết thời gian cho đội đen
+    //        CheckMate(0); // Đội đen thua vì hết thời gian
+    //        if (myTeam == 0)
+    //        {
+    //            isWinner = 1;
+    //        }
+    //        else if(myTeam==1)
+    //        {
+    //            isWinner = 0;
+    //        }
+    //        HandleGameResult(isWinner);
+    //    }
+
+    //}
     private void CheckTimeOut()
     {
+        if (isTimeOutHandled) return;
+
         if (whiteTimer.IsTimeUp())
         {
             // Xử lý hết thời gian cho đội trắng
             CheckMate(1); // Đội trắng thua vì hết thời gian
+            if (myTeam == 1)
+            {
+                isWinner = 1;
+            }
+            else if (myTeam == 0)
+            {
+                isWinner = 0;
+            }
+            HandleGameResult(isWinner);
+            isTimeOutHandled = true; // Đánh dấu là đã xử lý thời gian hết hạn
         }
         else if (blackTimer.IsTimeUp())
         {
             // Xử lý hết thời gian cho đội đen
             CheckMate(0); // Đội đen thua vì hết thời gian
+            if (myTeam == 0)
+            {
+                isWinner = 1;
+            }
+            else if (myTeam == 1)
+            {
+                isWinner = 0;
+            }
+            HandleGameResult(isWinner);
+            isTimeOutHandled = true; // Đánh dấu là đã xử lý thời gian hết hạn
         }
     }
     // Cập nhật thời gian khi chuyển lượt chơi
@@ -862,11 +926,11 @@ public class ChessBoard : MonoBehaviour
         string textTeam = "";
         if (currentTeam==0)
         {
-            textTeam = "White";
+            textTeam = "Black";
         }
         else if(currentTeam==1)
         {
-            textTeam = "Black";
+            textTeam = "White";
         }
         string move = $"{textTeam}: {originalFile},{originalY} -> {destinationFile},{y}";
         moveHistory.Add(move);
@@ -997,7 +1061,7 @@ public class ChessBoard : MonoBehaviour
         currentTeam = (currentTeam == 0) ? 1 : 0;
         //assign the team
         currentTeam =nw.AssignedTeam;
-
+        myTeam = nw.AssignedTeam;
         Debug.Log($"My assigned team is {nw.AssignedTeam}");
 
         if(localGame && currentTeam ==0)
@@ -1159,5 +1223,50 @@ public class ChessBoard : MonoBehaviour
         int destinationRank = destinationY + 1;
 
         return $"{originalFile}{originalRank} -> {destinationFile}{destinationRank}";
+    }
+
+    //Score
+    private void HandleGameResult(int isWinner)
+    {
+        // Update score or perform other actions based on game result
+        // Example: Update score on Firebase
+        if (FirebaseAuth.DefaultInstance.CurrentUser != null)
+        {
+            string userId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
+            //DatabaseReference scoreRef = FirebaseDatabase.DefaultInstance.GetReference("score" + userId);
+            DatabaseReference scoreRef = FirebaseDatabase.DefaultInstance.GetReference("score").Child(userId).Child("sc");
+            // Example: Increase score by 10 for a win
+            if (isWinner==1)
+            {
+                scoreRef.RunTransaction(transaction =>
+                {
+                    if (transaction.Value == null)
+                    {
+                        transaction.Value = 10;
+                    }
+                    else
+                    {
+                        transaction.Value = (long)transaction.Value + 10;
+                    }
+                    return TransactionResult.Success(transaction);
+                });
+            }
+            // Example: Decrease score by 5 for a loss
+            else if(isWinner==0)
+            {
+                scoreRef.RunTransaction(transaction =>
+                {
+                    if (transaction.Value == null)
+                    {
+                        transaction.Value = 0;
+                    }
+                    else
+                    {
+                        transaction.Value = (long)transaction.Value - 5;
+                    }
+                    return TransactionResult.Success(transaction);
+                });
+            }
+        }
     }
 }
