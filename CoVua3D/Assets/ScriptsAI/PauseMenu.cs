@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using UnityEngine.Video;
 
 public class PauseMenu : MonoBehaviour
 {
     public static bool GameIsPaused = false;
-
+    public GameObject Setting;
     public GameObject pauseMenuUI;
     public bool IsLoggIn;
-   
+    public GameObject backgroundPlane; // Plane để làm dynamic background
+    private VideoPlayer videoPlayer; // VideoPlayer để phát video trên Plane
     // Update is called once per frame
     void Update()
     {
@@ -25,7 +28,23 @@ public class PauseMenu : MonoBehaviour
             }
         }
     }
-
+    void Start()
+    {
+        Setting.SetActive(true);
+        if (backgroundPlane != null)
+        {
+            videoPlayer = backgroundPlane.GetComponent<VideoPlayer>();
+            if (videoPlayer != null)
+            {
+                videoPlayer.isLooping = true; // Thiết lập video lặp lại
+                videoPlayer.loopPointReached += OnVideoEnd;
+            }
+        }
+    }
+    void OnVideoEnd(VideoPlayer vp)
+    {
+        vp.Play(); // Phát lại video khi nó kết thúc
+    }
     // Resume
     public void Resume()
     {

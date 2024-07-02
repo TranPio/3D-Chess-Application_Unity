@@ -13,11 +13,12 @@ public class BoSungThongTin : MonoBehaviour
     public TMP_InputField Ngaysinh;
     public Toggle GtinhNam, GtinhNu;
     private DatabaseReference reference;
-    private bool kiemtrabosung = false;
 
     void Start()
     {
         reference = FirebaseDatabase.DefaultInstance.RootReference;
+        profileName.text = FireBase.usernameNow;
+        profileEmail.text = FireBase.emailNow;
     }
 
     public async void Bosungthongtinne()
@@ -48,7 +49,6 @@ public class BoSungThongTin : MonoBehaviour
                 // Thực hiện cập nhật lên Realtime Database
                 await reference.Child("Users").Child(userID).Child("ThongTinBoSung").SetRawJsonValueAsync(json);
                 Debug.Log("Cập nhật thông tin thành công");
-                kiemtrabosung = true;
             }
             catch (Exception e)
             {
@@ -61,10 +61,7 @@ public class BoSungThongTin : MonoBehaviour
             // Hiển thị thông báo hoặc xử lý khác khi người dùng không được phép cập nhật thông tin
         }
 
-        if (kiemtrabosung)
-        {
-            // Thongbao.Instance.ShowThongbao("Thành công!", "Cập nhật thông tin thành công");
-        }
+       
     }
 }
 

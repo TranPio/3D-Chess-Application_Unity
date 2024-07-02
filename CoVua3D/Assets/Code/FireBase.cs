@@ -486,17 +486,24 @@ public class FireBase : MonoBehaviour
     }
     public void Logout()
     {
-        auth.SignOut();
-       // user = null;
-        userIdNow = "";
-        emailNow = "";
-        usernameNow = "";
-        GioiTinhNow = "";
-        QueQuanNow = "";
-        NgaySinhNow = "";
-        OpenLogin();
-        IsLoggedInStatus.isLoggedIn = 0;
-        SaveData();
+        if (auth != null)
+        {
+            auth.SignOut();
+            user = null;
+            userIdNow = "";
+            emailNow = "";
+            usernameNow = "";
+            GioiTinhNow = "";
+            QueQuanNow = "";
+            NgaySinhNow = "";
+            OpenLogin();
+            IsLoggedInStatus.isLoggedIn = 0;
+            SaveData();
+        }
+        else
+        {
+            Debug.LogError("Firebase Auth is not initialized");
+        }
     }
 
     void CreateUser(string email, string password, string username)
@@ -695,7 +702,10 @@ public class FireBase : MonoBehaviour
 
     void OnDestroy()
     {
-        auth.StateChanged -= AuthStateChanged;
+        if (auth != null)
+        {
+            auth.StateChanged -= AuthStateChanged;
+        }
         auth = null;
     }
     void UpdateProfile(string Username)
@@ -975,12 +985,8 @@ public class FireBase : MonoBehaviour
     }
 
     //}
-    //Bổ sung thông tin người dùng
-    public InputField Quequan;
-    public TMP_InputField Ngaysinh;
-    public Toggle GtinhNam, GtinhNu;
+
     public GameObject Bosungthongtin;
-   // public Text ProfileNgsinh, ProfileQuequan, ProfileGtinh, ProfileName2, ProfileEmail2;
     public void OpenBosungthongtin()
     {
         Bosungthongtin.SetActive(true);
@@ -996,99 +1002,13 @@ public class FireBase : MonoBehaviour
     {
         Bosungthongtin.SetActive(false);
         profilepanel.SetActive(true);
+        homepanel.SetActive(true);
+        TaskBar.SetActive(true);
+        Choi.SetActive(true);
     }
     private bool kiemtrabosung = false;
-    public void Bosungthongtinne()
-    {
-        string userID = userIdNow;
-        // Lấy thông tin người dùng từ giao diện
-        string quequanValue = Quequan.text;
-        string ngaysinhValue = Ngaysinh.text;
-        string gioitinhValue = GtinhNam.isOn ? "Nam" : "Nữ";
+    
 
-      
-
-        // Kiểm tra xem người dùng hiện tại đã đăng nhập chưa
-        if (user != null)
-        {
-            // Tạo một đối tượng mới chứa thông tin cần bổ sung
-            ThongTinBoSung thongTin = new ThongTinBoSung(quequanValue, ngaysinhValue, gioitinhValue);
-
-            // Chuyển đối tượng thành dạng JSON
-            string json = JsonUtility.ToJson(thongTin);
-
-            // Thực hiện cập nhật lên Realtime Database
-            reference.Child("Users").Child(userID).Child("ThongTinBoSung").SetRawJsonValueAsync(json)
-        .ContinueWithOnMainThread(task =>
-        {
-            if (task.IsCompleted)
-            {
-                if (task.IsFaulted)
-                {
-                    Debug.Log("Cập nhật thông tin thất bại: " + task.Exception.Message);
-                }
-                else
-                {
-                    Debug.Log("Cập nhật thông tin thành công");
-                    kiemtrabosung = true;
-
-                }
-            }
-        });
-        }
-        else
-        {
-            Debug.Log("Người dùng hiện tại không được phép cập nhật thông tin");
-            // Hiển thị thông báo hoặc xử lý khác khi người dùng không được phép cập nhật thông tin
-        }
-        if (kiemtrabosung == true)
-        {
-            Tbao("Thành công!", "Cập nhật thông tin thành công");
-        }
-    }
-
-
-    // DisplayUserProfileInfo function
-    //void DisplayUserProfileInfo()
-    //{
-    //    //LoadUserData();
-    //    string userID = userIdNow;
-    //    reference.Child("Users").Child(userID).Child("ThongTinBoSung").GetValueAsync().ContinueWithOnMainThread(task =>
-    //    {
-    //        if (task.IsCompleted)
-    //        {
-    //            DataSnapshot snapshot = task.Result;
-    //            if (snapshot != null && snapshot.Exists)
-    //            {
-    //                string gioitinh = snapshot.Child("gioitinh").Value.ToString().Trim();
-    //                string ngaysinh = snapshot.Child("ngaysinh").Value.ToString().Trim();
-    //                string quequan = snapshot.Child("quequan").Value.ToString().Trim();
-    //                testNgsinh.text = snapshot.Child("ngaysinh").Value.ToString().Trim();
-    //                testGtinh.text = snapshot.Child("gioitinh").Value.ToString().Trim();
-    //                testQuequan.text = snapshot.Child("quequan").Value.ToString().Trim();
-    //                Debug.Log("KIEMTRA HIEN THI -------------------" + testNgsinh + " " + testGtinh + " " + testQuequan);
-    //                Debug.Log("KIEMTRA HIEN THI -------------------" + gioitinh + " " + ngaysinh + " " + quequan);
-    //                // Update UI elements
-
-    //                GioiTinhNow = gioitinh;
-    //                NgaySinhNow = ngaysinh;
-    //                QueQuanNow = quequan;
-    //                ProfileName2.text = profileName.text;
-    //                ProfileEmail2.text = profileEmail.text;
-    //                ProfileGtinh.text = gioitinh;
-    //                ProfileNgsinh.text = ngaysinh;
-    //                ProfileQuequan.text = quequan;
-
-    //                Debug.Log("KIEMTRA HIEN THI GA MAN HINH -------------------" + ProfileGtinh.text.Trim() + " " + ProfileNgsinh.text.Trim() + " " + ProfileQuequan.text.Trim());
-
-    //            }
-    //        }
-    //        else
-    //        {
-    //            Debug.LogError("Failed to fetch user profile info: " + task.Exception);
-    //        }
-    //    });
-    //}
 
 
     // Tìm kiếm người dùng theo tên trên REALTIME DATABASE
