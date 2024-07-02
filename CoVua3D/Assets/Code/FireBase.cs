@@ -37,7 +37,7 @@ public class FireBase : MonoBehaviour
     //public static GameManager Instance;
     public static FireBase Instance;
     public GameObject loginpanel, signuppanel, homepanel, profilepanel, forgetpasspanel, TbaoPanel, settingLogout, ConfirmAcc;
-    public GameObject TaskBar, OpenTaskBar;
+    public GameObject TaskBar, OpenTaskBar, Choi, INTRO;
     public InputField emaillogin, passwordlogin, usernamesignup, emailsignup, passwordsignup, forgetpass;
     public Text tbao_Text, tbao_Mess, tbaomksignup, tbaomklogin, tbaoemailsignup, tbaoemaillogin, emailconfirm, emailcf2;
     public Toggle rememberMe, hienmklogin, hienmksignup;
@@ -53,10 +53,7 @@ public class FireBase : MonoBehaviour
     public static string userIdNow = "", usernameNow = "", emailNow = "", GioiTinhNow = "", QueQuanNow = "", NgaySinhNow = "";
     public static IsLoggedIn IsLoggedInStatus;
 
-    //Khai báo BackGround Động
-    //Trang HOME
-    public RawImage rawImageBackground; // RawImage dùng cho dynamic background
-    private VideoPlayer videoPlayer; // VideoPlayer để phát video trên RawImage
+    
 
 
     //REALTIME DATABASE
@@ -100,24 +97,83 @@ public class FireBase : MonoBehaviour
             }
         });
         LoadData();
-        if (IsLoggedInStatus.isLoggedIn == 1)
+
+        // Ensure intro video is active and plays at start
+        Debug.Log("Initializing INTRO video");
+
+        if (rawImageBackgroundIntro != null)
         {
-            OpenHome();
+            videoPlayerIntro = rawImageBackgroundIntro.GetComponent<VideoPlayer>();
+            if (videoPlayerIntro != null)
+            {
+                videoPlayerIntro.isLooping = true;
+                videoPlayerIntro.loopPointReached += OnVideoEnd;
+                videoPlayerIntro.Play();
+                Debug.Log("Intro video is playing");
+            }
+            else
+            {
+                Debug.LogError("VideoPlayer component missing on rawImageBackgroundIntro");
+            }
         }
         else
         {
+            Debug.LogError("rawImageBackgroundIntro is null");
+        }
+
+        Debug.Log("Checking login status");
+        if (IsLoggedInStatus.isLoggedIn == 2)
+        {
+            OpenHome();
+        }
+        else if (IsLoggedInStatus.isLoggedIn == 1)
+        {
             OpenLogin();
         }
+        else
+        {
+            INTRO.SetActive(true);
+            Debug.Log("INTRO set to active");
+        }
+
         if (isSignIn)
         {
             LoadProfileImage(defaultUserImage);
-           
         }
+
         if (rawImageBackground != null)
         {
             videoPlayer = rawImageBackground.GetComponent<VideoPlayer>();
+            if (videoPlayer != null)
+            {
+                videoPlayer.isLooping = true;
+                videoPlayer.loopPointReached += OnVideoEnd;
+            }
         }
+        if (backgroundImageLogin_Signup != null)
+        {
+            videoPlayerLogin_Signup = backgroundImageLogin_Signup.GetComponent<VideoPlayer>();
+            if (videoPlayerLogin_Signup != null)
+            {
+                videoPlayerLogin_Signup.isLooping = true;
+            }
+        }
+    }
 
+
+    //Khai báo BackGround Động
+    //INTRO
+    public RawImage rawImageBackgroundIntro; // RawImage dùng cho dynamic background
+    private VideoPlayer videoPlayerIntro; // VideoPlayer để phát video trên RawImage
+    //Trang LOGIN_SIGNUP
+    public RawImage backgroundImageLogin_Signup; // RawImage để phát video cho Login, Signup 
+    private VideoPlayer videoPlayerLogin_Signup; // VideoPlayer để phát video trên RawImage cho Login, Signup
+    //Trang HOME
+    public RawImage rawImageBackground; // RawImage dùng cho dynamic background
+    private VideoPlayer videoPlayer; // VideoPlayer để phát video trên RawImage
+    void OnVideoEnd(VideoPlayer vp)
+    {
+        vp.Play(); // Phát lại video khi nó kết thúc
     }
 
     // Lưu trữ dữ liệu người dùng vào file
@@ -146,6 +202,18 @@ public class FireBase : MonoBehaviour
 
     public void OpenLogin()
     {
+        INTRO.SetActive(false);
+        if (rawImageBackgroundIntro != null)
+        {
+            videoPlayerIntro.Stop();
+        }
+           
+        IsLoggedInStatus.isLoggedIn = 1;
+        SaveData();
+        if (videoPlayerLogin_Signup != null)
+        {
+            videoPlayerLogin_Signup.Play();
+        }
         loginpanel.SetActive(true);
         signuppanel.SetActive(false);
         homepanel.SetActive(false);
@@ -156,11 +224,19 @@ public class FireBase : MonoBehaviour
         ConfirmAcc.SetActive(false);
         isLoginSignupPage = true;
         AudioManager audioManager = FindObjectOfType<AudioManager>();
-        if (audioManager != null)
-            audioManager.PlayBackgroundMusic();
+        if (audioManager != null) ;
+          //  audioManager.PlayBackgroundMusic();
     }
     public void OpenSignup()
     {
+        INTRO.SetActive(false);
+        if (rawImageBackgroundIntro != null)
+        {
+            videoPlayerIntro.Stop();
+        }
+    
+        IsLoggedInStatus.isLoggedIn = 1;
+        SaveData();
         loginpanel.SetActive(false);
         xacnhandkmk.SetActive(false);
         signuppanel.SetActive(true);
@@ -188,7 +264,12 @@ public class FireBase : MonoBehaviour
     }
     public void OpenHome()
     {
+        if (videoPlayerLogin_Signup != null)
+        {
+            videoPlayerLogin_Signup.Stop();
+        }
         TaskBar.SetActive(true);
+        Choi.SetActive(true);
         OpenTaskBar.SetActive(false);
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
@@ -275,6 +356,9 @@ public class FireBase : MonoBehaviour
     {
         ProfileUpdateAva.SetActive(false);
     }
+
+    //Đóng mở thanh TaskBar
+
     public void CloseTaskBar()
     {
         TaskBar.SetActive(false);
@@ -284,6 +368,10 @@ public class FireBase : MonoBehaviour
     {
         OpenTaskBar.SetActive(false);
         TaskBar.SetActive(true);
+    }
+    public void OpenChoi()
+    {
+        Choi.SetActive(true);
     }
     public void Exit()
     {
@@ -554,7 +642,7 @@ public class FireBase : MonoBehaviour
                     Tbao("", "Đăng nhập thành công");
 
                     OpenHome();
-                    IsLoggedInStatus.isLoggedIn = 1;
+                    IsLoggedInStatus.isLoggedIn = 2;
                     SaveData();
                     UpdateProfile(result.User.DisplayName);
 
