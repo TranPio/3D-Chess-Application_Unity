@@ -24,6 +24,7 @@ using Firebase.Unity;
 using UI.Dates;
 using System.IO;
 using UnityEngine.Video;
+using Unity.VisualScripting;
 
 
 
@@ -36,7 +37,8 @@ public class FireBase : MonoBehaviour
 {
     //public static GameManager Instance;
     public static FireBase Instance;
-    public GameObject loginpanel, signuppanel, homepanel, profilepanel, forgetpasspanel, TbaoPanel, settingLogout, ConfirmAcc;
+    public GameObject loginpanel, signuppanel, homepanel, profilepanel, forgetpasspanel, TbaoPanel, ConfirmAcc;
+    public GameObject Setting, XacnhanDMK, XacnhanDX;
     public GameObject TaskBar, OpenTaskBar, Choi;
     public InputField emaillogin, passwordlogin, usernamesignup, emailsignup, passwordsignup, forgetpass;
     public Text tbao_Text, tbao_Mess, tbaomksignup, tbaomklogin, tbaoemailsignup, tbaoemaillogin, emailconfirm, emailcf2;
@@ -188,8 +190,8 @@ public class FireBase : MonoBehaviour
         homepanel.SetActive(false);
         profilepanel.SetActive(false);
         forgetpasspanel.SetActive(false);
-        xacnhandkmk.SetActive(false);
-        settingLogout.SetActive(false);
+        Setting.SetActive(false);
+        XacnhanDX.SetActive(false);
         ConfirmAcc.SetActive(false);
         isLoginSignupPage = true;
         AudioManager audioManager = FindObjectOfType<AudioManager>();
@@ -205,12 +207,10 @@ public class FireBase : MonoBehaviour
         }
 
         loginpanel.SetActive(false);
-        xacnhandkmk.SetActive(false);
         signuppanel.SetActive(true);
         homepanel.SetActive(false);
         profilepanel.SetActive(false);
         forgetpasspanel.SetActive(false);
-        settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
         isLoginSignupPage = true;
         AudioManager audioManager = FindObjectOfType<AudioManager>();
@@ -219,15 +219,24 @@ public class FireBase : MonoBehaviour
     }
     public void OpenSetting()
     {
-        settingLogout.SetActive(true);
+        Setting.SetActive(true);
         loginpanel.SetActive(false);
-        xacnhandkmk.SetActive(false);
         signuppanel.SetActive(false);
-        homepanel.SetActive(false);
+        homepanel.SetActive(true);
         profilepanel.SetActive(false);
         forgetpasspanel.SetActive(false);
         ConfirmAcc.SetActive(false);
         isLoginSignupPage = false;
+    }
+    public void OpenXacnhanDMK()
+    {
+        XacnhanDMK.SetActive(true);
+        XacnhanDX.SetActive(false);
+    }
+    public void OpenXacnhanDX()
+    {
+        XacnhanDX.SetActive(true);
+        XacnhanDMK.SetActive(false);
     }
     public void OpenHome()
     {
@@ -240,11 +249,12 @@ public class FireBase : MonoBehaviour
         OpenTaskBar.SetActive(false);
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
-        xacnhandkmk.SetActive(false);
         homepanel.SetActive(true);
+        Setting.SetActive(false);
+        XacnhanDX.SetActive(false);
+        XacnhanDMK.SetActive(false);
         profilepanel.SetActive(false);
         forgetpasspanel.SetActive(false);
-        settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
         isLoginSignupPage = false;
         AudioManager audioManager = FindObjectOfType<AudioManager>();
@@ -261,10 +271,8 @@ public class FireBase : MonoBehaviour
         signuppanel.SetActive(false);
         signuppanel.SetActive(false);
         homepanel.SetActive(true);
-        xacnhandkmk.SetActive(false);
         profilepanel.SetActive(true);
         forgetpasspanel.SetActive(false);
-        settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
         isLoginSignupPage = false;
     }
@@ -273,10 +281,7 @@ public class FireBase : MonoBehaviour
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
         homepanel.SetActive(false);
-        xacnhandkmk.SetActive(false);
-        profilepanel.SetActive(false);
         forgetpasspanel.SetActive(true);
-        settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
         isLoginSignupPage = false;
     }
@@ -284,12 +289,10 @@ public class FireBase : MonoBehaviour
     {
         ConfirmAcc.SetActive(true);
         loginpanel.SetActive(false);
-        xacnhandkmk.SetActive(false);
         signuppanel.SetActive(false);
         homepanel.SetActive(false);
         profilepanel.SetActive(false);
         forgetpasspanel.SetActive(false);
-        settingLogout.SetActive(false);
         isLoginSignupPage = false;
         if (isEmailsent)
         {
@@ -305,10 +308,8 @@ public class FireBase : MonoBehaviour
     {
         ProfileUpdateAva.SetActive(true);
         profilepanel.SetActive(true);
-        settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
         homepanel.SetActive(false);
-        xacnhandkmk.SetActive(false);
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
         forgetpasspanel.SetActive(false);
@@ -784,41 +785,13 @@ public class FireBase : MonoBehaviour
             Debug.Log("Email đặt lại mật khẩu đã được gửi thành công.");
         });
     }
-    //Đặt lại mật khẩu bằng email
-    public GameObject xacnhandkmk, doimatkhau;
-    public void OpenXacnhandkmk()
-    {
-        xacnhandkmk.SetActive(true);
-        doimatkhau.SetActive(true);
-        profilepanel.SetActive(false);
-        settingLogout.SetActive(false);
-        ConfirmAcc.SetActive(false);
-        homepanel.SetActive(false);
-        loginpanel.SetActive(false);
-        signuppanel.SetActive(false);
-        forgetpasspanel.SetActive(false);
-    }
-    public void Opendoimatkhau()
-    {
-        xacnhandkmk.SetActive(false);
-        doimatkhau.SetActive(true);
-        profilepanel.SetActive(false);
-        settingLogout.SetActive(false);
-        ConfirmAcc.SetActive(false);
-        homepanel.SetActive(false);
-        loginpanel.SetActive(false);
-        signuppanel.SetActive(false);
-        forgetpasspanel.SetActive(false);
-    }
-    public void CloseXacnhandmk()
-    {
-        xacnhandkmk.SetActive(false);
-        doimatkhau.SetActive(true);
-    }
+
+   
+
     //public InputField dmkPasswordField;
     public void ChangePassword()
     {
-        dmkPasswordsubmit(DisplayProfile.Instance.profileEmail.text);
+        dmkPasswordsubmit(emailNow);
 
     }
     void dmkPasswordsubmit(string usermailpassword)
@@ -1012,22 +985,12 @@ public class FireBase : MonoBehaviour
     {
         Bosungthongtin.SetActive(true);
         profilepanel.SetActive(false);
-        settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
-        xacnhandkmk.SetActive(false);
         homepanel.SetActive(false);
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
         forgetpasspanel.SetActive(false);
-        //if(Bosungthongtin==true)
-        //{
-        //    ProfileName2.text = profileName.text;
-        //    ProfileEmail2.text = profileEmail.text;
-        //    Quequan.text = ProfileQuequan.text;
-        //    Ngaysinh.text = ProfileNgsinh.text;
-        //    GtinhNam.isOn = ProfileGtinh.text == "Nam";
-        //    GtinhNu.isOn = ProfileGtinh.text == "Nữ";
-        //}
+
     }
     public void CloseBosungthongtin()
     {
@@ -1134,9 +1097,7 @@ public class FireBase : MonoBehaviour
     {
         //timkiempanel.SetActive(true);
         profilepanel.SetActive(false);
-        settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
-        xacnhandkmk.SetActive(false);
         homepanel.SetActive(true);
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
@@ -1147,8 +1108,6 @@ public class FireBase : MonoBehaviour
     {
        // timkiempanel.SetActive(false);
         profilepanel.SetActive(false);
-        settingLogout.SetActive(false);
-        xacnhandkmk.SetActive(false);
         ConfirmAcc.SetActive(false);
         homepanel.SetActive(true);
         loginpanel.SetActive(false);
@@ -1170,19 +1129,7 @@ public class User
         password = _password;
     }
 }
-public class ThongTinBoSung
-{
-    public string quequan;
-    public string ngaysinh;
-    public string gioitinh;
 
-    public ThongTinBoSung(string _quequan, string _ngaysinh, string _gioitinh)
-    {
-        quequan = _quequan;
-        ngaysinh = _ngaysinh;
-        gioitinh = _gioitinh;
-    }
-}
 
 public class UnityMainThreadDispatcher : MonoBehaviour
 {
