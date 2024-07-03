@@ -313,9 +313,11 @@ public class FireBase : MonoBehaviour
         ProfileUpdateAva.SetActive(true);
         profilepanel.SetActive(true);
         ConfirmAcc.SetActive(false);
-        homepanel.SetActive(false);
+        homepanel.SetActive(true);
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
+        Choi.SetActive(true);
+        TaskBar.SetActive(true);
         forgetpasspanel.SetActive(false);
     }
     public void CloseSetAva()
@@ -493,7 +495,6 @@ public class FireBase : MonoBehaviour
         if (auth != null)
         {
             auth.SignOut();
-            user = null;
             userIdNow = "";
             emailNow = "";
             usernameNow = "";

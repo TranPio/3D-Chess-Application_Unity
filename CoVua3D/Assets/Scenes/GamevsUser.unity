@@ -555,6 +555,7 @@ GameObject:
   - component: {fileID: 146733167}
   - component: {fileID: 146733166}
   - component: {fileID: 146733169}
+  - component: {fileID: 146733170}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -721,6 +722,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 146733159}
   m_CullTransparentMesh: 1
+--- !u!114 &146733170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 146733159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e106af1db50e5cd438d1acee4d1bdc5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &223974226
 GameObject:
   m_ObjectHideFlags: 0
@@ -2319,9 +2332,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 146733164}
-        m_TargetAssemblyTypeName: GameUI, Assembly-CSharp
-        m_MethodName: OnOnlineBackButton
+      - m_Target: {fileID: 146733170}
+        m_TargetAssemblyTypeName: OpenGameNguoi, Assembly-CSharp
+        m_MethodName: CloseGameUsers
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
