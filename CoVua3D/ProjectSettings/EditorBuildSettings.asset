@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/GamevsUser.unity
     guid: 7116b70b412fd1e418ecbc9139b3c3ed
+  - enabled: 1
+    path: Assets/Scenes/HuongdanGame.unity
+    guid: 40a64bafd061e534ab6619d997deca60
   m_configObjects: {}
