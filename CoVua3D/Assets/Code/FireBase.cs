@@ -65,6 +65,10 @@ public class FireBase : MonoBehaviour
     Firebase.Auth.FirebaseAuth auth;
     Firebase.Auth.FirebaseUser user;
     bool isSignIn = false;
+
+    //Score
+    //private FirebaseAuth auth;
+    private DatabaseReference databaseReference;
     public void TogglePasswordVisibility(InputField x, Toggle y)
     {
         x.contentType = y.isOn ? InputField.ContentType.Standard : InputField.ContentType.Password;
@@ -563,6 +567,9 @@ public class FireBase : MonoBehaviour
             }
         });
         UpdateProfile(username);
+        //Score
+        // Tạo mục score cho người dùng mới
+        InitializeUserScore(username);
 
     }
     public void SigninUser(string email, string password)
@@ -614,6 +621,11 @@ public class FireBase : MonoBehaviour
                     IsLoggedInStatus.isLoggedIn = 1;
                     SaveData();
                     UpdateProfile(result.User.DisplayName);
+
+
+                    //score
+                    // Kiểm tra và tạo mục score nếu chưa tồn tại
+                    CheckAndInitializeUserScore(result.User.UserId);
 
                     DatabaseReference reference = FirebaseDatabase.DefaultInstance.GetReference("Users");
                     reference.Child(result.User.UserId).GetValueAsync().ContinueWithOnMainThread(userDataTask =>
@@ -1033,6 +1045,41 @@ public class FireBase : MonoBehaviour
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
         forgetpasspanel.SetActive(false);
+    }
+
+    //Score
+    private void InitializeUserScore(string userId)
+    {
+        databaseReference.Child("score").Child(userId).Child("sc").SetValueAsync(0).ContinueWith(task =>
+        {
+            if (task.IsCompleted)
+            {
+                Debug.Log("User score initialized successfully.");
+            }
+            else
+            {
+                Debug.LogError("Failed to initialize user score: " + task.Exception);
+            }
+        });
+    }
+
+    private void CheckAndInitializeUserScore(string userId)
+    {
+        databaseReference.Child("score").Child(userId).Child("sc").GetValueAsync().ContinueWith(task =>
+        {
+            if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+                if (!snapshot.Exists)
+                {
+                    InitializeUserScore(userId);
+                }
+            }
+            else
+            {
+                Debug.LogError("Failed to check user score: " + task.Exception);
+            }
+        });
     }
 
 }

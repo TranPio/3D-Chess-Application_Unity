@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/GameAI.unity
     guid: 01fb255b04d67964ab303b0e710e97d9
+  - enabled: 1
+    path: Assets/Scenes/GamevsUser.unity
+    guid: 7116b70b412fd1e418ecbc9139b3c3ed
   m_configObjects: {}
