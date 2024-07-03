@@ -44,9 +44,9 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 757.60004
+    x: 580.8
     y: 73.6
-    width: 340.40002
+    width: 517.2
     height: 404.6
   m_SerializedDataModeController:
     m_DataMode: 0
@@ -102,10 +102,10 @@ MonoBehaviour:
       serializedVersion: 2
       x: 0
       y: 21
-      width: 340.40002
+      width: 517.2
       height: 383.6
-    m_Scale: {x: 0.3324219, y: 0.3324219}
-    m_Translation: {x: 170.20001, y: 191.8}
+    m_Scale: {x: 0.50507814, y: 0.50507814}
+    m_Translation: {x: 258.6, y: 191.8}
     m_MarginLeft: 0
     m_MarginRight: 0
     m_MarginTop: 0
@@ -113,12 +113,12 @@ MonoBehaviour:
     m_LastShownAreaInsideMargins:
       serializedVersion: 2
       x: -512
-      y: -576.97766
+      y: -379.74323
       width: 1024
-      height: 1153.9553
+      height: 759.48645
     m_MinimalGUI: 1
-  m_defaultScale: 0.3324219
-  m_LastWindowPixelSize: {x: 425.50003, y: 505.75}
+  m_defaultScale: 0.50507814
+  m_LastWindowPixelSize: {x: 646.5, y: 505.75}
   m_ClearInEditMode: 1
   m_NoCameraWarning: 1
   m_LowResolutionForAspectRatios: 01000000000000000000
@@ -262,24 +262,24 @@ MonoBehaviour:
     m_OverlaysVisible: 1
   m_SceneHierarchy:
     m_TreeViewState:
-      scrollPos: {x: 0, y: 16.399994}
-      m_SelectedIDs: 8a710000
-      m_LastClickedID: 29066
-      m_ExpandedIDs: caf5ffff0afbffff8a71000096710000b6710000c4710000cc710000de7100003c7200004a72000090720000
+      scrollPos: {x: 0, y: 0}
+      m_SelectedIDs: fe7c0000
+      m_LastClickedID: 31998
+      m_ExpandedIDs: d4f7ffff0afbfffff07f0000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
-        m_Name: TuongVideo
-        m_OriginalName: TuongVideo
+        m_Name: 
+        m_OriginalName: 
         m_EditFieldRect:
           serializedVersion: 2
           x: 0
           y: 0
           width: 0
           height: 0
-        m_UserData: 29332
+        m_UserData: 0
         m_IsWaitingForDelay: 0
         m_IsRenaming: 0
-        m_OriginalEventType: 4
+        m_OriginalEventType: 11
         m_IsRenamingFilename: 0
         m_ClientGUIView: {fileID: 6}
       m_SearchString: 
@@ -306,7 +306,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: 264.8
     y: 0
-    width: 492.8
+    width: 316
     height: 425.6
   m_MinSize: {x: 202, y: 221}
   m_MaxSize: {x: 4002, y: 4021}
@@ -337,7 +337,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: 264.80002
     y: 73.6
-    width: 490.8
+    width: 314
     height: 404.6
   m_SerializedDataModeController:
     m_DataMode: 0
@@ -778,9 +778,9 @@ MonoBehaviour:
   m_Children: []
   m_Position:
     serializedVersion: 2
-    x: 757.6
+    x: 580.8
     y: 0
-    width: 342.40002
+    width: 519.2
     height: 425.6
   m_MinSize: {x: 202, y: 221}
   m_MaxSize: {x: 4002, y: 4021}
@@ -968,7 +968,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/BackGround/TrangHuongDan/VideoHuongDan2
+    - Assets/Scenes
     m_Globs: []
     m_OriginalText: 
     m_ImportLogFlags: 0
@@ -976,16 +976,16 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 74
   m_LastFolders:
-  - Assets/BackGround/TrangHuongDan/VideoHuongDan2
+  - Assets/Scenes
   m_LastFoldersGridSize: 74
   m_LastProjectPath: "C:\\Users\\Tr\u1EA7n Ho\xE0i Ph\xFA\\source\\repos\\Team14_NT106.O22.ANTT\\CoVua3D"
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 79}
-    m_SelectedIDs: c6750000
-    m_LastClickedID: 30150
-    m_ExpandedIDs: 0000000026730000287300002a7300002c7300002e73000030730000327300003473000036730000387300003a7300003c7300003e73000040730000427300004473000046730000487300004a7300004c7300004e73000050730000527300005675000000ca9a3b
+    scrollPos: {x: 0, y: 639.80005}
+    m_SelectedIDs: 2e760000
+    m_LastClickedID: 30254
+    m_ExpandedIDs: 00000000ae730000b0730000b2730000b4730000b6730000b8730000ba730000bc730000be730000c0730000c2730000c4730000c6730000c8730000ca730000cc730000ce730000d0730000d2730000d4730000d6730000d8730000da730000de75000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1013,7 +1013,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 0000000026730000287300002a7300002c7300002e73000030730000327300003473000036730000387300003a7300003c7300003e73000040730000427300004473000046730000487300004a7300004c7300004e730000507300005273000000ca9a3b
+    m_ExpandedIDs: 00000000ae730000b0730000b2730000b4730000b6730000b8730000ba730000bc730000be730000c0730000c2730000c4730000c6730000c8730000ca730000cc730000ce730000d0730000d2730000d4730000d6730000d8730000da730000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1038,8 +1038,8 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 8a710000
-    m_LastClickedInstanceID: 29066
+    m_SelectedInstanceIDs: fe7c0000
+    m_LastClickedInstanceID: 31998
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: c6230000986100008e6a000000000000146c0000766b01003cbc0000dea00000d8a00000e6a00000bcb60000e0a0000038a7000002a60000d29b0100e8aa010072830000
     m_RenameOverlay:
@@ -1159,8 +1159,8 @@ MonoBehaviour:
     y: 0
     width: 436
     height: 722.8
-  m_MinSize: {x: 275, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 276, y: 71}
+  m_MaxSize: {x: 4001, y: 4021}
   m_ActualView: {fileID: 18}
   m_Panes:
   - {fileID: 18}
