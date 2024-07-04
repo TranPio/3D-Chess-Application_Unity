@@ -73,7 +73,7 @@ public class Client : MonoBehaviour
         }
     }
     // Xử lý thời gian cho client
-   
+
     private void UpdateMessagePump()
     {
         DataStreamReader stream;

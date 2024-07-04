@@ -86,24 +86,8 @@ public class FireBase : MonoBehaviour
 
     void Start()
     {
-        if (hienmksignup != null && passwordsignup != null)
-        {
         hienmksignup.onValueChanged.AddListener(delegate { TogglePasswordVisibility(passwordsignup, hienmksignup); });
-        }
-        else
-        {
-            Debug.LogError("hienmksignup hoặc passwordsignup bị null");
-        }
-
-        if (hienmklogin != null && passwordlogin != null)
-        {
         hienmklogin.onValueChanged.AddListener(delegate { TogglePasswordVisibility(passwordlogin, hienmklogin); });
-        }
-        else
-        {
-            Debug.LogError("hienmklogin hoặc passwordlogin bị null");
-        }
-
         Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
         {
             FirebaseApp.DefaultInstance.Options.DatabaseUrl = new Uri(DTBURL);
@@ -123,14 +107,14 @@ public class FireBase : MonoBehaviour
         // Ensure intro video is active and plays at start
         Debug.Log("Initializing INTRO video");
 
-       
+
 
         Debug.Log("Checking login status");
         if (IsLoggedInStatus.isLoggedIn == 1)
         {
             OpenHome();
         }
-        else 
+        else
         {
             OpenLogin();
         }
@@ -162,7 +146,7 @@ public class FireBase : MonoBehaviour
 
 
     //Khai báo BackGround Động
-    
+
     //Trang LOGIN_SIGNUP
     public RawImage backgroundImageLogin_Signup; // RawImage để phát video cho Login, Signup 
     private VideoPlayer videoPlayerLogin_Signup; // VideoPlayer để phát video trên RawImage cho Login, Signup
@@ -216,7 +200,7 @@ public class FireBase : MonoBehaviour
         isLoginSignupPage = true;
         AudioManager audioManager = FindObjectOfType<AudioManager>();
         if (audioManager != null) ;
-          //  audioManager.PlayBackgroundMusic();
+        //  audioManager.PlayBackgroundMusic();
     }
     public void OpenSignup()
     {
@@ -227,25 +211,23 @@ public class FireBase : MonoBehaviour
         }
 
         loginpanel.SetActive(false);
-        xacnhandkmk.SetActive(false);
         signuppanel.SetActive(true);
         homepanel.SetActive(false);
         Choi.SetActive(false);
         TaskBar.SetActive(false);
         profilepanel.SetActive(false);
         forgetpasspanel.SetActive(false);
-        settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
         isLoginSignupPage = true;
+        Setting.SetActive(false);
         AudioManager audioManager = FindObjectOfType<AudioManager>();
         if (audioManager != null) ;
-            //audioManager.PlayBackgroundMusic();
+        //audioManager.PlayBackgroundMusic();
     }
     public void OpenSetting()
     {
         Setting.SetActive(true);
         loginpanel.SetActive(false);
-        xacnhandkmk.SetActive(false);
         signuppanel.SetActive(false);
         homepanel.SetActive(true);
         profilepanel.SetActive(false);
@@ -282,23 +264,21 @@ public class FireBase : MonoBehaviour
         OpenTaskBar.SetActive(false);
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
-        xacnhandkmk.SetActive(false);
         homepanel.SetActive(true);
         Setting.SetActive(false);
         XacnhanDX.SetActive(false);
         XacnhanDMK.SetActive(false);
         profilepanel.SetActive(false);
         forgetpasspanel.SetActive(false);
-        settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
         isLoginSignupPage = false;
         AudioManager audioManager = FindObjectOfType<AudioManager>();
         if (audioManager != null)
-           // audioManager.PlayBackgroundMusic();
-        if (videoPlayer != null)
-        {
-            videoPlayer.Play();
-        }
+            // audioManager.PlayBackgroundMusic();
+            if (videoPlayer != null)
+            {
+                videoPlayer.Play();
+            }
     }
     public void OpenProfile()
     {
@@ -308,25 +288,15 @@ public class FireBase : MonoBehaviour
         homepanel.SetActive(true);
         profilepanel.SetActive(true);
         forgetpasspanel.SetActive(false);
-        settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
         isLoginSignupPage = false;
-        //LoadUserData();
-        //profileName.text = usernameNow;
-        //profileEmail.text = emailNow;
-        //profileGioitinh.text = GioiTinhNow;
-        //profileQuequan.text = QueQuanNow;
-        //profileNgaysinh.text = NgaySinhNow;
     }
     public void Openforgetpass()
     {
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
         homepanel.SetActive(false);
-        xacnhandkmk.SetActive(false);
-        profilepanel.SetActive(false);
         forgetpasspanel.SetActive(true);
-        settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
         isLoginSignupPage = false;
     }
@@ -334,12 +304,10 @@ public class FireBase : MonoBehaviour
     {
         ConfirmAcc.SetActive(true);
         loginpanel.SetActive(false);
-        xacnhandkmk.SetActive(false);
         signuppanel.SetActive(false);
         homepanel.SetActive(false);
         profilepanel.SetActive(false);
         forgetpasspanel.SetActive(false);
-        settingLogout.SetActive(false);
         isLoginSignupPage = false;
         if (isEmailsent)
         {
@@ -355,7 +323,6 @@ public class FireBase : MonoBehaviour
     {
         ProfileUpdateAva.SetActive(true);
         profilepanel.SetActive(true);
-        settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
         homepanel.SetActive(true);
         loginpanel.SetActive(false);
@@ -614,7 +581,7 @@ public class FireBase : MonoBehaviour
         UpdateProfile(username);
         //Score
         // Tạo mục score cho người dùng mới
-        InitializeUserScore(username);
+       // InitializeUserScore(username);
 
     }
     public void SigninUser(string email, string password)
@@ -670,7 +637,7 @@ public class FireBase : MonoBehaviour
 
                     //score
                     // Kiểm tra và tạo mục score nếu chưa tồn tại
-                    CheckAndInitializeUserScore(result.User.UserId);
+                   // CheckAndInitializeUserScore(result.User.UserId);
 
                     DatabaseReference reference = FirebaseDatabase.DefaultInstance.GetReference("Users");
                     reference.Child(result.User.UserId).GetValueAsync().ContinueWithOnMainThread(userDataTask =>
@@ -718,8 +685,6 @@ public class FireBase : MonoBehaviour
             emaillogin.text = "";
         if (passwordlogin != null)
             passwordlogin.text = "";
-
-      
     }
 
     // Xóa tài khoản người dùng 
@@ -757,6 +722,8 @@ public class FireBase : MonoBehaviour
             // Xóa người dùng từ Authentication
             await user.DeleteAsync();
             Debug.Log("Người dùng đã được xóa thành công từ Authentication.");
+
+            Tbao("Thành công! ", "Tài khoản đã được xóa thành công");
 
             // Xóa dữ liệu lưu trữ cục bộ
             userIdNow = "";
@@ -855,7 +822,7 @@ public class FireBase : MonoBehaviour
             if (!isSigned)
             {
                 isSigned = true;
-               
+
                 LoadProfileImage(defaultUserImage);
             }
         }
@@ -908,7 +875,7 @@ public class FireBase : MonoBehaviour
         });
     }
 
-   
+
 
     //public InputField dmkPasswordField;
     public void ChangePassword()
@@ -1099,14 +1066,11 @@ public class FireBase : MonoBehaviour
     //}
 
     public GameObject Bosungthongtin;
-   // public Text ProfileNgsinh, ProfileQuequan, ProfileGtinh, ProfileName2, ProfileEmail2;
     public void OpenBosungthongtin()
     {
         Bosungthongtin.SetActive(true);
         profilepanel.SetActive(false);
-        settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
-        xacnhandkmk.SetActive(false);
         homepanel.SetActive(false);
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
@@ -1122,108 +1086,17 @@ public class FireBase : MonoBehaviour
         Choi.SetActive(true);
     }
     private bool kiemtrabosung = false;
-    public void Bosungthongtinne()
-    {
-        string userID = userIdNow;
-        // Lấy thông tin người dùng từ giao diện
-        string quequanValue = Quequan.text;
-        string ngaysinhValue = Ngaysinh.text;
-        string gioitinhValue = GtinhNam.isOn ? "Nam" : "Nữ";
-
-      
-
-        // Kiểm tra xem người dùng hiện tại đã đăng nhập chưa
-        if (user != null)
-        {
-            // Tạo một đối tượng mới chứa thông tin cần bổ sung
-            ThongTinBoSung thongTin = new ThongTinBoSung(quequanValue, ngaysinhValue, gioitinhValue);
-
-            // Chuyển đối tượng thành dạng JSON
-            string json = JsonUtility.ToJson(thongTin);
-
-            // Thực hiện cập nhật lên Realtime Database
-            reference.Child("Users").Child(userID).Child("ThongTinBoSung").SetRawJsonValueAsync(json)
-        .ContinueWithOnMainThread(task =>
-        {
-            if (task.IsCompleted)
-            {
-                if (task.IsFaulted)
-                {
-                    Debug.Log("Cập nhật thông tin thất bại: " + task.Exception.Message);
-                }
-                else
-                {
-                    Debug.Log("Cập nhật thông tin thành công");
-                    kiemtrabosung = true;
-
-                }
-            }
-        });
-        }
-        else
-        {
-            Debug.Log("Người dùng hiện tại không được phép cập nhật thông tin");
-            // Hiển thị thông báo hoặc xử lý khác khi người dùng không được phép cập nhật thông tin
-        }
-        if (kiemtrabosung == true)
-        {
-            Tbao("Thành công!", "Cập nhật thông tin thành công");
-        }
-    }
 
 
-    // DisplayUserProfileInfo function
-    //void DisplayUserProfileInfo()
-    //{
-    //    //LoadUserData();
-    //    string userID = userIdNow;
-    //    reference.Child("Users").Child(userID).Child("ThongTinBoSung").GetValueAsync().ContinueWithOnMainThread(task =>
-    //    {
-    //        if (task.IsCompleted)
-    //        {
-    //            DataSnapshot snapshot = task.Result;
-    //            if (snapshot != null && snapshot.Exists)
-    //            {
-    //                string gioitinh = snapshot.Child("gioitinh").Value.ToString().Trim();
-    //                string ngaysinh = snapshot.Child("ngaysinh").Value.ToString().Trim();
-    //                string quequan = snapshot.Child("quequan").Value.ToString().Trim();
-    //                testNgsinh.text = snapshot.Child("ngaysinh").Value.ToString().Trim();
-    //                testGtinh.text = snapshot.Child("gioitinh").Value.ToString().Trim();
-    //                testQuequan.text = snapshot.Child("quequan").Value.ToString().Trim();
-    //                Debug.Log("KIEMTRA HIEN THI -------------------" + testNgsinh + " " + testGtinh + " " + testQuequan);
-    //                Debug.Log("KIEMTRA HIEN THI -------------------" + gioitinh + " " + ngaysinh + " " + quequan);
-    //                // Update UI elements
-
-    //                GioiTinhNow = gioitinh;
-    //                NgaySinhNow = ngaysinh;
-    //                QueQuanNow = quequan;
-    //                ProfileName2.text = profileName.text;
-    //                ProfileEmail2.text = profileEmail.text;
-    //                ProfileGtinh.text = gioitinh;
-    //                ProfileNgsinh.text = ngaysinh;
-    //                ProfileQuequan.text = quequan;
-    
-    //                Debug.Log("KIEMTRA HIEN THI GA MAN HINH -------------------" + ProfileGtinh.text.Trim() + " " + ProfileNgsinh.text.Trim() + " " + ProfileQuequan.text.Trim());
-
-    //            }
-    //        }
-    //        else
-    //        {
-    //            Debug.LogError("Failed to fetch user profile info: " + task.Exception);
-    //        }
-    //    });
-    //}
 
 
     // Tìm kiếm người dùng theo tên trên REALTIME DATABASE
-   // public GameObject timkiempanel;
+    // public GameObject timkiempanel;
     public void Opentimkiem()
     {
         //timkiempanel.SetActive(true);
         profilepanel.SetActive(false);
-        settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
-        xacnhandkmk.SetActive(false);
         homepanel.SetActive(true);
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
@@ -1232,10 +1105,8 @@ public class FireBase : MonoBehaviour
     }
     public void Closetimkiem()
     {
-       // timkiempanel.SetActive(false);
+        // timkiempanel.SetActive(false);
         profilepanel.SetActive(false);
-        settingLogout.SetActive(false);
-        xacnhandkmk.SetActive(false);
         ConfirmAcc.SetActive(false);
         homepanel.SetActive(true);
         loginpanel.SetActive(false);
@@ -1244,39 +1115,39 @@ public class FireBase : MonoBehaviour
     }
 
     //Score
-    private void InitializeUserScore(string userId)
-    {
-        databaseReference.Child("score").Child(userId).Child("sc").SetValueAsync(0).ContinueWith(task =>
-        {
-            if (task.IsCompleted)
-            {
-                Debug.Log("User score initialized successfully.");
-            }
-            else
-            {
-                Debug.LogError("Failed to initialize user score: " + task.Exception);
-            }
-        });
-    }
+    //private void InitializeUserScore(string userId)
+    //{
+    //    databaseReference.Child("score").Child(userId).Child("sc").SetValueAsync(0).ContinueWith(task =>
+    //    {
+    //        if (task.IsCompleted)
+    //        {
+    //            Debug.Log("User score initialized successfully.");
+    //        }
+    //        else
+    //        {
+    //            Debug.LogError("Failed to initialize user score: " + task.Exception);
+    //        }
+    //    });
+    //}
 
-    private void CheckAndInitializeUserScore(string userId)
-    {
-        databaseReference.Child("score").Child(userId).Child("sc").GetValueAsync().ContinueWith(task =>
-        {
-            if (task.IsCompleted)
-            {
-                DataSnapshot snapshot = task.Result;
-                if (!snapshot.Exists)
-                {
-                    InitializeUserScore(userId);
-                }
-            }
-            else
-            {
-                Debug.LogError("Failed to check user score: " + task.Exception);
-            }
-        });
-    }
+    //private void CheckAndInitializeUserScore(string userId)
+    //{
+    //    databaseReference.Child("score").Child(userId).Child("sc").GetValueAsync().ContinueWith(task =>
+    //    {
+    //        if (task.IsCompleted)
+    //        {
+    //            DataSnapshot snapshot = task.Result;
+    //            if (!snapshot.Exists)
+    //            {
+    //                InitializeUserScore(userId);
+    //            }
+    //        }
+    //        else
+    //        {
+    //            Debug.LogError("Failed to check user score: " + task.Exception);
+    //        }
+    //    });
+    //}
 
 }
 public class User
@@ -1292,19 +1163,7 @@ public class User
         password = _password;
     }
 }
-public class ThongTinBoSung
-{
-    public string quequan;
-    public string ngaysinh;
-    public string gioitinh;
 
-    public ThongTinBoSung(string _quequan, string _ngaysinh, string _gioitinh)
-    {
-        quequan = _quequan;
-        ngaysinh = _ngaysinh;
-        gioitinh = _gioitinh;
-    }
-}
 
 public class UnityMainThreadDispatcher : MonoBehaviour
 {

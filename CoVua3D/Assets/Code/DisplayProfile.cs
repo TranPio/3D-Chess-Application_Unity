@@ -12,6 +12,7 @@ public class DisplayProfile : MonoBehaviour
     public Text profileGioitinh, profileQuequan, profileNgaysinh, profileDiem;
     public static DisplayProfile Instance;
     public string emailNow="";
+    public static string diemNow;
 
     private DatabaseReference reference;
 
@@ -122,6 +123,7 @@ public class DisplayProfile : MonoBehaviour
             {
                 string diem = userDataSnapshot.Child("sc").Value?.ToString()?.Trim() ?? "";
                 profileDiem.text = diem;
+                diemNow =diem ;
             }
             else
             {

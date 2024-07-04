@@ -5,9 +5,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public enum CameraAngle
 {
-    menu=0,
-    whiteTeam=1,
-    blackTeam=2
+    menu = 0,
+    whiteTeam = 1,
+    blackTeam = 2
 }
 public class GameUI : MonoBehaviour
 {
@@ -31,7 +31,7 @@ public class GameUI : MonoBehaviour
     //Cameras
     public void ChangeCamera(CameraAngle index)
     {
-        for (int i = 0; i < cameraAngles.Length; i++) 
+        for (int i = 0; i < cameraAngles.Length; i++)
         {
             cameraAngles[i].SetActive(false);
         }
@@ -53,7 +53,7 @@ public class GameUI : MonoBehaviour
     {
         //server.Init(8007);
         //client.Init("127.0.0.1", 8007);
-        menuAnimator.SetTrigger("OnlineMenu");
+        menuAnimator.SetTrigger("StartMenu");
     }
     public void OnOnlineHostButton()
     {
@@ -85,7 +85,11 @@ public class GameUI : MonoBehaviour
     {
         ChangeCamera(CameraAngle.menu);
         menuAnimator.SetTrigger("StartMenu");
-      
+
+    }
+    public void OnNameuser()
+    {
+
     }
 
     #region
@@ -97,7 +101,7 @@ public class GameUI : MonoBehaviour
 
     }
 
-   
+
     private void UnRegisterEvents()
     {
         NetUtility.C_START_GAME -= OnStartGameClient;

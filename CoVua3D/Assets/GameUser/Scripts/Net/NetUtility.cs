@@ -11,22 +11,22 @@ public enum OpCode
     START_GAME = 3,
     MAKE_MOVE = 4,
     REMATCH = 5,
-    TIME_MESSAGE=6
+    TIME_MESSAGE = 6
 }
-public static class NetUtility 
+public static class NetUtility
 {
-    public static void OnData(DataStreamReader stream, NetworkConnection cnn, Server server =null)
+    public static void OnData(DataStreamReader stream, NetworkConnection cnn, Server server = null)
     {
-        NetMessage msg=null;
-        var opCode=(OpCode)stream.ReadByte();
-        switch(opCode)
+        NetMessage msg = null;
+        var opCode = (OpCode)stream.ReadByte();
+        switch (opCode)
         {
             case OpCode.KEEP_ALIVE: msg = new NetKeepAlive(stream); break;
-            case OpCode.WELCOME: msg=new NetWelcome(stream); break;
-            case OpCode.START_GAME: msg =new NetStartGame(stream); break;
-            case OpCode.MAKE_MOVE: msg=new NetMakeMove(stream); break;
-            case OpCode.REMATCH:msg = new NetRematch(stream); break;
-            case OpCode.TIME_MESSAGE:msg = new NetRematch(stream); break;
+            case OpCode.WELCOME: msg = new NetWelcome(stream); break;
+            case OpCode.START_GAME: msg = new NetStartGame(stream); break;
+            case OpCode.MAKE_MOVE: msg = new NetMakeMove(stream); break;
+            case OpCode.REMATCH: msg = new NetRematch(stream); break;
+            case OpCode.TIME_MESSAGE: msg = new NetRematch(stream); break;
             default:
                 Debug.LogError("Message received had no opCode");
                 break;
