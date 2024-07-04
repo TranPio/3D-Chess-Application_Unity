@@ -48,7 +48,7 @@ public class ChessBoard : MonoBehaviour
     [SerializeField] private TextMeshProUGUI whiteTimeText;
     [SerializeField] private TextMeshProUGUI blackTimeText;
     //[SerializeField] private float initialTime = 10.0f; //mỗi lượt 90 giây
-    private float initialTime = 20.0f;
+    private float initialTime = 30.0f;
 
 
 
@@ -80,6 +80,7 @@ public class ChessBoard : MonoBehaviour
     //Timer
     public Timer whiteTimer;
     public Timer blackTimer;
+    public bool isConnect = false;
 
     //Move list
     public GameObject moveTextPrefab; // Prefab của Text hoặc TextMeshPro
@@ -105,7 +106,7 @@ public class ChessBoard : MonoBehaviour
         whiteTimer = new Timer(initialTime);
        // whiteTimer = new Timer();
         blackTimer = new Timer(initialTime);
-        UpdateTimers();
+       UpdateTimers();
     }
 
     private void Update()
@@ -218,6 +219,7 @@ public class ChessBoard : MonoBehaviour
         }
 
         //Cập nhật thời gian cho mỗi lượt
+        
         UpdateTimers();
        
 
@@ -226,7 +228,10 @@ public class ChessBoard : MonoBehaviour
     // Hàm cập nhật Timer
     private void UpdateTimers()
     {
-        if (isWhiteTurn && currentTeam == 0)
+        if (isConnect==true)
+        {
+
+        if (isWhiteTurn )
         {
             whiteTimer.Start();
             //blackTimer.Stop();
@@ -239,7 +244,8 @@ public class ChessBoard : MonoBehaviour
 
             CheckTimeOut();
         }
-        else if (!isWhiteTurn && currentTeam == 1)
+        //else if (!isWhiteTurn && currentTeam == 1)
+        else if (!isWhiteTurn)
         {
             blackTimer.Start();
           //  whiteTimer.Stop();
@@ -256,6 +262,7 @@ public class ChessBoard : MonoBehaviour
 
         // Kiểm tra xem có hết thời gian không
        // CheckTimeOut();
+        }    
     }
     private string FormatTime(float time)
     {
@@ -264,39 +271,7 @@ public class ChessBoard : MonoBehaviour
         return string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
-    //private void CheckTimeOut()
-    //{
-    //    if (whiteTimer.IsTimeUp())
-    //    {
-    //        // Xử lý hết thời gian cho đội trắng
-    //        CheckMate(1); // Đội trắng thua vì hết thời gian
-    //        if(myTeam==1)
-    //        {
-    //            isWinner= 1;
-    //        }
-    //        else if(myTeam==0)
-    //        {
-    //            isWinner = 0;
-    //        }
-    //        HandleGameResult(isWinner);
-
-    //    }
-    //    else if (blackTimer.IsTimeUp())
-    //    {
-    //        // Xử lý hết thời gian cho đội đen
-    //        CheckMate(0); // Đội đen thua vì hết thời gian
-    //        if (myTeam == 0)
-    //        {
-    //            isWinner = 1;
-    //        }
-    //        else if(myTeam==1)
-    //        {
-    //            isWinner = 0;
-    //        }
-    //        HandleGameResult(isWinner);
-    //    }
-
-    //}
+   
     private void CheckTimeOut()
     {
         if (isTimeOutHandled) return;
@@ -540,6 +515,12 @@ public class ChessBoard : MonoBehaviour
         availableMoves.Clear();
         moveList.Clear();
         playerRematch[0] = playerRematch[1] = false;
+
+        moveHistory.Clear();
+        UpdateMoveHistoryUI();
+        whiteTimer = new Timer(initialTime);
+        blackTimer = new Timer(initialTime);
+        UpdateTimers();
 
         //clean up
         for (int x = 0; x < TILE_COUNT_X; x++)
@@ -871,7 +852,19 @@ public class ChessBoard : MonoBehaviour
             if(ocp.team==0)
             {
                 if (ocp.type == ChessPieceType.King1)
+                { 
                     CheckMate(1);
+                    if (myTeam == 1)
+                    {
+                        isWinner = 1;
+                    }
+                    else if (myTeam == 0)
+                    {
+                        isWinner = 0;
+                    }
+                    HandleGameResult(isWinner);
+                    isTimeOutHandled = true;
+                } 
 
                 deadWhites.Add(ocp);
                 //Hiển thị quân cờ bị ăn
@@ -885,7 +878,20 @@ public class ChessBoard : MonoBehaviour
             else
             {
                 if (ocp.type == ChessPieceType.King1)
+                {
                     CheckMate(0);
+                    if (myTeam == 0)
+                    {
+                        isWinner = 1;
+                    }
+                    else if (myTeam == 1)
+                    {
+                        isWinner = 0;
+                    }
+                    HandleGameResult(isWinner);
+                    isTimeOutHandled = true; // Đánh dấu là đã xử lý thời gian hết hạn
+
+                }
 
                 deadBlacks.Add(ocp);
                 ocp.SetScale(Vector3.one * deathSize);
@@ -926,11 +932,11 @@ public class ChessBoard : MonoBehaviour
         char originalFile = (char)('a' + originalX);
         char destinationFile = (char)('a' + x);
         string textTeam = "";
-        if (currentTeam==0)
+        if (isWhiteTurn==true)
         {
             textTeam = "Black";
         }
-        else if(currentTeam==1)
+        else if(isWhiteTurn==false)
         {
             textTeam = "White";
         }
@@ -1014,6 +1020,8 @@ public class ChessBoard : MonoBehaviour
         if (nw.AssignedTeam == 1)
         {
             Server.Instance.Broadcast(new NetStartGame());
+            isConnect = true;
+
         }
 
     }
@@ -1069,6 +1077,10 @@ public class ChessBoard : MonoBehaviour
         if(localGame && currentTeam ==0)
         {
             Server.Instance.Broadcast(new NetStartGame());
+        }
+        if(nw.AssignedTeam==1)
+        {
+            isConnect = true;
         }
     }
     private void OnStartGameClient(NetMessage message)
