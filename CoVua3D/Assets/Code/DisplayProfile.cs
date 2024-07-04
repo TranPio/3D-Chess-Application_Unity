@@ -9,7 +9,7 @@ using TMPro;
 public class DisplayProfile : MonoBehaviour
 {
     public Text profileName, profileEmail;
-    public Text profileGioitinh, profileQuequan, profileNgaysinh;
+    public Text profileGioitinh, profileQuequan, profileNgaysinh, profileDiem;
     public static DisplayProfile Instance;
     public string emailNow="";
 
@@ -105,5 +105,36 @@ public class DisplayProfile : MonoBehaviour
             profileEmail.text = "";
         }
     }
+    public async void LoadProfileData2()
+    {
+        string userId = FireBase.userIdNow;
+        if (string.IsNullOrEmpty(userId))
+        {
+            Debug.LogError("UserID không hợp lệ.");
+            return;
+        }
 
+        try
+        {
+            DataSnapshot userDataSnapshot = await reference.Child("score").Child(userId).GetValueAsync();
+
+            if (userDataSnapshot.Exists)
+            {
+                string diem = userDataSnapshot.Child("sc").Value?.ToString()?.Trim() ?? "";
+                profileDiem.text = diem;
+            }
+            else
+            {
+                Debug.Log("Thông tin bổ sung không tồn tại.");
+                // Đặt các trường thông tin bổ sung trống
+                profileDiem.text = "";
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Lỗi khi lấy thông tin bổ sung: " + e.Message);
+            // Đặt các trường thông tin bổ sung trống
+           profileDiem.text = "";
+        }
+    }
 }

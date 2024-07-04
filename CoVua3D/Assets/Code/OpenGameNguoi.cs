@@ -18,5 +18,9 @@ public class OpenGameNguoi : MonoBehaviour
             // Unload scene
             SceneManager.UnloadSceneAsync(sceneName);
         }
+    public void CloseGameUsers()
+    {
+        SceneManager.LoadScene("CoVua3D");
+    }
 }
 

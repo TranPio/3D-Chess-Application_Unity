@@ -22,15 +22,24 @@ using System.Security.Policy;
 using Firebase.Database;
 using Firebase.Unity;
 using UI.Dates;
+using System.IO;
+using UnityEngine.Video;
+using Unity.VisualScripting;
 
 
 
-
+[System.Serializable]
+public class IsLoggedIn
+{
+    public int isLoggedIn;
+}
 public class FireBase : MonoBehaviour
 {
     //public static GameManager Instance;
     public static FireBase Instance;
-    public GameObject loginpanel, signuppanel, homepanel, profilepanel, forgetpasspanel, TbaoPanel, settingLogout, ConfirmAcc;
+    public GameObject loginpanel, signuppanel, homepanel, profilepanel, forgetpasspanel, TbaoPanel, ConfirmAcc;
+    public GameObject Setting, XacnhanDMK, XacnhanDX;
+    public GameObject TaskBar, OpenTaskBar, Choi;
     public InputField emaillogin, passwordlogin, usernamesignup, emailsignup, passwordsignup, forgetpass;
     public Text tbao_Text, tbao_Mess, tbaomksignup, tbaomklogin, tbaoemailsignup, tbaoemaillogin, emailconfirm, emailcf2;
     public Toggle rememberMe, hienmklogin, hienmksignup;
@@ -44,6 +53,10 @@ public class FireBase : MonoBehaviour
     // private string defaultUserImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrIMwQF5tiqO-E-rYuz7TT_tZ4ITeDzK3a-g&usqp=CAU";
     private string defaultUserImage = "https://img.freepik.com/premium-vector/cute-boy-thinking-cartoon-avatar_138676-2439.jpg";
     public static string userIdNow = "", usernameNow = "", emailNow = "", GioiTinhNow = "", QueQuanNow = "", NgaySinhNow = "";
+    public static IsLoggedIn IsLoggedInStatus;
+
+    
+
 
     //REALTIME DATABASE
     public string DTBURL = "https://team14-database-default-rtdb.firebaseio.com/";
@@ -75,7 +88,7 @@ public class FireBase : MonoBehaviour
     {
         if (hienmksignup != null && passwordsignup != null)
         {
-            hienmksignup.onValueChanged.AddListener(delegate { TogglePasswordVisibility(passwordsignup, hienmksignup); });
+        hienmksignup.onValueChanged.AddListener(delegate { TogglePasswordVisibility(passwordsignup, hienmksignup); });
         }
         else
         {
@@ -84,7 +97,7 @@ public class FireBase : MonoBehaviour
 
         if (hienmklogin != null && passwordlogin != null)
         {
-            hienmklogin.onValueChanged.AddListener(delegate { TogglePasswordVisibility(passwordlogin, hienmklogin); });
+        hienmklogin.onValueChanged.AddListener(delegate { TogglePasswordVisibility(passwordlogin, hienmklogin); });
         }
         else
         {
@@ -105,31 +118,114 @@ public class FireBase : MonoBehaviour
                 Debug.LogError(System.String.Format("Could not resolve all Firebase dependencies: {0}", dependencyStatus));
             }
         });
+        LoadData();
+
+        // Ensure intro video is active and plays at start
+        Debug.Log("Initializing INTRO video");
+
+       
+
+        Debug.Log("Checking login status");
+        if (IsLoggedInStatus.isLoggedIn == 1)
+        {
+            OpenHome();
+        }
+        else 
+        {
+            OpenLogin();
+        }
 
         if (isSignIn)
         {
             LoadProfileImage(defaultUserImage);
         }
+
+        if (rawImageBackground != null)
+        {
+            videoPlayer = rawImageBackground.GetComponent<VideoPlayer>();
+            if (videoPlayer != null)
+            {
+                videoPlayer.isLooping = true;
+                videoPlayer.loopPointReached += OnVideoEnd;
+            }
+        }
+        if (backgroundImageLogin_Signup != null)
+        {
+            videoPlayerLogin_Signup = backgroundImageLogin_Signup.GetComponent<VideoPlayer>();
+            if (videoPlayerLogin_Signup != null)
+            {
+                videoPlayerLogin_Signup.isLooping = true;
+                videoPlayerLogin_Signup.loopPointReached += OnVideoEnd;
+            }
+        }
     }
+
+
+    //Khai báo BackGround Động
+    
+    //Trang LOGIN_SIGNUP
+    public RawImage backgroundImageLogin_Signup; // RawImage để phát video cho Login, Signup 
+    private VideoPlayer videoPlayerLogin_Signup; // VideoPlayer để phát video trên RawImage cho Login, Signup
+    //Trang HOME
+    public RawImage rawImageBackground; // RawImage dùng cho dynamic background
+    private VideoPlayer videoPlayer; // VideoPlayer để phát video trên RawImage
+    void OnVideoEnd(VideoPlayer vp)
+    {
+        vp.Play(); // Phát lại video khi nó kết thúc
+    }
+    private bool kiemtraBG_DN = false;
+    // Lưu trữ dữ liệu người dùng vào file
+    public void LoadData()
+    {
+        string file = "Dulieu.json";
+        string filePath = Path.Combine(Application.persistentDataPath, file);
+        if (!File.Exists(filePath))
+        {
+            IsLoggedIn data = new IsLoggedIn();
+            data.isLoggedIn = 0;
+            string json = JsonUtility.ToJson(data);
+            File.WriteAllText(filePath, json);
+        }
+        IsLoggedInStatus = JsonUtility.FromJson<IsLoggedIn>(File.ReadAllText(filePath));
+    }
+    public void SaveData()
+    {
+        string file = "Dulieu.json";
+        string filePath = Path.Combine(Application.persistentDataPath, file);
+        string json = JsonUtility.ToJson(IsLoggedInStatus);
+        File.WriteAllText(filePath, json);
+    }
+
 
 
     public void OpenLogin()
     {
+
+        if (videoPlayerLogin_Signup != null && !videoPlayerLogin_Signup.isPlaying)
+        {
+            videoPlayerLogin_Signup.Play();
+        }
         loginpanel.SetActive(true);
         signuppanel.SetActive(false);
         homepanel.SetActive(false);
         profilepanel.SetActive(false);
         forgetpasspanel.SetActive(false);
-        xacnhandkmk.SetActive(false);
-        settingLogout.SetActive(false);
+        Setting.SetActive(false);
+        XacnhanDX.SetActive(false);
         ConfirmAcc.SetActive(false);
         isLoginSignupPage = true;
         AudioManager audioManager = FindObjectOfType<AudioManager>();
-        if (audioManager != null)
-            audioManager.PlayBackgroundMusic();
+        if (audioManager != null) ;
+          //  audioManager.PlayBackgroundMusic();
     }
     public void OpenSignup()
     {
+
+        if (videoPlayerLogin_Signup != null && !videoPlayerLogin_Signup.isPlaying)
+        {
+            videoPlayerLogin_Signup.Play();
+        }
+
         loginpanel.SetActive(false);
         xacnhandkmk.SetActive(false);
         signuppanel.SetActive(true);
@@ -145,22 +241,42 @@ public class FireBase : MonoBehaviour
     }
     public void OpenSetting()
     {
-        settingLogout.SetActive(true);
+        Setting.SetActive(true);
         loginpanel.SetActive(false);
         xacnhandkmk.SetActive(false);
         signuppanel.SetActive(false);
-        homepanel.SetActive(false);
+        homepanel.SetActive(true);
         profilepanel.SetActive(false);
         forgetpasspanel.SetActive(false);
         ConfirmAcc.SetActive(false);
         isLoginSignupPage = false;
     }
+    public void OpenXacnhanDMK()
+    {
+        XacnhanDMK.SetActive(true);
+        XacnhanDX.SetActive(false);
+    }
+    public void OpenXacnhanDX()
+    {
+        XacnhanDX.SetActive(true);
+        XacnhanDMK.SetActive(false);
+    }
     public void OpenHome()
     {
+        if (videoPlayerLogin_Signup != null)
+        {
+            videoPlayerLogin_Signup.Stop();
+        }
+        TaskBar.SetActive(true);
+        Choi.SetActive(true);
+        OpenTaskBar.SetActive(false);
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
         xacnhandkmk.SetActive(false);
         homepanel.SetActive(true);
+        Setting.SetActive(false);
+        XacnhanDX.SetActive(false);
+        XacnhanDMK.SetActive(false);
         profilepanel.SetActive(false);
         forgetpasspanel.SetActive(false);
         settingLogout.SetActive(false);
@@ -168,15 +284,18 @@ public class FireBase : MonoBehaviour
         isLoginSignupPage = false;
         AudioManager audioManager = FindObjectOfType<AudioManager>();
         if (audioManager != null)
-            audioManager.PlayBackgroundMusic();
+           // audioManager.PlayBackgroundMusic();
+        if (videoPlayer != null)
+        {
+            videoPlayer.Play();
+        }
     }
     public void OpenProfile()
     {
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
         signuppanel.SetActive(false);
-        homepanel.SetActive(false);
-        xacnhandkmk.SetActive(false);
+        homepanel.SetActive(true);
         profilepanel.SetActive(true);
         forgetpasspanel.SetActive(false);
         settingLogout.SetActive(false);
@@ -228,17 +347,34 @@ public class FireBase : MonoBehaviour
         profilepanel.SetActive(true);
         settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
-        homepanel.SetActive(false);
-        xacnhandkmk.SetActive(false);
+        homepanel.SetActive(true);
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
+        Choi.SetActive(true);
+        TaskBar.SetActive(true);
         forgetpasspanel.SetActive(false);
     }
     public void CloseSetAva()
     {
         ProfileUpdateAva.SetActive(false);
     }
-    
+
+    //Đóng mở thanh TaskBar
+
+    public void CloseTaskBar()
+    {
+        TaskBar.SetActive(false);
+        OpenTaskBar.SetActive(true);
+    }
+    public void OpenTaskBar1()
+    {
+        OpenTaskBar.SetActive(false);
+        TaskBar.SetActive(true);
+    }
+    public void OpenChoi()
+    {
+        Choi.SetActive(true);
+    }
     public void Exit()
     {
         Application.Quit();
@@ -390,15 +526,23 @@ public class FireBase : MonoBehaviour
     }
     public void Logout()
     {
-        auth.SignOut();
-      
-
-        // Cập nhật trạng thái đăng nhập trong PlayerPrefs
-        //PlayerPrefs.SetInt("IsLoggedIn", 0);
-        //PlayerPrefs.Save();
-
-        // Chuyển người dùng về trang đăng nhập
-        OpenLogin();
+        if (auth != null)
+        {
+            auth.SignOut();
+            userIdNow = "";
+            emailNow = "";
+            usernameNow = "";
+            GioiTinhNow = "";
+            QueQuanNow = "";
+            NgaySinhNow = "";
+            OpenLogin();
+            IsLoggedInStatus.isLoggedIn = 0;
+            SaveData();
+        }
+        else
+        {
+            Debug.LogError("Firebase Auth is not initialized");
+        }
     }
 
     void CreateUser(string email, string password, string username)
@@ -461,6 +605,7 @@ public class FireBase : MonoBehaviour
         //Score
         // Tạo mục score cho người dùng mới
         InitializeUserScore(username);
+
     }
     public void SigninUser(string email, string password)
     {
@@ -508,8 +653,12 @@ public class FireBase : MonoBehaviour
                     Tbao("", "Đăng nhập thành công");
 
                     OpenHome();
+                    IsLoggedInStatus.isLoggedIn = 1;
+                    SaveData();
                     UpdateProfile(result.User.DisplayName);
 
+
+                    //score
                     // Kiểm tra và tạo mục score nếu chưa tồn tại
                     CheckAndInitializeUserScore(result.User.UserId);
 
@@ -602,7 +751,10 @@ public class FireBase : MonoBehaviour
 
     void OnDestroy()
     {
-        auth.StateChanged -= AuthStateChanged;
+        if (auth != null)
+        {
+            auth.StateChanged -= AuthStateChanged;
+        }
         auth = null;
     }
     void UpdateProfile(string Username)
@@ -640,11 +792,7 @@ public class FireBase : MonoBehaviour
             if (!isSigned)
             {
                 isSigned = true;
-                //ProfileGtinh.text = GioiTinhNow;
-                //ProfileNgsinh.text = NgaySinhNow;
-                //ProfileQuequan.text = QueQuanNow;
-                //profileName.text =  usernameNow;
-                //profileEmail.text = user.Email;
+               
                 LoadProfileImage(defaultUserImage);
             }
         }
@@ -654,24 +802,18 @@ public class FireBase : MonoBehaviour
         var message = "";
         switch (errorCode)
         {
-            case AuthError.AccountExistsWithDifferentCredentials:
-                message = "Tài khoản không tồn tại";
-                break;
-            case AuthError.MissingPassword:
-                message = "Thiếu mật khẩu";
-                break;
-            case AuthError.WrongPassword:
-                message = "Sai mật khẩu";
-                break;
-            case AuthError.EmailAlreadyInUse:
-                message = "Email của bạn đã tồn tại";
-                break;
-            case AuthError.MissingEmail:
-                message = "Thiếu email";
-                break;
+            case Firebase.Auth.AuthError.AccountExistsWithDifferentCredentials:
+                return "Tài khoản đã tồn tại với thông tin xác thực khác.";
+            case Firebase.Auth.AuthError.MissingPassword:
+                return "Thiếu mật khẩu.";
+            case Firebase.Auth.AuthError.WeakPassword:
+                return "Mật khẩu quá yếu.";
+            case Firebase.Auth.AuthError.WrongPassword:
+                return "Sai mật khẩu.";
+            case Firebase.Auth.AuthError.InvalidEmail:
+                return "Email không hợp lệ.";
             default:
-                message = "Lỗi không hợp lệ";
-                break;
+                return "Đã xảy ra lỗi. Vui lòng thử lại.";
         }
         return message;
     }
@@ -702,41 +844,13 @@ public class FireBase : MonoBehaviour
             Debug.Log("Email đặt lại mật khẩu đã được gửi thành công.");
         });
     }
-    //Đặt lại mật khẩu bằng email
-    public GameObject xacnhandkmk, doimatkhau;
-    public void OpenXacnhandkmk()
-    {
-        xacnhandkmk.SetActive(true);
-        doimatkhau.SetActive(true);
-        profilepanel.SetActive(false);
-        settingLogout.SetActive(false);
-        ConfirmAcc.SetActive(false);
-        homepanel.SetActive(false);
-        loginpanel.SetActive(false);
-        signuppanel.SetActive(false);
-        forgetpasspanel.SetActive(false);
-    }
-    public void Opendoimatkhau()
-    {
-        xacnhandkmk.SetActive(false);
-        doimatkhau.SetActive(true);
-        profilepanel.SetActive(false);
-        settingLogout.SetActive(false);
-        ConfirmAcc.SetActive(false);
-        homepanel.SetActive(false);
-        loginpanel.SetActive(false);
-        signuppanel.SetActive(false);
-        forgetpasspanel.SetActive(false);
-    }
-    public void CloseXacnhandmk()
-    {
-        xacnhandkmk.SetActive(false);
-        doimatkhau.SetActive(true);
-    }
+
+   
+
     //public InputField dmkPasswordField;
     public void ChangePassword()
     {
-        dmkPasswordsubmit(DisplayProfile.Instance.profileEmail.text);
+        dmkPasswordsubmit(emailNow);
 
     }
     void dmkPasswordsubmit(string usermailpassword)
@@ -920,10 +1034,7 @@ public class FireBase : MonoBehaviour
     }
 
     //}
-    //Bổ sung thông tin người dùng
-    public InputField Quequan;
-    public TMP_InputField Ngaysinh;
-    public Toggle GtinhNam, GtinhNu;
+
     public GameObject Bosungthongtin;
    // public Text ProfileNgsinh, ProfileQuequan, ProfileGtinh, ProfileName2, ProfileEmail2;
     public void OpenBosungthongtin()
@@ -937,20 +1048,15 @@ public class FireBase : MonoBehaviour
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
         forgetpasspanel.SetActive(false);
-        //if(Bosungthongtin==true)
-        //{
-        //    ProfileName2.text = profileName.text;
-        //    ProfileEmail2.text = profileEmail.text;
-        //    Quequan.text = ProfileQuequan.text;
-        //    Ngaysinh.text = ProfileNgsinh.text;
-        //    GtinhNam.isOn = ProfileGtinh.text == "Nam";
-        //    GtinhNu.isOn = ProfileGtinh.text == "Nữ";
-        //}
+
     }
     public void CloseBosungthongtin()
     {
         Bosungthongtin.SetActive(false);
         profilepanel.SetActive(true);
+        homepanel.SetActive(true);
+        TaskBar.SetActive(true);
+        Choi.SetActive(true);
     }
     private bool kiemtrabosung = false;
     public void Bosungthongtinne()
@@ -1033,7 +1139,7 @@ public class FireBase : MonoBehaviour
     //                ProfileGtinh.text = gioitinh;
     //                ProfileNgsinh.text = ngaysinh;
     //                ProfileQuequan.text = quequan;
-
+    
     //                Debug.Log("KIEMTRA HIEN THI GA MAN HINH -------------------" + ProfileGtinh.text.Trim() + " " + ProfileNgsinh.text.Trim() + " " + ProfileQuequan.text.Trim());
 
     //            }

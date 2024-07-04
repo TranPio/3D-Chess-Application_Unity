@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel.Design;
 using TMPro;
 using UnityEngine;
@@ -68,16 +68,18 @@ public class GameUI : MonoBehaviour
         SetLocalGame?.Invoke(false);
 
         client.Init(addressInput.text, 8007);
+
     }
     public void OnOnlineBackButton()
     {
+        // xư ly dua ve trang chu
         menuAnimator.SetTrigger("StartMenu");
     }
     public void OnHostBackButton()
     {
         server.Shutdown();
         client.Shutdown();
-        menuAnimator.SetTrigger("OnlineMenu");
+        menuAnimator.SetTrigger("StartMenu");
     }
     public void OnLeaveFromGameMenu()
     {
