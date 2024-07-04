@@ -38,7 +38,7 @@ public class FireBase : MonoBehaviour
     //public static GameManager Instance;
     public static FireBase Instance;
     public GameObject loginpanel, signuppanel, homepanel, profilepanel, forgetpasspanel, TbaoPanel, ConfirmAcc;
-    public GameObject Setting, XacnhanDMK, XacnhanDX;
+    public GameObject Setting, XacnhanDMK, XacnhanDX, XacnhanXTK;
     public GameObject TaskBar, OpenTaskBar, Choi;
     public InputField emaillogin, passwordlogin, usernamesignup, emailsignup, passwordsignup, forgetpass;
     public Text tbao_Text, tbao_Mess, tbaomksignup, tbaomklogin, tbaoemailsignup, tbaoemaillogin, emailconfirm, emailcf2;
@@ -55,7 +55,7 @@ public class FireBase : MonoBehaviour
     public static string userIdNow = "", usernameNow = "", emailNow = "", GioiTinhNow = "", QueQuanNow = "", NgaySinhNow = "";
     public static IsLoggedIn IsLoggedInStatus;
 
-    
+
 
 
     //REALTIME DATABASE
@@ -230,14 +230,16 @@ public class FireBase : MonoBehaviour
         xacnhandkmk.SetActive(false);
         signuppanel.SetActive(true);
         homepanel.SetActive(false);
+        Choi.SetActive(false);
+        TaskBar.SetActive(false);
         profilepanel.SetActive(false);
         forgetpasspanel.SetActive(false);
         settingLogout.SetActive(false);
         ConfirmAcc.SetActive(false);
         isLoginSignupPage = true;
         AudioManager audioManager = FindObjectOfType<AudioManager>();
-        if (audioManager != null)
-            audioManager.PlayBackgroundMusic();
+        if (audioManager != null) ;
+            //audioManager.PlayBackgroundMusic();
     }
     public void OpenSetting()
     {
@@ -255,11 +257,19 @@ public class FireBase : MonoBehaviour
     {
         XacnhanDMK.SetActive(true);
         XacnhanDX.SetActive(false);
+        XacnhanXTK.SetActive(false);
     }
     public void OpenXacnhanDX()
     {
         XacnhanDX.SetActive(true);
         XacnhanDMK.SetActive(false);
+        XacnhanXTK.SetActive(false);
+    }
+    public void OpenXacnhanXTK()
+    {
+        XacnhanDMK.SetActive(false);
+        XacnhanDX.SetActive(false);
+        XacnhanXTK.SetActive(true);
     }
     public void OpenHome()
     {
@@ -712,7 +722,60 @@ public class FireBase : MonoBehaviour
       
     }
 
-    //Tải thông tin người dùng từ PlayerPrefs 
+    // Xóa tài khoản người dùng 
+    public async void Xoataikhoan()
+    {
+        if (auth == null || auth.CurrentUser == null)
+        {
+            Debug.LogError("Firebase Auth chưa được khởi tạo hoặc người dùng chưa đăng nhập");
+            return;
+        }
+
+        // Lấy người dùng hiện tại
+        Firebase.Auth.FirebaseUser user = auth.CurrentUser;
+        string userId = user.UserId;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            Debug.LogError("UserID không hợp lệ.");
+            return;
+        }
+
+        DatabaseReference userReference = FirebaseDatabase.DefaultInstance.GetReference("Users").Child(userId);
+        DatabaseReference scoreReference = FirebaseDatabase.DefaultInstance.GetReference("score").Child(userId);
+
+        try
+        {
+            // Xóa dữ liệu người dùng từ Realtime Database
+            await userReference.RemoveValueAsync();
+            Debug.Log("Dữ liệu người dùng đã được xóa thành công từ Realtime Database.");
+
+            // Xóa dữ liệu điểm số của người dùng từ Realtime Database
+            await scoreReference.RemoveValueAsync();
+            Debug.Log("Điểm số người dùng đã được xóa thành công từ Realtime Database.");
+
+            // Xóa người dùng từ Authentication
+            await user.DeleteAsync();
+            Debug.Log("Người dùng đã được xóa thành công từ Authentication.");
+
+            // Xóa dữ liệu lưu trữ cục bộ
+            userIdNow = "";
+            emailNow = "";
+            usernameNow = "";
+            GioiTinhNow = "";
+            QueQuanNow = "";
+            NgaySinhNow = "";
+            IsLoggedInStatus.isLoggedIn = 0;
+            SaveData();
+
+            // Chuyển đến trang đăng ký
+            OpenSignup();
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Lỗi khi xóa tài khoản: " + e.Message);
+        }
+    }
 
 
     public bool kiemtraXACNHAN = false;
