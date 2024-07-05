@@ -6,9 +6,10 @@ using UnityEngine;
 public class UIFriend : MonoBehaviour
 {
     [SerializeField] private TMP_Text friendNameText;
-    [SerializeField] private FriendInfo friend;
+    private FriendInfo friend;
 
     public static Action<string> OnRemoveFriend = delegate {};
+    public static Action<string> OnInviteFriend = delegate {};
 
     public void Initialize(FriendInfo friendInfo)
     {
@@ -25,9 +26,20 @@ public class UIFriend : MonoBehaviour
 
     public void RemoveFriend()
     {
-        OnRemoveFriend?.Invoke(friend.UserId);
+        if (friend != null)
+        {
+            OnRemoveFriend?.Invoke(friend.UserId);
+            Destroy(gameObject);
+        }
+        else
+        {
+            Debug.LogError("Cannot remove friend. FriendInfo is null.");
+        }
+    }  
 
-        // Sau khi gọi Invoke, bạn có thể xóa đối tượng chứa script này bằng cách sử dụng Destroy(gameObject)
-        Destroy(gameObject);
+    public void InviteFriend()
+    {
+        Debug.Log($"Clicked to invite friend {friend.UserId}");
+        OnInviteFriend?.Invoke(friend.UserId);
     }
 }

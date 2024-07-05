@@ -5,13 +5,14 @@ using PlayFab.ClientModels;
 using System;
 using System.Linq;
 using UnityEngine;
-using UnityEditor.Experimental.GraphView;
 
 public class PlayfabFriendController : MonoBehaviour
 {
     private UIFriend uiFriend;
-    public static Action<List<FriendInfo>> OnFriendListUpdate = delegate {};
+    public static Action<List<FriendInfo>> OnFriendListUpdate = delegate { };
     private List<FriendInfo> friends;
+    private bool isLoggedIn;
+
     private void Awake() 
     {
         uiFriend = GetComponent<UIFriend>();
@@ -19,6 +20,10 @@ public class PlayfabFriendController : MonoBehaviour
         PhotonConnector.GetPhotonFriends += HandleGetFriends;
         UIAddFriend.OnAddFriend += HandleAddPlayfabFriend;    
         UIFriend.OnRemoveFriend += HandleRemoveFriend;
+        PlayFabClientAPI.LoginWithCustomID(new LoginWithCustomIDRequest {
+            CustomId = SystemInfo.deviceUniqueIdentifier,
+            CreateAccount = true
+        }, OnLoginSuccess, OnFailure);
     }
 
     private void OnDestroy() 
@@ -28,27 +33,50 @@ public class PlayfabFriendController : MonoBehaviour
         UIFriend.OnRemoveFriend -= HandleRemoveFriend;
     }
 
+    private void OnLoginSuccess(LoginResult result)
+    {
+        Debug.Log("Successfully logged in to PlayFab.");
+        isLoggedIn = true;
+    }
+
     private void HandleAddPlayfabFriend(string name)
     {
-        var request = new AddFriendRequest{ FriendTitleDisplayName = name};
+        if (!isLoggedIn)
+        {
+            Debug.LogError("Cannot add friend. User is not logged in.");
+            return;
+        }
+        var request = new AddFriendRequest { FriendTitleDisplayName = name };
         PlayFabClientAPI.AddFriend(request, OnFriendAddedSuccess, OnFailure);
     }
-     private void HandleRemoveFriend(string name)
+
+    private void HandleRemoveFriend(string name)
     {
+        if (!isLoggedIn)
+        {
+            Debug.LogError("Cannot remove friend. User is not logged in.");
+            return;
+        }
         FriendInfo friendToRemove = friends.FirstOrDefault(f => f.TitleDisplayName == name);
-    if (friendToRemove != null)
-    {
-        var request = new RemoveFriendRequest { FriendPlayFabId = friendToRemove.FriendPlayFabId };
-        PlayFabClientAPI.RemoveFriend(request, OnFrienRemoveSuccess, OnFailure);
+        if (friendToRemove != null)
+        {
+            var request = new RemoveFriendRequest { FriendPlayFabId = friendToRemove.FriendPlayFabId };
+            PlayFabClientAPI.RemoveFriend(request, OnFriendRemoveSuccess, OnFailure);
+        }
+        else
+        {
+            Debug.LogWarning($"Friend '{name}' not found in the friends list.");
+            // Optionally, you can inform the user or handle this case accordingly.
+        }
     }
-    else
-    {
-        Debug.LogWarning($"Friend '{name}' not found in the friends list.");
-        // Optionally, you can inform the user or handle this case accordingly.
-    }
-    }
+
     private void HandleGetFriends()
     {
+        if (!isLoggedIn)
+        {
+            Debug.LogError("Cannot get friends. User is not logged in.");
+            return;
+        }
         GetPlayfabFriends();
     }
 
@@ -57,8 +85,14 @@ public class PlayfabFriendController : MonoBehaviour
         var request = new GetFriendsListRequest { XboxToken = null, IncludeFacebookFriends = false, IncludeSteamFriends = false };
         PlayFabClientAPI.GetFriendsList(request, OnFriendsListSuccess, OnFailure);
     }
-   public void GetSteamFriends(List<string> steamIds)
+
+    public void GetSteamFriends(List<string> steamIds)
     {
+        if (!isLoggedIn)
+        {
+            Debug.LogError("Cannot get Steam friends. User is not logged in.");
+            return;
+        }
         var request = new GetPlayFabIDsFromSteamIDsRequest { SteamStringIDs = steamIds };
         PlayFabClientAPI.GetPlayFabIDsFromSteamIDs(request, OnSteamFriendsReceived, OnFailure);
     }
@@ -74,6 +108,11 @@ public class PlayfabFriendController : MonoBehaviour
 
     private void AddFriendByPlayFabID(string playFabId)
     {
+        if (!isLoggedIn)
+        {
+            Debug.LogError("Cannot add friend by PlayFab ID. User is not logged in.");
+            return;
+        }
         var request = new AddFriendRequest { FriendPlayFabId = playFabId };
         PlayFabClientAPI.AddFriend(request, OnFriendAddedSuccess, OnFailure);
     }
@@ -83,19 +122,21 @@ public class PlayfabFriendController : MonoBehaviour
         Debug.Log("Friend added successfully.");
         GetPlayfabFriends();
     }
-     private void OnFriendsListSuccess(GetFriendsListResult result)
+
+    private void OnFriendsListSuccess(GetFriendsListResult result)
     {
         Debug.Log("Successfully retrieved friends list.");
-        friends=result.Friends;
+        friends = result.Friends;
         OnFriendListUpdate?.Invoke(result.Friends);
     }
-    private void OnFrienRemoveSuccess(RemoveFriendResult result)
+
+    private void OnFriendRemoveSuccess(RemoveFriendResult result)
     {
         GetPlayfabFriends();
     }
+
     private void OnFailure(PlayFabError error)
     {
-        Debug.Log($"Playfab Friend Error occured {error.GenerateErrorReport()}");
+        Debug.Log($"PlayFab Friend Error occurred: {error.GenerateErrorReport()}");
     }
-
 }

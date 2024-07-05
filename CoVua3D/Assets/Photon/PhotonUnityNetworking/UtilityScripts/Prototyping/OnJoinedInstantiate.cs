@@ -129,22 +129,22 @@ namespace Photon.Pun.UtilityScripts
 			GameObject validated = null;
 
 			if (unvalidated != null)
-			{
+{
+    if (PrefabUtility.IsPartOfPrefabAsset(unvalidated))
+        return unvalidated;
 
-				if (PrefabUtility.IsPartOfPrefabAsset(unvalidated))
-					return unvalidated;
+    var prefabStatus = PrefabUtility.GetPrefabInstanceStatus(unvalidated);
+    var isValidPrefab = prefabStatus == PrefabInstanceStatus.Connected;
 
-				var prefabStatus = PrefabUtility.GetPrefabInstanceStatus(unvalidated);
-				var isValidPrefab = prefabStatus == PrefabInstanceStatus.Connected || prefabStatus == PrefabInstanceStatus.Disconnected;
+    if (isValidPrefab)
+        validated = PrefabUtility.GetCorrespondingObjectFromSource(unvalidated) as GameObject;
+    else
+        return null;
 
-				if (isValidPrefab)
-					validated = PrefabUtility.GetCorrespondingObjectFromSource(unvalidated) as GameObject;
-				else
-					return null;
+    if (!PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(validated).Contains("/Resources"))
+        Debug.LogWarning("Player Prefab needs to be a Prefab in a Resource folder.");
+}
 
-				if (!PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(validated).Contains("/Resources"))
-					Debug.LogWarning("Player Prefab needs to be a Prefab in a Resource folder.");
-			}
 #else
             GameObject validated = unvalidated;
 
