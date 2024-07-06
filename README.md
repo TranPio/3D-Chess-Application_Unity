@@ -2,11 +2,11 @@
 ### GVHD: TS. Trần Hồng Nghi
 ###      TÊN ĐỒ ÁN: ỨNG DỤNG CỜ VUA 3D
 #### 1.Thành viên của nhóm
-|  Tên thành viên  |   MSSV   |Code| Đồ án |
-|------------------|----------|----|-------|
-|Hồ Thị Huỳnh My   | 22520897 |----|-------|
-|Nguyễn Thành Nhân | 22521003 |----|-------|
-|Trần Hoài Phú     | 22521106 |----|-------|
+|  Tên thành viên  |   MSSV   |Khối lượng thực hiện|
+|------------------|----------|--------------------|
+|Hồ Thị Huỳnh My   | 22520897 |                    |
+|Nguyễn Thành Nhân | 22521003 |                    |
+|Trần Hoài Phú     | 22521106 |                    |
 
 #### 2. Mô tả đồ án
 **1.	Giới thiệu**

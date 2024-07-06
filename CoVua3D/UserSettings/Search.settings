@@ -11,6 +11,9 @@ scopes = {
 	"last_search.310DEAF3" = "h:#email="
 	"OpenInspectorPreview.310DEAF3" = "0"
 	"currentGroup.310DEAF3" = "scene"
+	"last_search.310DEAF1" = "photonse"
+	"OpenInspectorPreview.310DEAF1" = "0"
+	"currentGroup.310DEAF1" = "all"
 }
 providers = {
 	adb = {
@@ -62,6 +65,8 @@ providers = {
 objectSelectors = {
 }
 recentSearches = [
+	"p"
+	"P"
 ]
 searchItemFavorites = [
 ]

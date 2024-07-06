@@ -38,7 +38,7 @@ public class FireBase : MonoBehaviour
     //public static GameManager Instance;
     public static FireBase Instance;
     public GameObject loginpanel, signuppanel, homepanel, profilepanel, forgetpasspanel, TbaoPanel, ConfirmAcc;
-    public GameObject Setting, XacnhanDMK, XacnhanDX, XacnhanXTK;
+    public GameObject Setting, XacnhanDMK, XacnhanDX, XacnhanXTK, OpenBXH, OpenBanbe, KetBan, ChatRoom, TopRank;
     public GameObject TaskBar, OpenTaskBar, Choi;
     public InputField emaillogin, passwordlogin, usernamesignup, emailsignup, passwordsignup, forgetpass;
     public Text tbao_Text, tbao_Mess, tbaomksignup, tbaomklogin, tbaoemailsignup, tbaoemaillogin, emailconfirm, emailcf2;
@@ -52,7 +52,7 @@ public class FireBase : MonoBehaviour
     public static bool isLoginSignupPage = false;
     // private string defaultUserImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrIMwQF5tiqO-E-rYuz7TT_tZ4ITeDzK3a-g&usqp=CAU";
     private string defaultUserImage = "https://img.freepik.com/premium-vector/cute-boy-thinking-cartoon-avatar_138676-2439.jpg";
-    public static string userIdNow = "", usernameNow = "", emailNow = "", GioiTinhNow = "", QueQuanNow = "", NgaySinhNow = "";
+    public static string userIdNow = "", usernameNow = "", emailNow = "", GioiTinhNow = "", QueQuanNow = "", NgaySinhNow = "", userPassNow;
     public static IsLoggedIn IsLoggedInStatus;
 
 
@@ -234,6 +234,8 @@ public class FireBase : MonoBehaviour
         forgetpasspanel.SetActive(false);
         ConfirmAcc.SetActive(false);
         isLoginSignupPage = false;
+        OpenBXH.SetActive(false);
+        OpenBanbe.SetActive(false);
     }
     public void OpenXacnhanDMK()
     {
@@ -290,6 +292,8 @@ public class FireBase : MonoBehaviour
         forgetpasspanel.SetActive(false);
         ConfirmAcc.SetActive(false);
         isLoginSignupPage = false;
+        OpenBXH.SetActive(false);
+        OpenBanbe.SetActive(false);
     }
     public void Openforgetpass()
     {
@@ -330,6 +334,7 @@ public class FireBase : MonoBehaviour
         Choi.SetActive(true);
         TaskBar.SetActive(true);
         forgetpasspanel.SetActive(false);
+        OpenBXH.SetActive(false);
     }
     public void CloseSetAva()
     {
@@ -351,10 +356,63 @@ public class FireBase : MonoBehaviour
     public void OpenChoi()
     {
         Choi.SetActive(true);
+        OpenBanbe.SetActive(false);
+        OpenBXH.SetActive(false);
     }
     public void Exit()
     {
         Application.Quit();
+    }
+    public void OpenBXH1()
+    {
+        OpenBXH.SetActive(true);
+        homepanel.SetActive(true);
+        profilepanel.SetActive(false);
+        ConfirmAcc.SetActive(false);
+        Choi.SetActive(false);
+        TaskBar.SetActive(true);
+        OpenBanbe.SetActive(false);
+
+    }
+    public void OpenBanbe1()
+    {
+        OpenBanbe.SetActive(true);
+        profilepanel.SetActive(false);
+        OpenBXH.SetActive(false);
+        Setting.SetActive(false);   
+    }
+    public void OpenFriendList()
+    {
+        KetBan.SetActive(true);
+        OpenBanbe.SetActive(false);
+    }
+    public void CloseFriendList()
+    {
+        KetBan.SetActive(false);
+        OpenBanbe.SetActive(true);
+    }
+    public void OpenChatRoom()
+    {
+        ChatRoom.SetActive(true);
+        TaskBar.SetActive(false);
+        OpenBanbe.SetActive(false);
+    }
+    public void CloseChatRoom()
+    {
+        ChatRoom.SetActive(false);
+        TaskBar.SetActive(true);
+        OpenBanbe.SetActive(true);
+    }
+    public void OpenTopRank()
+    {
+        TopRank.SetActive(true);
+        TaskBar.SetActive(true);
+
+    }
+    public void CloseTopRank()
+    {
+        TopRank.SetActive(false);
+   
     }
     private bool IsValidPassword(string password)
     {
@@ -442,7 +500,7 @@ public class FireBase : MonoBehaviour
                 tbaomklogin.text = "Mật khẩu phải chứa ít nhất 8 ký tự, 1 chữ hoa, 1 chữ thường và 1 số";
             return;
         }
-
+        userPassNow = passwordlogin.text;
         SigninUser(emaillogin.text, passwordlogin.text);
     }
 
@@ -582,6 +640,7 @@ public class FireBase : MonoBehaviour
         //Score
         // Tạo mục score cho người dùng mới
        // InitializeUserScore(username);
+       
 
     }
     public void SigninUser(string email, string password)
@@ -1071,16 +1130,17 @@ public class FireBase : MonoBehaviour
         Bosungthongtin.SetActive(true);
         profilepanel.SetActive(false);
         ConfirmAcc.SetActive(false);
-        homepanel.SetActive(false);
+        homepanel.SetActive(true);
         loginpanel.SetActive(false);
         signuppanel.SetActive(false);
         forgetpasspanel.SetActive(false);
+        TaskBar.SetActive(true);
 
     }
     public void CloseBosungthongtin()
     {
         Bosungthongtin.SetActive(false);
-        profilepanel.SetActive(true);
+        profilepanel.SetActive(false);
         homepanel.SetActive(true);
         TaskBar.SetActive(true);
         Choi.SetActive(true);

@@ -20,7 +20,11 @@ public class BoSungThongTin : MonoBehaviour
         profileName.text = FireBase.usernameNow;
         profileEmail.text = FireBase.emailNow;
     }
-
+    public void GetTen_Email()
+    {
+        profileName.text = FireBase.usernameNow;
+        profileEmail.text = FireBase.emailNow;
+    }
     public async void Bosungthongtinne()
     {
         string userID = FireBase.userIdNow;

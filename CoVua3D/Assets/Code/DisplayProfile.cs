@@ -61,9 +61,9 @@ public class DisplayProfile : MonoBehaviour
         {
             Debug.LogError("Lỗi khi lấy thông tin bổ sung: " + e.Message);
             // Đặt các trường thông tin bổ sung trống
-            profileGioitinh.text = "";
-            profileNgaysinh.text = "";
-            profileQuequan.text = "";
+            //profileGioitinh.text = "";
+            //profileNgaysinh.text = "";
+            //profileQuequan.text = "";
         }
     }
 
@@ -102,9 +102,18 @@ public class DisplayProfile : MonoBehaviour
         {
             Debug.LogError("Lỗi khi lấy thông tin người dùng: " + e.Message);
             // Đặt các trường thông tin người dùng trống
-            profileName.text = "";
-            profileEmail.text = "";
+           // profileName.text = "";
+            //profileEmail.text = "";
         }
+    }
+    public void Tat()
+    {
+        profileDiem.text = "";
+        profileEmail.text = "";
+        profileGioitinh.text = "";
+        profileName.text = "";
+        profileNgaysinh.text = "";
+        profileQuequan.text = "";
     }
     public async void LoadProfileData2()
     {

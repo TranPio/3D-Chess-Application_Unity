@@ -15,6 +15,7 @@ using System.Runtime.CompilerServices;
 using Firebase.Auth;
 using Firebase.Database;
 using System.Transactions;
+using UnityEngine.Video;
 
 public enum SpecialMove
 {
@@ -96,6 +97,8 @@ public class ChessBoard : MonoBehaviour
     public int myTeam;
     public int isWinner = -1;
     private bool isTimeOutHandled = false;
+    public RawImage backgroundUser; 
+    private VideoPlayer backgroundUser_Video;
 
     public void OpenPause()
     {
@@ -132,9 +135,21 @@ public class ChessBoard : MonoBehaviour
         // whiteTimer = new Timer();
         blackTimer = new Timer(initialTime);
         UpdateTimers();
+        if (backgroundUser != null)
+        {
+            backgroundUser_Video = backgroundUser.GetComponent<VideoPlayer>();
+            if (backgroundUser_Video != null)
+            {
+                backgroundUser_Video.isLooping = true;
+                backgroundUser_Video.loopPointReached += OnVideoEnd;
+            }
+        }
 
     }
-
+    void OnVideoEnd(VideoPlayer vp)
+    {
+        vp.Play(); // Phát lại video khi nó kết thúc
+    }
     private void Update()
     {
         if (!currentCamera)
