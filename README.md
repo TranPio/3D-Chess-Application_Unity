@@ -48,8 +48,8 @@ Game Cờ Vua 3D cho phép người chơi thi đấu với nhau qua mạng LAN. 
 ## 4. Giao Diện Trò Chơi Với Người  
 ### 4.1. Giao Diện Đợi Người Chơi Vào Phòng
 ![Giao Diện Game Với Máy](https://github.com/user-attachments/assets/de62fb8b-2017-4970-937f-a191ecc6f212)  
-**Giao diện này xuất hiện khi người chơi nhấn nút “Tạo phòng”, màn hình sẽ lập tức chuyển sang giao diện này. Tại đây người tạo phòng sẽ đợi cho tới khi có người kết nối vào phòng bằng địa chỉ IP của phòng thì giao diện sẽ chuyển vào game.
-**Nếu người chơi không muốn đợi người chơi còn lại tham gia vào thì có thể nhấn nút “Cancel” để hủy phòng đang tạo và quay trở về màn hình sảnh chờ.
+**Giao diện này xuất hiện khi người chơi nhấn nút “Tạo phòng”, màn hình sẽ lập tức chuyển sang giao diện này. Tại đây người tạo phòng sẽ đợi cho tới khi có người kết nối vào phòng bằng địa chỉ IP của phòng thì giao diện sẽ chuyển vào game.**
+**Nếu người chơi không muốn đợi người chơi còn lại tham gia vào thì có thể nhấn nút “Cancel” để hủy phòng đang tạo và quay trở về màn hình sảnh chờ.**
 
 
 
